@@ -1,0 +1,100 @@
+
+namespace InsuranceBrokerSystem.Infrastructure.Data
+{
+    public class AppDbContext:DbContext
+    {
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
+        public DbSet<InsuranceClass> InsuranceClasses { get; set; }
+        public DbSet<InsuranceLineOfBusiness> InsuranceLines { get; set; }
+
+        public DbSet<InsuranceCompany> InsuranceCompanies { get; set; }
+        public DbSet<InsuranceContact> InsuranceContacts { get; set; }
+        public DbSet<InsuranceProduct> InsuranceProducts { get; set; }
+
+        public DbSet<PolicyType> policyTypes { get; set; }
+        public DbSet<Nationality> nationalities { get; set; }
+        public DbSet<BusinessActivity> businessActivities { get; set; }
+
+        public DbSet<Account> accounts { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            #region "InsuranceClass"
+            modelBuilder.Entity<InsuranceClass>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<InsuranceLineOfBusiness>()
+                .HasKey(x => x.Id);
+
+            // Relationship (ClassName string FK)
+            modelBuilder.Entity<InsuranceLineOfBusiness>()
+                .HasOne(l => l.InsuranceClass)
+                .WithMany(c => c.Lines)
+                .HasForeignKey(l => l.ClassID)
+                .HasPrincipalKey(c => c.Id);
+            #endregion
+            
+            #region "PolicyType"
+            modelBuilder.Entity<PolicyType>()
+                .HasKey(x => x.Id);
+            #endregion
+
+            #region "Nationality"
+            modelBuilder.Entity <Nationality>()
+                .HasKey(x => x.Id);
+            #endregion
+
+            #region "BusinessActivity"
+            modelBuilder.Entity<BusinessActivity>()
+                .HasKey(x => x.Id);
+            #endregion
+
+            #region "InsuranceCompany"
+            modelBuilder.Entity<InsuranceCompany>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<InsuranceCompany>()
+                .HasIndex(x => x.CompanyName)
+                .IsUnique();
+            modelBuilder.Entity<InsuranceCompany>()
+                .HasIndex(x => x.CRNo)
+                .IsUnique();
+            modelBuilder.Entity<InsuranceProduct>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<InsuranceContact>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<InsuranceCompany>()
+                .HasMany(c => c.Products)
+                .WithOne(p => p.InsuranceCompany)
+                .HasForeignKey(p => p.InsuranceCompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<InsuranceCompany>()
+                .HasMany(c => c.Contacts)
+                .WithOne(p => p.InsuranceCompany)
+                .HasForeignKey(p => p.InsuranceCompanyId)
+                .OnDelete(DeleteBehavior.Cascade);
+            #endregion
+
+            #region "Account"
+            modelBuilder.Entity<Account>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<Account>()
+                .HasIndex(x => x.AccountNumber)
+                .HasFilter("[IsDeleted] = 0")
+                .IsUnique();
+            modelBuilder.Entity<Account>()
+                .HasIndex(x => x.AccountName)
+                .HasFilter("[IsDeleted] = 0")
+                .IsUnique();
+            modelBuilder.Entity<Account>()
+                .HasOne(p=>p.Parent)
+                .WithMany(c=>c.Children)
+                .HasForeignKey(p=>p.ParentId)
+                .OnDelete(DeleteBehavior.Restrict);
+            #endregion
+        }
+    }
+}

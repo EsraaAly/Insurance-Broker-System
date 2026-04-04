@@ -1,0 +1,187 @@
+<Window x:Class="InsuranceBrokerSystem.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:InsuranceBrokerSystem.UI"
+        mc:Ignorable="d"
+        Title="IBS Management System" Height="651" Width="1077" WindowState="Maximized">
+    <Window.Resources>
+        <ResourceDictionary Source="Style.xaml"/>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="sidebarColumn" Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Border x:Name="sidebarBorder"  x:FieldModifier="public" Width="325" Grid.Column="0" Background="{StaticResource SidebarColor}" CornerRadius="0,20,20,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="100"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <StackPanel Grid.Row="0" VerticalAlignment="Center" Margin="25,0">
+                    <TextBlock Text="IBS" FontSize="32" FontWeight="Black" Foreground="White"/>
+                    <TextBlock Text="Insurance Broker System" FontSize="11" Foreground="{StaticResource SecondaryBrush}" FontWeight="SemiBold" />
+                </StackPanel>
+
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="10,0">
+                    <StackPanel>
+                        <Button Content="Operational Dashboard" Style="{StaticResource SidebarItemStyle}" Click="Menu_Click" Margin="0,5,0,10" FontWeight="SemiBold" Foreground="White" />
+                        <Expander Header="MASTER TABLES" Style="{StaticResource ModernExpander}" >
+                            <StackPanel>
+                                <Button Content="Insurance Classes / Lines of Business" Style="{StaticResource SidebarItemStyle}" Click="Menu_Click" />
+                                <Button Content="Insurance Companies" Style="{StaticResource SidebarItemStyle}" Click="Menu_Click" />
+                                <!--<Button Content="Producers" Style="{StaticResource SidebarItemStyle}"  Click="Menu_Click" />
+                                <Button Content="Insurance Brokers" Style="{StaticResource SidebarItemStyle}"  Click="Menu_Click" />
+                                <Button Content="Prospect Types" Style="{StaticResource SidebarItemStyle}"  Click="Menu_Click" />
+                                <Button Content="Business Activities" Style="{StaticResource SidebarItemStyle}"  Click="Menu_Click" />
+                                <Button Content="Clients Categories" Style="{StaticResource SidebarItemStyle}" Click="Menu_Click" />
+                                <Button Content="Contacts List Position" Style="{StaticResource SidebarItemStyle}"  Click="Menu_Click" />
+                                <Button Content="Countries" Style="{StaticResource SidebarItemStyle}"/>
+                                <Button Content="Default Emails" Style="{StaticResource SidebarItemStyle}"/>
+                                <Button Content="Prospect Loss Reasons" Style="{StaticResource SidebarItemStyle}"/>-->
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- BUSINESS DEVELOPMENT -->
+                        <Expander Header="BUSINESS DEVELOPMENT" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                                
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- CLIENTS REGISTRY -->
+                        <Expander Header="CLIENTS REGISTRY" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                                
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- CUSTOMER SERVICE -->
+                        <Expander Header="CUSTOMER SERVICE" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                                
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- PRODUCTION -->
+                        <Expander Header="PRODUCTION" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- CLAIMS -->
+                        <Expander Header="CLAIMS" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                                
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- COMPLIANCE -->
+                        <Expander Header="COMPLIANCE" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                                
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- HUMAN RESOURCES -->
+                        <Expander Header="HUMAN RESOURCES" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                               
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- FINANCE -->
+                        <Expander Header="FINANCE" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                                <Button Content="Chart Of Account" Style="{StaticResource SidebarItemStyle}" Click="Menu_Click" />
+
+                                <Button Content="Approve Insurance Companies" Style="{StaticResource SidebarItemStyle}" Click="Menu_Click" />
+                                
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- FIXED ASSETS -->
+                        <Expander Header="FIXED ASSETS" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                                
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- SYSTEM ADMIN -->
+                        <Expander Header="SYSTEM ADMIN" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                                
+                            </StackPanel>
+                        </Expander>
+
+                        <!-- HELP -->
+                        <Expander Header="HELP" Style="{StaticResource ModernExpander}">
+                            <StackPanel>
+                                
+                            </StackPanel>
+                        </Expander>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <Button Grid.Row="2" x:Name="SignOutButton" Content="SIGN OUT" Margin="20" Height="45" 
+                        Background="{StaticResource AccentBrush}" />
+            </Grid>
+        </Border>
+
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="70"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="35"/>
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Background="White" Margin="20,10,20,0" CornerRadius="15">
+                
+                <Border.Effect>
+                    <DropShadowEffect BlurRadius="15" ShadowDepth="2" Opacity="0.1"/>
+                </Border.Effect>
+                <Grid Margin="20,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="200"/>
+                    </Grid.ColumnDefinitions>
+                    <Button  Grid.Column="0" x:Name="btnToggleSidebar" 
+                        Style="{StaticResource HamburgerButtonStyle}"
+                        Click="ToggleMenu_Click"/>
+                    <TextBlock Grid.Column="1" x:Name="txtCurrentPage" Text="Operational Dashboard" VerticalAlignment="Center" FontSize="18" FontWeight="SemiBold" Foreground="{StaticResource PrimaryBrush}" Margin="46,0,0,0"/>
+
+                    <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <!--<Button x:Name="btnRefreshPrivileges" Content="Refresh" Width="80" Height="30" Margin="0,0,10,0" Style="{StaticResource SecondaryButtonStyle}" Background="{StaticResource RefreshGray}"/>-->
+                        <Button x:Name="btnShowAlarms" Content="Alarms (0)" Width="100" Height="30" Background="{StaticResource AccentBrush}"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+
+            <ContentControl Grid.Row="1" x:Name="MainContent" Margin="20"/>
+
+            <StatusBar Grid.Row="2" Background="Transparent" Margin="20,0">
+                <StatusBarItem>
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse Width="8" Height="8" Fill="#2ECC71" Margin="0,0,8,0"/>
+                        <TextBlock x:Name="LableUser" Text="Current User: Admin" FontWeight="Medium"/>
+                    </StackPanel>
+                </StatusBarItem>
+                <Separator Background="{StaticResource DisabledBrush}" Margin="10,8"/>
+                <StatusBarItem>
+                    <TextBlock x:Name="lblBranch" Text="Branch: Cairo Head Office"/>
+                </StatusBarItem>
+                <StatusBarItem HorizontalAlignment="Right">
+                    <TextBlock x:Name="lblServer" Text="Connected to Live Server" Foreground="{StaticResource SecondaryBrush}" FontWeight="Bold"/>
+                </StatusBarItem>
+            </StatusBar>
+        </Grid>
+    </Grid>
+</Window>

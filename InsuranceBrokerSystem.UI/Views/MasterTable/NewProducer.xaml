@@ -1,0 +1,62 @@
+﻿<UserControl x:Class="InsuranceBrokerSystem.UI.Views.MasterTable.NewProducer"
+            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:local="clr-namespace:InsuranceBrokerSystem.UI"
+            mc:Ignorable="d" d:DesignHeight="430" d:DesignWidth="1000" 
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Stretch" >
+    <UserControl.Resources>
+        <ResourceDictionary Source="/Style.xaml"/>
+    </UserControl.Resources>
+
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <GroupBox Grid.Row="0" Header="Producer's Details" Style="{StaticResource GroupBoxStyle}" Margin="10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Margin="10">
+                    <Label Content="Name *"/>
+                    <TextBox Text="{Binding Producer.Name}"/>
+                    <Label Content="Mobile *"/>
+                    <TextBox Text="{Binding Producer.Mobile}"/>
+                    <Label Content="Tele."/>
+                    <TextBox Text="{Binding Producer.Tele}"/>
+                    <Label Content="ID Info *"/>
+                    <TextBox Text="{Binding Producer.IdInfo}" Height="80" AcceptsReturn="True" VerticalContentAlignment="Top"/>
+                </StackPanel>
+
+                <StackPanel Grid.Column="1" Margin="10">
+                    <Label Content="Acc No *"/>
+                    <TextBox Text="{Binding Producer.AccNo}"/>
+                    <Label Content="Acc Name"/>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox Text="{Binding Producer.AccName}"/>
+                        <Button Grid.Column="1" Content="Search.." Background="{StaticResource SidebarColor}" Margin="5,0,0,0" Padding="10,2"/>
+                    </Grid>
+                    <Label Content="Email"/>
+                    <TextBox Text="{Binding Producer.Email}"/>
+                    <Label Content="Address"/>
+                    <TextBox Text="{Binding Producer.Address}" Height="80" AcceptsReturn="True" VerticalContentAlignment="Top"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Save" Style="{StaticResource SecondaryButtonStyle}" Background="{StaticResource SaveButtonColor}" Width="100" Margin="5"/>
+            <Button Content="Clear" Style="{StaticResource SecondaryButtonStyle}" Background="{StaticResource SidebarColor}" Width="100" Margin="5"/>
+            <Button Content="Close" Style="{StaticResource {x:Type Button}}" Background="{StaticResource AccentBrush}" Width="100" Margin="5"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

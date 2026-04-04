@@ -34,7 +34,8 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
                 throw new Exception($"API Error: {response.StatusCode} - {error}");
 
             }
-            return await response.Content.ReadFromJsonAsync<List<GetInsuranceProductDTO>>();
+            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<List<GetInsuranceProductDTO>>>();
+            return apiResponse.Data?? new List<GetInsuranceProductDTO>();
 
         }
     }

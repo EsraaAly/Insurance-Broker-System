@@ -12,10 +12,15 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             _mapper = mapper;
         }
 
-        public async Task<List<GetInsuranceContractDTO>> GetInsuranceContactByInsuranceIdAsync(int Id)
+        public async Task<Result<List<GetInsuranceContractDTO>>> GetInsuranceContactByInsuranceIdAsync(int id)
         {
-            List<GetInsuranceContractDTO> dto = _mapper.Map<List<GetInsuranceContractDTO>>(await _unitOfWork.InsuranceContract.GetInsuranceContactsByInsuranceIdAsync(Id));
-            return dto;
+            var contacts = await _unitOfWork.InsuranceContract.GetInsuranceContactsByInsuranceIdAsync(id);
+            if (contacts == null)
+            {
+                return Result<List<GetInsuranceContractDTO>>.Failure("No contacts found for this insurance company");
+            }
+            var dto = _mapper.Map<List<GetInsuranceContractDTO>>(contacts);
+            return Result<List<GetInsuranceContractDTO>>.Success(dto);
         }
     }
 }

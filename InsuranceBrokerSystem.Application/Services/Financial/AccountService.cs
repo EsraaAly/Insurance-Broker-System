@@ -13,27 +13,28 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
             _mapper = mapper;
         }
 
-        public async Task<GetAccountDTO> AddAccountAsync(CreateAccountDTO dto)
+        public async Task<Result<GetAccountDTO>> AddAccountAsync(CreateAccountDTO dto)
         {
+            if (dto == null) return Result<GetAccountDTO>.Failure("Account data is null");
+
             var existingDeleted = await _unitOfWork.AccountNumber.GetByExpressionAsync(x => x.AccountName == dto.AccountName && x.IsDeleted == true);
 
             if (existingDeleted != null)
             {
-                // RESTORE: Instead of adding, just reactivate the old one
                 existingDeleted.IsDeleted = false;
                 existingDeleted.UpdatedDate = DateTime.Now;
-                // Update other fields from dto if necessary...
 
                 await _unitOfWork.AccountNumber.UpdateEntityAsync(existingDeleted);
                 await _unitOfWork.CommitAsync();
-                return _mapper.Map<GetAccountDTO>(existingDeleted);
+                return Result<GetAccountDTO>.Success(_mapper.Map<GetAccountDTO>(existingDeleted), "Account restored successfully");
             }
+
             Account acc = _mapper.Map<Account>(dto);
             var parent = await _unitOfWork.AccountNumber.GetEntityByIdAsync(dto.ParentId ?? 0);
-            var siblings = parent != null? await _unitOfWork.AccountNumber.GetAllEntitytiesAsync() :null;
-            if (siblings != null)
-                siblings  = siblings.Where(s => s.ParentId == parent.Id).ToList();
-            string newAccountNumber = await _unitOfWork.AccountNumber.GenerateAsync(parent, siblings,(int)dto.AccountType);
+            var siblingsResponse = parent != null ? await _unitOfWork.AccountNumber.GetAllEntitytiesAsync() : null;
+            var siblings = siblingsResponse != null ? siblingsResponse.Where(s => s.ParentId == parent!.Id).ToList() : null;
+            
+            string newAccountNumber = await _unitOfWork.AccountNumber.GenerateAsync(parent, siblings, (int)dto.AccountType);
 
             acc.AccountNumber = newAccountNumber;
             acc.CreatedBy = "Israa";
@@ -46,61 +47,86 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
             {
                 acc.Level = dto.Level + 1;
             }
-            acc = await _unitOfWork.AccountNumber.AddEntityAsync(acc);
 
+            acc = await _unitOfWork.AccountNumber.AddEntityAsync(acc);
             await _unitOfWork.CommitAsync();
 
             GetAccountDTO accDTO = _mapper.Map<GetAccountDTO>(acc);
-            return accDTO;
+            return Result<GetAccountDTO>.Success(accDTO, "Account created successfully");
         }
 
-        public Task<GetAccountDTO> GetAccountByIdAsync(int id)
+        public async Task<Result<GetAccountDTO>> GetAccountByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var entity = await _unitOfWork.AccountNumber.GetEntityByIdAsync(id);
+            if (entity == null)
+            {
+                return Result<GetAccountDTO>.Failure("Account not found");
+            }
+            return Result<GetAccountDTO>.Success(_mapper.Map<GetAccountDTO>(entity));
         }
 
-        public async Task<GetAccountDTO> UpdateAccountAsync(EditAccountDTO dto)
+        public async Task<Result<GetAccountDTO>> UpdateAccountAsync(EditAccountDTO dto)
         {
             var existing = await _unitOfWork.AccountNumber.GetEntityByIdAsync(dto.Id);
-            if (existing == null) throw new KeyNotFoundException("Account not found");
-
-            _mapper.Map(dto, existing);
-            await _unitOfWork.AccountNumber.UpdateEntityAsync(existing);
-            await _unitOfWork.CommitAsync();
-
-            return _mapper.Map<GetAccountDTO>(existing);
-        }
-
-        public async Task<List<GetAccountDTO>> GetAllAccountsAsync()
-        {
-            var accounts = await _unitOfWork.AccountNumber.GetAllEntitytiesAsync();
-            return _mapper.Map<List<GetAccountDTO>>(accounts);
-        }
-
-        public async Task<List<GetAccountDTO>> GetRootAccountsAsync()
-        {
-            var allAccounts = await GetAllAccountsAsync();
-            // Return only Level 1 accounts (Roots)
-            return allAccounts.Where(a => a.Level == 1 || a.ParentId == null).ToList();
-        }
-
-        public async Task<bool> DeleteAccountAsync(int id)
-        {
-            var existing = await _unitOfWork.AccountNumber.GetEntityByIdAsync(id);
-            if (existing == null) return false;
-
-            var allAccounts = await _unitOfWork.AccountNumber.GetAllEntitytiesAsync();
-            if (allAccounts.Any(a => a.ParentId == id))
+            if (existing == null)
             {
-                return false; // Cannot delete parent with children
+                return Result<GetAccountDTO>.Failure("Account not found");
             }
 
-            // A real app might do _unitOfWork.AccountNumber.DeleteEntityAsync(existing)
-            // Assuming DeleteEntityAsync exists. Let's try DeleteEntityAsync.
-            await _unitOfWork.AccountNumber.DeleteEntityAsync(existing.Id);
-            await _unitOfWork.CommitAsync();
+            _mapper.Map(dto, existing);
+            bool success = await _unitOfWork.AccountNumber.UpdateEntityAsync(existing);
+            if (success)
+            {
+                await _unitOfWork.CommitAsync();
+                return Result<GetAccountDTO>.Success(_mapper.Map<GetAccountDTO>(existing), "Account updated successfully");
+            }
 
-            return true;
+            return Result<GetAccountDTO>.Failure("Failed to update account");
+        }
+
+        public async Task<Result<List<GetAccountDTO>>> GetAllAccountsAsync()
+        {
+            var accounts = await _unitOfWork.AccountNumber.GetAllEntitytiesAsync();
+            if (accounts == null)
+            {
+                return Result<List<GetAccountDTO>>.Failure("No accounts found");
+            }
+            return Result<List<GetAccountDTO>>.Success(_mapper.Map<List<GetAccountDTO>>(accounts));
+        }
+
+        public async Task<Result<List<GetAccountDTO>>> GetRootAccountsAsync()
+        {
+            var result = await GetAllAccountsAsync();
+            if (!result.Succeeded || result.Data == null)
+            {
+                return result;
+            }
+            var rootAccounts = result.Data.Where(a => a.Level == 1 || a.ParentId == null).ToList();
+            return Result<List<GetAccountDTO>>.Success(rootAccounts);
+        }
+
+        public async Task<Result<bool>> DeleteAccountAsync(int id)
+        {
+            var existing = await _unitOfWork.AccountNumber.GetEntityByIdAsync(id);
+            if (existing == null)
+            {
+                return Result<bool>.Failure("Account not found");
+            }
+
+            var allAccounts = await _unitOfWork.AccountNumber.GetAllEntitytiesAsync();
+            if (allAccounts != null && allAccounts.Any(a => a.ParentId == id))
+            {
+                return Result<bool>.Failure("Cannot delete parent account with children");
+            }
+
+            bool success = await _unitOfWork.AccountNumber.DeleteEntityAsync(existing.Id);
+            if (success)
+            {
+                await _unitOfWork.CommitAsync();
+                return Result<bool>.Success(true, "Account deleted successfully");
+            }
+
+            return Result<bool>.Failure("Failed to delete account");
         }
 
         //public async Task<GetAccountDTO> GetAccountByIdAsync(int id)

@@ -64,10 +64,21 @@ namespace InsuranceBrokerSystem.UI.Services.Financial
         {
             try
             {
-                var dtos = await _httpClient.GetFromJsonAsync<List<GetAccountDTO>>(ApiRoutes.Financial.Account.GetAllAccounts);
-                if (dtos == null) return new List<Account>();
+                // CHANGE: Use ApiResponse<List<GetAccountDTO>> here
+                var response = await _httpClient.GetFromJsonAsync<ApiResponse<List<GetAccountDTO>>>(ApiRoutes.Financial.Account.GetAllAccounts);
 
-                return dtos.Select(dto => MapDtoToUIModel(dto, "No Parent")).ToList();
+                // Now 'response' is the envelope, which HAS .Success and .Data
+                if (response != null && response.Succeeded)
+                {
+                    List<GetAccountDTO> dtos = response.Data ?? new List<GetAccountDTO>();
+                    return dtos.Select(dto => MapDtoToUIModel(dto, "No Parent")).ToList();
+                }
+                else
+                {
+                    string msg = response?.Message ?? "Unknown error";
+                    MessageBox.Show($"Server returned an error: {msg}");
+                    return new List<Account>();
+                }
             }
             catch (Exception ex)
             {

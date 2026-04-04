@@ -1,4 +1,6 @@
 
+using Microsoft.OpenApi.MicrosoftExtensions;
+
 namespace InsuranceBrokerSystem.UI.Services.Master_Table
 {
     class InsuranceCompanyService
@@ -54,7 +56,8 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
                 throw new Exception($"API Error: {response.StatusCode} - {error}");
             }
 
-            return await response.Content.ReadFromJsonAsync<List<GetInsuranceCompanyDTO>>();
+            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<List<GetInsuranceCompanyDTO>>>();
+            return apiResponse.Data ?? new List<GetInsuranceCompanyDTO>();
         }
 
         public async Task<GetInsuranceCompanyDTO> GetInsuranceCompanyByNameAsync(string name)
@@ -72,7 +75,8 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
                 MessageBox.Show("No insurance company found with the specified name.", "Not Found", MessageBoxButton.OK, MessageBoxImage.Information);
                 return null; 
             }
-            return await response.Content.ReadFromJsonAsync<GetInsuranceCompanyDTO>();
+            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<GetInsuranceCompanyDTO>>();
+            return apiResponse.Data?? new GetInsuranceCompanyDTO();
 
         }
     }

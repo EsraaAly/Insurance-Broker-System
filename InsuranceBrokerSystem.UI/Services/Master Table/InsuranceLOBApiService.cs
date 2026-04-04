@@ -35,7 +35,8 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
                 throw new Exception($"API Error: {response.StatusCode} - {error}");
             }
 
-            return await response.Content.ReadFromJsonAsync<List<GetInsuranceLOBDTO>>();
+             var ApiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<List<GetInsuranceLOBDTO>>>();
+            return ApiResponse.Data ?? new List<GetInsuranceLOBDTO>();
         }
 
         public async Task<List<GetInsuranceLOBDTO>> GetLOBByClassIdAsync(int classId)
@@ -48,7 +49,9 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
                 throw new Exception($"API Error: {response.StatusCode} - {error}");
             }
 
-            return await response.Content.ReadFromJsonAsync<List<GetInsuranceLOBDTO>>();
+            var ApiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<List<GetInsuranceLOBDTO>>>();
+            return ApiResponse.Data ?? new List<GetInsuranceLOBDTO>();
+
         }
 
         public async Task<bool> AddLOBAsync(AddInsuranceLOBDTO dto)

@@ -1,8 +1,7 @@
-// ============================================================
+// =====================================
 // Global Using Directives — InsuranceBrokerSystem.Application
-// All namespaces listed here are automatically available in
-// every .cs file within this project (C# 10 / .NET 6+).
-// ============================================================
+// =====================================
+global using InsuranceBrokerSystem.Application.Common.Models;
 
 // ── BCL ──────────────────────────────────────────────────────
 global using System;

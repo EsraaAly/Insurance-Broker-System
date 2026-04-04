@@ -1,8 +1,8 @@
-// ============================================================
+// =====================================
 // Global Using Directives — InsuranceBrokerSystem.Api
-// All namespaces listed here are automatically available in
-// every .cs file within this project (C# 10 / .NET 6+).
-// ============================================================
+// =====================================
+global using InsuranceBrokerSystem.Application.Common.Models;
+global using InsuranceBrokerSystem.Api.Extensions;
 
 // ── BCL ──────────────────────────────────────────────────────
 global using System;

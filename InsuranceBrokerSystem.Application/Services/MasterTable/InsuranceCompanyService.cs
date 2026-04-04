@@ -18,148 +18,91 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             _insuranceCompanyAccountService = insuranceCompanyAccountService;
         }
 
-        public async Task<GetInsuranceCompanyDTO> AddInsuranceCompaniesAsync(AddInsuranceCompanyDTO dto)
+        public async Task<Result<GetInsuranceCompanyDTO>> AddInsuranceCompaniesAsync(AddInsuranceCompanyDTO dto)
         {
+            if (dto == null) return Result<GetInsuranceCompanyDTO>.Failure("Data is null");
 
             InsuranceCompany entry = _mapper.Map<InsuranceCompany>(dto);
-
             entry.CreatedBy = "Israa";
             entry.CreatedDate = DateTime.Now;
 
-            foreach(var e in entry.Contacts)
+            foreach (var e in entry.Contacts)
             {
                 e.CreatedBy = "Israa";
                 e.CreatedDate = DateTime.Now;
                 e.InsuranceCompanyId = entry.Id;
-                //await _unitOfWork.G_repoInsuranceContract.AddEntityAsync(e);
             }
             foreach (var e in entry.Products)
             {
                 e.CreatedBy = "Israa";
                 e.CreatedDate = DateTime.Now;
                 e.InsuranceCompanyId = entry.Id;
-                //await _unitOfWork.G_repoInsuranceProduct.AddEntityAsync(e);
             }
 
             entry = await _unitOfWork.InsuranceCompany.AddEntityAsync(entry);
-
-            //await _unitOfWork._G_repoInsuranceContract.AddEntityAsync(entry);
             await _unitOfWork.CommitAsync();
+
             GetInsuranceCompanyDTO company = _mapper.Map<GetInsuranceCompanyDTO>(entry);
-            return company;
+            return Result<GetInsuranceCompanyDTO>.Success(company, "Insurance Company added successfully");
         }
 
-        public async Task<bool> DeleteInsuranceCompaniesAsync(int Id)
+        public async Task<Result<bool>> DeleteInsuranceCompaniesAsync(int id)
         {
-           var success =  await _unitOfWork.InsuranceCompany.DeleteEntityAsync(Id);
-            
+            var success = await _unitOfWork.InsuranceCompany.DeleteEntityAsync(id);
+
             if (success)
             {
                 await _unitOfWork.CommitAsync();
-                return true;
+                return Result<bool>.Success(true, "Insurance Company deleted successfully");
             }
-            return false;
+            return Result<bool>.Failure("Failed to delete Insurance Company or it does not exist");
         }
 
-        public async Task<List<GetInsuranceCompanyDTO>> GetAllInsuranceCompaniesAsync()
+        public async Task<Result<List<GetInsuranceCompanyDTO>>> GetAllInsuranceCompaniesAsync()
         {
-             var entries = await _unitOfWork.InsuranceCompany.GetAllEntitytiesAsync();
+            var entries = await _unitOfWork.InsuranceCompany.GetAllEntitytiesAsync();
+            if (entries == null)
+            {
+                return Result<List<GetInsuranceCompanyDTO>>.Failure("No insurance companies found");
+            }
             List<GetInsuranceCompanyDTO> dto = _mapper.Map<List<GetInsuranceCompanyDTO>>(entries);
-            //List<GetInsuranceCompanyDTO> dto = entries.Select(e => new GetInsuranceCompanyDTO
-            //{
-            //    Id = e.Id,
-            //    CompanyName=e.CompanyName,
-            //    CompanyNameAr=e.CompanyNameAr,
-            //    Abbreviation=e.Abbreviation,
-            //    AdditionalNo=e.AdditionalNo,
-            //    BuildingName=e.BuildingName,
-            //    BuildingNameArabic=e.BuildingNameArabic,
-            //    BuildingNo=e.BuildingNo,
-            //    CityName=e.CityName,
-            //    CityNameArabic=e.CityNameArabic,
-            //    CountryRegion=e.CountryRegion,
-            //    CountryRegionArabic=e.CountryRegionArabic,
-            //    CreatedBy=e.CreatedBy,
-            //    CreatedDate=e.CreatedDate,
-            //    CRNo=e.CRNo,
-            //    DistrictName=e.DistrictName,
-            //    DistrictNameArabic=e.DistrictNameArabic,
-            //    Email=e.Email,
-            //    PostalZIPCode=e.PostalZIPCode,
-            //    State=e.State,
-            //    StateArabic=e.StateArabic,
-            //    StreetName=e.StreetName,
-            //    StreetNameArabic=e.StreetNameArabic,
-            //    Tele=e.Tele,
-            //    UnifiedNo=e.UnifiedNo,
-            //    UpdatedBy=e.UpdatedBy,
-            //    UpdatedDate=e.UpdatedDate,
-            //    VATNo=e.VATNo                
-            //}).ToList();
-
-            return dto;
+            return Result<List<GetInsuranceCompanyDTO>>.Success(dto);
         }
 
-        public async Task<GetInsuranceCompanyDTO> GetInsuranceCompaniesByIdAsync(int Id)
+        public async Task<Result<GetInsuranceCompanyDTO>> GetInsuranceCompaniesByIdAsync(int id)
         {
-            var entry = await _unitOfWork.InsuranceCompany.GetEntityByIdAsync(Id);
-
-            GetInsuranceCompanyDTO dto =  _mapper.Map< GetInsuranceCompanyDTO>(entry);
-
-            //GetInsuranceCompanyDTO dto = new GetInsuranceCompanyDTO
-            //{
-            //    Id = entry.Id,
-            //    CompanyName = entry.CompanyName,
-            //    CompanyNameAr = entry.CompanyNameAr,
-            //    Abbreviation = entry.Abbreviation,
-            //    AdditionalNo = entry.AdditionalNo,
-            //    BuildingName = entry.BuildingName,
-            //    BuildingNameArabic = entry.BuildingNameArabic,
-            //    BuildingNo = entry.BuildingNo,
-            //    CityName = entry.CityName,
-            //    CityNameArabic = entry.CityNameArabic,
-            //    CountryRegion = entry.CountryRegion,
-            //    CountryRegionArabic = entry.CountryRegionArabic,
-            //    CreatedBy = entry.CreatedBy,
-            //    CreatedDate = entry.CreatedDate,
-            //    CRNo = entry.CRNo,
-            //    DistrictName = entry.DistrictName,
-            //    DistrictNameArabic = entry.DistrictNameArabic,
-            //    Email = entry.Email,
-            //    PostalZIPCode = entry.PostalZIPCode,
-            //    State = entry.State,
-            //    StateArabic = entry.StateArabic,
-            //    StreetName = entry.StreetName,
-            //    StreetNameArabic = entry.StreetNameArabic,
-            //    Tele = entry.Tele,
-            //    UnifiedNo = entry.UnifiedNo,
-            //    UpdatedBy = entry.UpdatedBy,
-            //    UpdatedDate = entry.UpdatedDate,
-            //    VATNo = entry.VATNo
-            //};
-
-            return dto;
-        }
-
-        public async Task<GetInsuranceCompanyDTO> GetInsuranceCompaniesByNameAsync(string CompanyName)
-        {
-            var entry = await _unitOfWork.InsuranceCompany.GetInsuranceCompaniesByNameAsync(CompanyName);
+            var entry = await _unitOfWork.InsuranceCompany.GetEntityByIdAsync(id);
+            if (entry == null)
+            {
+                return Result<GetInsuranceCompanyDTO>.Failure("Insurance Company not found");
+            }
 
             GetInsuranceCompanyDTO dto = _mapper.Map<GetInsuranceCompanyDTO>(entry);
-
-            return dto;
+            return Result<GetInsuranceCompanyDTO>.Success(dto);
         }
 
-        public async Task<GetInsuranceCompanyDTO> UpdateInsuranceCompaniesAsync(UpdateInsuranceCompanyDTO dto)
+        public async Task<Result<GetInsuranceCompanyDTO>> GetInsuranceCompaniesByNameAsync(string companyName)
         {
-            var existingEntry = await _unitOfWork.InsuranceCompany.GetEntityByIdWithIncludesAsync(dto.Id,x=>x.Products,x=>x.Contacts);
+            var entry = await _unitOfWork.InsuranceCompany.GetInsuranceCompaniesByNameAsync(companyName);
+            if (entry == null)
+            {
+                return Result<GetInsuranceCompanyDTO>.Failure("Insurance Company not found");
+            }
+
+            GetInsuranceCompanyDTO dto = _mapper.Map<GetInsuranceCompanyDTO>(entry);
+            return Result<GetInsuranceCompanyDTO>.Success(dto);
+        }
+
+        public async Task<Result<GetInsuranceCompanyDTO>> UpdateInsuranceCompaniesAsync(UpdateInsuranceCompanyDTO dto)
+        {
+            var existingEntry = await _unitOfWork.InsuranceCompany.GetEntityByIdWithIncludesAsync(dto.Id, x => x.Products, x => x.Contacts);
 
             if (existingEntry == null)
             {
-                return null;
+                return Result<GetInsuranceCompanyDTO>.Failure("Insurance Company not found");
             }
 
-            _mapper.Map(dto,existingEntry);
+            _mapper.Map(dto, existingEntry);
 
             existingEntry.UpdatedBy = "Israa";
             existingEntry.UpdatedDate = DateTime.Now;
@@ -168,59 +111,47 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             if (success)
             {
                 await _unitOfWork.CommitAsync();
-                return _mapper.Map<GetInsuranceCompanyDTO>(existingEntry);
+                return Result<GetInsuranceCompanyDTO>.Success(_mapper.Map<GetInsuranceCompanyDTO>(existingEntry), "Insurance Company updated successfully");
             }
-            return null;
+            return Result<GetInsuranceCompanyDTO>.Failure("Failed to update Insurance Company");
         }
 
-        public async Task<bool> ApproveInsuranceCompaniesAsync(int id)
+        public async Task<Result<bool>> ApproveInsuranceCompaniesAsync(int id)
         {
-            
             var existingEntry = await _unitOfWork.InsuranceCompany.GetEntityByIdAsync(id);
 
             if (existingEntry == null)
             {
-                return false;
+                return Result<bool>.Failure("Insurance Company not found");
             }
-
-            //CreateAccountDTO dTO = new CreateAccountDTO
-            //{
-            //    AccountName = existingEntry.CompanyName,
-            //    AccountType = AccountType.Asset,
-            //    ParentId = null,
-            //    Level = 1
-            //};
-            //var CommAccrued = await _accountService.AddAccountAsync();
 
             existingEntry.IsApproved = true;
             existingEntry.IsRejected = false;
             existingEntry.ApprovedBy = "Israa";
             existingEntry.ApprovedDate = DateTime.Now;
 
-            //existingEntry.AccNoCommAccrued = CommAccrued.AccountNumber;//liability 002-001-001-000
-            //existingEntry.AccNoCommDue = account.AccountNumber;//liability 002-001-001-000
-            //existingEntry.AccNoVATAccrued = account.AccountNumber;//liability 002-001-002-000
-            //existingEntry.AccNoVATReceivable = account.AccountNumber;//assets 001-001-002-000
-            //existingEntry.AccNoGrossPremium = account.AccountNumber;//revenue 004-001-001-000
-            //existingEntry.AccNoGrossVAT = account.AccountNumber;//revenue 
-            //existingEntry.AccNoNetPremium = account.AccountNumber;//revenue 004-001-001-000
-            //existingEntry.AccNoUWVATPayable = account.AccountNumber;//liability 002-001-002-000
-
-
             var success = await _unitOfWork.InsuranceCompany.UpdateEntityAsync(existingEntry);
             if (success)
             {
-               
-                await _insuranceCompanyAccountService.GenerateAccountsAsync(existingEntry.Id);
+                var accountResult = await _insuranceCompanyAccountService.GenerateAccountsAsync(existingEntry.Id);
+                if (!accountResult.Succeeded)
+                {
+                    return Result<bool>.Failure($"Insurance Company approved, but account generation failed: {accountResult.Message}");
+                }
                 await _unitOfWork.CommitAsync();
-                return true;
+                return Result<bool>.Success(true, "Insurance Company approved and accounts generated successfully");
             }
-            return false;
+            return Result<bool>.Failure("Failed to approve Insurance Company");
         }
 
-        public async Task<bool> RejectInsuranceCompaniesAsync(int id)
+        public async Task<Result<bool>> RejectInsuranceCompaniesAsync(int id)
         {
-            return await _unitOfWork.InsuranceCompany.RejectInsuranceCompaniesAsync(id);
+            var success = await _unitOfWork.InsuranceCompany.RejectInsuranceCompaniesAsync(id);
+            if (success)
+            {
+                return Result<bool>.Success(true, "Insurance Company rejected successfully");
+            }
+            return Result<bool>.Failure("Failed to reject Insurance Company or it is already processed");
         }
     }
 }

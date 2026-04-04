@@ -17,7 +17,8 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
             try
             {
                 // This sends a GET to https://localhost:7001/api/InsuranceClass
-                return await _httpClient.GetFromJsonAsync<List<GetInsuranceClassDTO>>(ApiRoutes.MasterTable.InsuranceClass.GetAllInsuranceClasses);
+               var response =  await _httpClient.GetFromJsonAsync< ApiResponse<List<GetInsuranceClassDTO>>>(ApiRoutes.MasterTable.InsuranceClass.GetAllInsuranceClasses);
+               return response.Data ?? new List<GetInsuranceClassDTO>();
             }
             catch (HttpRequestException)
             {

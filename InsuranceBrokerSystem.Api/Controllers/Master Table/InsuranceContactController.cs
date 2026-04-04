@@ -15,10 +15,8 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         [HttpGet(ApiRoutes.MasterTable.InsuranceCompContact.GetInsuranceContactByInsuranceIdAsync + "/{id}")]
         public async Task<IActionResult> GetInsuranceContactByInsuranceIdAsync(int id)
         {
-
-            var company = await _InsuranceContractService.GetInsuranceContactByInsuranceIdAsync(id);
-
-            return Ok(company);
+            var result = await _InsuranceContractService.GetInsuranceContactByInsuranceIdAsync(id);
+            return result.ToActionResult();
         }
 
     }

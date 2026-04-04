@@ -12,11 +12,11 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             _mapper = mapper;
 
         }
-        public async Task<bool> AddLOBAsync(AddInsuranceLOBDTO insuranceLine)
+        public async Task<Result<bool>> AddLOBAsync(AddInsuranceLOBDTO insuranceLine)
         {
             if (insuranceLine != null)
             {
-                var Insureanceclass  = await _unitOfWork.GInsuranceClass.GetEntityByIdAsync(insuranceLine.ClassID);
+                var Insureanceclass = await _unitOfWork.GInsuranceClass.GetEntityByIdAsync(insuranceLine.ClassID);
                 var insuranceLine1 = new Domain.Entities.Master_Table.InsuranceLineOfBusiness
                 {
                     ClassID = insuranceLine.ClassID,
@@ -26,79 +26,82 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                     CreatedBy = "Israa",
                     CreatedDate = DateTime.Now,
                     UpdatedBy = "",
-                    UpdatedDate =DateTime.Now,
+                    UpdatedDate = DateTime.Now,
                     IsDeleted = false,
                 };
-                var entity =await _unitOfWork.InsuranceLOB.AddEntityAsync(insuranceLine1);
+                var entity = await _unitOfWork.InsuranceLOB.AddEntityAsync(insuranceLine1);
                 if (entity != null)
                 {
                     await _unitOfWork.CommitAsync();
-                    return true;
+                    return Result<bool>.Success(true, "Line of Business added successfully");
                 }
-
             }
-            return false;
+            return Result<bool>.Failure("Failed to add Line of Business");
         }
 
-        public async Task<bool> DeleteLOBAsync(int id)
+        public async Task<Result<bool>> DeleteLOBAsync(int id)
         {
-            var insuranceLine = _unitOfWork.InsuranceLOB.GetEntityByIdAsync(id);
+            var insuranceLine = await _unitOfWork.InsuranceLOB.GetEntityByIdAsync(id);
 
             if (insuranceLine != null)
             {
-                 var success =await _unitOfWork.InsuranceLOB.DeleteEntityAsync(id);
-                await _unitOfWork.CommitAsync();
+                var success = await _unitOfWork.InsuranceLOB.DeleteEntityAsync(id);
                 if (success)
                 {
-                    return true;
+                    await _unitOfWork.CommitAsync();
+                    return Result<bool>.Success(true, "Line of Business deleted successfully");
                 }
-                return false;
+                return Result<bool>.Failure("Failed to delete Line of Business");
             }
-            return false;
+            return Result<bool>.Failure("Line of Business not found");
         }
 
-        public async Task<List<GetInsuranceLOBDTO>> GetAllLOBsAsync()
+        public async Task<Result<List<GetInsuranceLOBDTO>>> GetAllLOBsAsync()
         {
             var masterClasses = await _unitOfWork.GInsuranceClass.GetAllEntitytiesAsync();
-            var insuranceLinees = await _unitOfWork.InsuranceLOB.GetAllEntitytiesAsync().ContinueWith(t =>
+            var entities = await _unitOfWork.InsuranceLOB.GetAllEntitytiesAsync();
+            
+            if (entities == null)
             {
-                if (t.Result != null)
-                {
-                    List<GetInsuranceLOBDTO> insuranceLinees = t.Result.Select(i => new GetInsuranceLOBDTO
-                    {
-                        Id = i.Id,
-                        LineOfBusiness = i.LineOfBusiness,
-                        Abbreviation = i.Abbreviation,
-                        ClassID = i.ClassID,
-                        ClassName = masterClasses.FirstOrDefault(c=>c.Id == i.ClassID)?.ClassName ?? "N/A", // Note: This is a synchronous call inside a loop, consider optimizing this
-                        CreatedBy = i.CreatedBy,
-                        CreatedDate = i.CreatedDate,
-                        UpdatedBy = i.UpdatedBy,
-                        UpdatedDate = i.UpdatedDate,
+                return Result<List<GetInsuranceLOBDTO>>.Failure("No Lines of Business found");
+            }
 
-                    }).ToList();
+            List<GetInsuranceLOBDTO> dtos = entities.Select(i => new GetInsuranceLOBDTO
+            {
+                Id = i.Id,
+                LineOfBusiness = i.LineOfBusiness,
+                Abbreviation = i.Abbreviation,
+                ClassID = i.ClassID,
+                ClassName = masterClasses?.FirstOrDefault(c => c.Id == i.ClassID)?.ClassName ?? "N/A",
+                CreatedBy = i.CreatedBy,
+                CreatedDate = i.CreatedDate,
+                UpdatedBy = i.UpdatedBy,
+                UpdatedDate = i.UpdatedDate,
+            }).ToList();
 
-                    return insuranceLinees;
-                }
-                return null;
-            });
-            return insuranceLinees;
+            return Result<List<GetInsuranceLOBDTO>>.Success(dtos);
         }
 
-        public async Task<List<GetInsuranceLOBDTO>> GetInsuranceLOBByClassIdAsync(int ClassId)
+        public async Task<Result<List<GetInsuranceLOBDTO>>> GetInsuranceLOBByClassIdAsync(int classId)
         {
-            var LOB_List = await _unitOfWork.InsuranceLOB.GetInsuranceLOBByClassIdAsync(ClassId);
+            var LOB_List = await _unitOfWork.InsuranceLOB.GetInsuranceLOBByClassIdAsync(classId);
+            if (LOB_List == null)
+            {
+                return Result<List<GetInsuranceLOBDTO>>.Failure("No Lines of Business found for this class");
+            }
             List<GetInsuranceLOBDTO> dto = _mapper.Map<List<GetInsuranceLOBDTO>>(LOB_List);
-            return dto;
+            return Result<List<GetInsuranceLOBDTO>>.Success(dto);
         }
 
-        public async Task<GetInsuranceLOBDTO> GetLOBByidAsync(int id)
+        public async Task<Result<GetInsuranceLOBDTO>> GetLOBByidAsync(int id)
         {
             var entity = await _unitOfWork.InsuranceLOB.GetEntityByIdAsync(id);
 
-            if (entity == null) return null;
+            if (entity == null)
+            {
+                return Result<GetInsuranceLOBDTO>.Failure("Line of Business not found");
+            }
 
-            // 3. Map the data to the DTO
             GetInsuranceLOBDTO dto = new GetInsuranceLOBDTO
             {
                 Id = entity.Id,
@@ -110,38 +113,33 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                 UpdatedDate = entity.UpdatedDate
             };
 
-            return dto;
+            return Result<GetInsuranceLOBDTO>.Success(dto);
         }
 
-        public async Task<GetInsuranceLOBDTO> UpdateLOBAsync(UpdateInsuranceLOBDTO dto)
+        public async Task<Result<GetInsuranceLOBDTO>> UpdateLOBAsync(UpdateInsuranceLOBDTO dto)
         {
             var Insureanceclass = await _unitOfWork.GInsuranceClass.GetEntityByIdAsync(dto.ClassID);
-
-            // 1. Fetch the EXISTING record from the repository
             var entity = await _unitOfWork.InsuranceLOB.GetEntityByIdAsync(dto.Id);
 
-            if (entity == null) return null;
+            if (entity == null)
+            {
+                return Result<GetInsuranceLOBDTO>.Failure("Line of Business not found");
+            }
 
-            // 2. UPDATE the existing entity properties with data from the DTO
-            // Do NOT create a 'new' entity; modify the one we just fetched
             entity.LineOfBusiness = dto.LineOfBusiness;
             entity.Abbreviation = dto.Abbreviation;
             entity.ClassID = dto.ClassID;
             entity.InsuranceClass = Insureanceclass;
 
-            // Audit fields
             entity.UpdatedBy = "Israa";
             entity.UpdatedDate = DateTime.Now;
 
-            // 3. Save the changes via the repository
             bool isUpdated = await _unitOfWork.InsuranceLOB.UpdateEntityAsync(entity);
-            
 
             if (isUpdated)
             {
                 await _unitOfWork.CommitAsync();
-                // 4. Map the updated entity back to a GetinsuranceLineDTO for the UI
-                return new GetInsuranceLOBDTO
+                return Result<GetInsuranceLOBDTO>.Success(new GetInsuranceLOBDTO
                 {
                     Id = entity.Id,
                     LineOfBusiness = entity.LineOfBusiness,
@@ -150,10 +148,10 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                     CreatedDate = entity.CreatedDate,
                     UpdatedBy = entity.UpdatedBy,
                     UpdatedDate = entity.UpdatedDate
-                };
+                }, "Line of Business updated successfully");
             }
 
-            return null;
+            return Result<GetInsuranceLOBDTO>.Failure("Failed to update Line of Business");
         }
 
     }

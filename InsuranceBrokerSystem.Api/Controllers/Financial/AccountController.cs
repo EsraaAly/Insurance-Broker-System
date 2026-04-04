@@ -14,36 +14,32 @@ namespace InsuranceBrokerSystem.Api.Controllers.Financial
         [HttpGet(ApiRoutes.Financial.Account.GetAllAccounts)]
         public async Task<IActionResult> GetAllAccountsAsync()
         {
-            var accounts = await _accountService.GetAllAccountsAsync();
-            return Ok(accounts);
+            var result = await _accountService.GetAllAccountsAsync();
+            return result.ToActionResult();
         }
 
         [HttpPut(ApiRoutes.Financial.Account.UpdateAccount)]
         public async Task<IActionResult> UpdateAccountAsync(EditAccountDTO dto)
         {
-            if (dto == null) return BadRequest();
+            if (dto == null) return BadRequest("Data is null");
             var result = await _accountService.UpdateAccountAsync(dto);
-            return Ok(result);
+            return result.ToActionResult();
         }
 
         [HttpDelete(ApiRoutes.Financial.Account.DeleteAccount + "/{id}")]
         public async Task<IActionResult> DeleteAccountAsync(int id)
         {
             var result = await _accountService.DeleteAccountAsync(id);
-            if (!result) return BadRequest("Cannot delete account. Ensure it has no children.");
-            return Ok();
+            return result.ToActionResult();
         }
 
         [HttpPost(ApiRoutes.Financial.Account.AddAccount)]
-        public async Task<IActionResult> AddAccountAsync([FromBody]CreateAccountDTO dto)
+        public async Task<IActionResult> AddAccountAsync([FromBody] CreateAccountDTO dto)
         {
-            if (dto == null) 
-            { 
-                return BadRequest(); 
-            }
+            if (dto == null) return BadRequest("Data is null");
 
-            GetAccountDTO accDTO = await _accountService.AddAccountAsync(dto);
-            return Ok(accDTO);
+            var result = await _accountService.AddAccountAsync(dto);
+            return result.ToActionResult();
         }
     }
 }

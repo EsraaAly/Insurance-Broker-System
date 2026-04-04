@@ -15,15 +15,15 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         [HttpGet(ApiRoutes.MasterTable.InsuranceLOB.GetAllInsuranceLOBs)]
         public async Task<IActionResult> GetAllLOBsAsync()
         {
-            var LOBs = await _insuranceLOBService.GetAllLOBsAsync();
-            return Ok(LOBs);
+            var result = await _insuranceLOBService.GetAllLOBsAsync();
+            return result.ToActionResult();
         }
 
         [HttpGet(ApiRoutes.MasterTable.InsuranceLOB.GetLOBByClassIdAsync + "/{id}")]
         public async Task<IActionResult> GetLOBByClassIdAsync(int id)
         {
-            var LOB = await _insuranceLOBService.GetInsuranceLOBByClassIdAsync(id);
-            return Ok(LOB);
+            var result = await _insuranceLOBService.GetInsuranceLOBByClassIdAsync(id);
+            return result.ToActionResult();
         }
 
         [HttpPost(ApiRoutes.MasterTable.InsuranceLOB.AddInsuranceLOB)]
@@ -31,14 +31,8 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         {
             if (dto == null) return BadRequest("Data is null");
 
-            var success = await _insuranceLOBService.AddLOBAsync(dto);
-
-            if (success)
-            {
-                return Ok(new { message = "Insurance LOB added successfully" });
-            }
-
-            return BadRequest("Failed to add Insurance LOB. Please check your data.");
+            var result = await _insuranceLOBService.AddLOBAsync(dto);
+            return result.ToActionResult();
         }
 
         [HttpPut(ApiRoutes.MasterTable.InsuranceLOB.UpdateInsuranceLOB)]
@@ -46,29 +40,17 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         {
             if (dto is null) return BadRequest("Data is null");
 
-            var entry = await _insuranceLOBService.UpdateLOBAsync(dto);
-
-            if (entry != null)
-            {
-                return Ok(new { message = "Insurance LOB updated successfully" });
-            }
-
-            return BadRequest("Failed to update Insurance LOB. Please check your data.");
+            var result = await _insuranceLOBService.UpdateLOBAsync(dto);
+            return result.ToActionResult();
         }
 
         [HttpDelete(ApiRoutes.MasterTable.InsuranceLOB.DeleteInsuranceLOB + "/{id}")]
         public async Task<IActionResult> DeleteLOBAsync(int id)
         {
-            if (id == 0) return BadRequest("Id is't Valid");
+            if (id == 0) return BadRequest("Id isn't valid");
 
-            var success = await _insuranceLOBService.DeleteLOBAsync(id);
-
-            if (success)
-            {
-                return Ok(new { message = "Insurance LOB Deleted successfully" });
-            }
-
-            return BadRequest("Failed to Delete Insurance LOB. Please check your data.");
+            var result = await _insuranceLOBService.DeleteLOBAsync(id);
+            return result.ToActionResult();
         }
     }
 }

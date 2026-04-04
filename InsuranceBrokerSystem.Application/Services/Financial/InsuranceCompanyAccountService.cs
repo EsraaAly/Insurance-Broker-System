@@ -12,19 +12,13 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
             _accountService = accountService;
         }
 
-        public async Task<bool> GenerateAccountsAsync(int companyId)
+        public async Task<Result<bool>> GenerateAccountsAsync(int companyId)
         {
-            //existingEntry.AccNoCommAccrued = CommAccrued.AccountNumber;//liability 002-001-001-000
-            //existingEntry.AccNoCommDue = account.AccountNumber;//liability 002-001-001-000
-            //existingEntry.AccNoVATAccrued = account.AccountNumber;//liability 002-001-002-000
-            //existingEntry.AccNoVATReceivable = account.AccountNumber;//assets 001-001-002-000
-            //existingEntry.AccNoGrossPremium = account.AccountNumber;//revenue 004-001-001-000
-            //existingEntry.AccNoGrossVAT = account.AccountNumber;//revenue 
-            //existingEntry.AccNoNetPremium = account.AccountNumber;//revenue 004-001-001-000
-            //existingEntry.AccNoUWVATPayable = account.AccountNumber;//liability 002-001-002-000
-
             var company = await _unitOfWork.InsuranceCompany.GetEntityByIdAsync(companyId);
-            if (company == null) return false;
+            if (company == null)
+            {
+                return Result<bool>.Failure("Insurance Company not found");
+            }
 
             var accountDefinitions = new List<(string Suffix, int ParentId, Action<string> SetField)>
             {
@@ -38,8 +32,13 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
                 ("UW VAT Payable", await GetParentIdByCodeAsync("002-001-002-000"), val => company.AccNoUWVATPayable = val)
             };
 
-            return await ExecuteGenerationAsync(company, accountDefinitions);
-            return false; // Temporarily disabled to prevent unintended account creation during testing
+            bool success = await ExecuteGenerationAsync(company, accountDefinitions);
+            if (success)
+            {
+                return Result<bool>.Success(true, "Accounts generated successfully for the insurance company");
+            }
+
+            return Result<bool>.Failure("Failed to generate some or all accounts for the insurance company");
         }
 
         private async Task<int> GetParentIdByCodeAsync(string code)

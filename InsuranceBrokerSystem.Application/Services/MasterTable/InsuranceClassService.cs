@@ -9,7 +9,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
         {
             _unitOfWork = unitOfWorkrepo;
         }
-        public async Task<bool> AddClassAsync(AddInsuranceClassDTO insuranceClass)
+        public async Task<Result<bool>> AddClassAsync(AddInsuranceClassDTO insuranceClass)
         {
             if (insuranceClass != null)
             {
@@ -20,70 +20,69 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                     CreatedBy = "Israa",
                     CreatedDate = DateTime.Now,
                     UpdatedBy = "",
-                    UpdatedDate =DateTime.Now,
+                    UpdatedDate = DateTime.Now,
                     IsDeleted = false,
                 };
                 var entity = await _unitOfWork.GInsuranceClass.AddEntityAsync(insuranceClass1);
                 if (entity != null)
                 {
-                   await _unitOfWork.CommitAsync();
-                    return true;
+                    await _unitOfWork.CommitAsync();
+                    return Result<bool>.Success(true, "Insurance Class added successfully");
                 }
-               
-
             }
-            return false;
+            return Result<bool>.Failure("Failed to add Insurance Class");
         }
 
-        public async Task<bool> DeleteClassAsync(int id)
+        public async Task<Result<bool>> DeleteClassAsync(int id)
         {
-            var insuranceClass = _unitOfWork.GInsuranceClass.GetEntityByIdAsync(id);
+            var insuranceClass = await _unitOfWork.GInsuranceClass.GetEntityByIdAsync(id);
 
             if (insuranceClass != null)
             {
-               var success =  await _unitOfWork.GInsuranceClass.DeleteEntityAsync(id);
-                
+                var success = await _unitOfWork.GInsuranceClass.DeleteEntityAsync(id);
+
                 if (success)
                 {
                     await _unitOfWork.CommitAsync();
-                    return true;
+                    return Result<bool>.Success(true, "Insurance Class deleted successfully");
                 }
-                return false;
+                return Result<bool>.Failure("Failed to delete Insurance Class");
             }
-            return false;
+            return Result<bool>.Failure("Insurance Class not found");
         }
 
-        public async Task<List<GetInsuranceClassDTO>> GetAllClassesAsync()
+        public async Task<Result<List<GetInsuranceClassDTO>>> GetAllClassesAsync()
         {
-            var insuranceClasses = await _unitOfWork.GInsuranceClass.GetAllEntitytiesAsync().ContinueWith(t =>
+            var entities = await _unitOfWork.GInsuranceClass.GetAllEntitytiesAsync();
+            if (entities == null)
             {
-                if (t.Result != null)
-                {
-                    List<GetInsuranceClassDTO> insuranceClasses = t.Result.Select(i => new GetInsuranceClassDTO
-                    {
-                        Id = i.Id,
-                        ClassName = i.ClassName,
-                        Abbreviation = i.Abbreviation,
-                        CreatedBy = i.CreatedBy,
-                        CreatedDate = i.CreatedDate,
-                        UpdatedBy = i.UpdatedBy,
-                        UpdatedDate = i.UpdatedDate,
-                    }).ToList();
-                    return insuranceClasses;
-                }
-                return null;
-            });
-            return insuranceClasses;
+                return Result<List<GetInsuranceClassDTO>>.Failure("No insurance classes found");
+            }
+
+            var dtos = entities.Select(i => new GetInsuranceClassDTO
+            {
+                Id = i.Id,
+                ClassName = i.ClassName,
+                Abbreviation = i.Abbreviation,
+                CreatedBy = i.CreatedBy,
+                CreatedDate = i.CreatedDate,
+                UpdatedBy = i.UpdatedBy,
+                UpdatedDate = i.UpdatedDate,
+            }).ToList();
+
+            return Result<List<GetInsuranceClassDTO>>.Success(dtos);
         }
 
-        public async Task<GetInsuranceClassDTO> GetClassByidAsync(int id)
+        public async Task<Result<GetInsuranceClassDTO>> GetClassByidAsync(int id)
         {
             var entity = await _unitOfWork.GInsuranceClass.GetEntityByIdAsync(id);
 
-            if (entity == null) return null;
+            if (entity == null)
+            {
+                return Result<GetInsuranceClassDTO>.Failure("Insurance Class not found");
+            }
 
-            // 3. Map the data to the DTO
-            GetInsuranceClassDTO dto = new GetInsuranceClassDTO
+            var dto = new GetInsuranceClassDTO
             {
                 Id = entity.Id,
                 ClassName = entity.ClassName,
@@ -94,32 +93,28 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                 UpdatedDate = entity.UpdatedDate
             };
 
-            return dto;
+            return Result<GetInsuranceClassDTO>.Success(dto);
         }
 
-        public async Task<GetInsuranceClassDTO> UpdateClassAsync(UpdateInsuranceClassDTO dto)
+        public async Task<Result<GetInsuranceClassDTO>> UpdateClassAsync(UpdateInsuranceClassDTO dto)
         {
-            // 1. Fetch the EXISTING record from the repository
             var entity = await _unitOfWork.GInsuranceClass.GetEntityByIdAsync(dto.Id);
 
-            if (entity == null) return null;
+            if (entity == null)
+            {
+                return Result<GetInsuranceClassDTO>.Failure("Insurance Class not found");
+            }
 
-            // 2. UPDATE the existing entity properties with data from the DTO
-            // Do NOT create a 'new' entity; modify the one we just fetched
             entity.ClassName = dto.ClassName;
             entity.Abbreviation = dto.Abbreviation;
-
-            // Audit fields
             entity.UpdatedBy = "Israa";
             entity.UpdatedDate = DateTime.Now;
 
-            // 3. Save the changes via the repository
             bool isUpdated = await _unitOfWork.GInsuranceClass.UpdateEntityAsync(entity);
-            await _unitOfWork.CommitAsync();
             if (isUpdated)
             {
-                // 4. Map the updated entity back to a GetInsuranceClassDTO for the UI
-                return new GetInsuranceClassDTO
+                await _unitOfWork.CommitAsync();
+                var updatedDto = new GetInsuranceClassDTO
                 {
                     Id = entity.Id,
                     ClassName = entity.ClassName,
@@ -129,9 +124,10 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                     UpdatedBy = entity.UpdatedBy,
                     UpdatedDate = entity.UpdatedDate
                 };
+                return Result<GetInsuranceClassDTO>.Success(updatedDto, "Insurance Class updated successfully");
             }
 
-            return null;
+            return Result<GetInsuranceClassDTO>.Failure("Failed to update Insurance Class");
         }
     }
 }

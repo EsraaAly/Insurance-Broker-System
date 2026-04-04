@@ -3,6 +3,6 @@ namespace InsuranceBrokerSystem.Application.Interfaces.Master_Table
 {
     public interface IInsuranceContractService
     {
-        public Task<List<GetInsuranceContractDTO>> GetInsuranceContactByInsuranceIdAsync(int Id);
+        public Task<Result<List<GetInsuranceContractDTO>>> GetInsuranceContactByInsuranceIdAsync(int id);
     }
 }

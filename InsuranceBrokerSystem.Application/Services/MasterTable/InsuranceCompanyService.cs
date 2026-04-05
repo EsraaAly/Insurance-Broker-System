@@ -93,8 +93,13 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             return Result<GetInsuranceCompanyDTO>.Success(dto);
         }
 
+        /// <summary>
+        /// Updates an existing Insurance Company and its related entities using a transactional Unit of Work.
+        /// Demonstrates the use of AutoMapper for complex object-graph updates.
+        /// </summary>
         public async Task<Result<GetInsuranceCompanyDTO>> UpdateInsuranceCompaniesAsync(UpdateInsuranceCompanyDTO dto)
         {
+            // 1. Fetch existing entity with related Products and Contacts loaded (Eager Loading)
             var existingEntry = await _unitOfWork.InsuranceCompanyRepository.GetEntityByIdWithIncludesAsync(dto.Id, x => x.Products, x => x.Contacts);
 
             if (existingEntry == null)
@@ -102,11 +107,14 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                 return Result<GetInsuranceCompanyDTO>.Failure("Insurance Company not found");
             }
 
+            // 2. Map DTO changes onto the tracked entity
             _mapper.Map(dto, existingEntry);
 
-            existingEntry.UpdatedBy = "Israa";
+            // 3. Audit trail tracking
+            existingEntry.UpdatedBy = "SystemAudit";
             existingEntry.UpdatedDate = DateTime.Now;
 
+            // 4. Persistence via Repository & Unit of Work
             var success = await _unitOfWork.InsuranceCompanyRepository.UpdateEntityAsync(existingEntry);
             if (success)
             {

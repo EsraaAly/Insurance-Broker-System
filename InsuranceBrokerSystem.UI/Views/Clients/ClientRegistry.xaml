@@ -4,7 +4,9 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:InsuranceBrokerSystem.UI.Views.Clients"
-             mc:Ignorable="d" Height="489" Width="1180">
+             mc:Ignorable="d" d:DesignHeight="700" d:DesignWidth="1000" 
+             HorizontalContentAlignment="Stretch"
+             VerticalContentAlignment="Stretch">
 
     <UserControl.Resources>
         <ResourceDictionary Source="/Style.xaml"/>
@@ -19,8 +21,8 @@
         </Grid.RowDefinitions>
 
         <!-- Filter Section -->
-        <GroupBox Header="Filter By" Style="{StaticResource GroupBoxStyle}" Margin="10,10,10,8">
-            <Grid Margin="5">
+        <GroupBox Header="Filter By" Style="{StaticResource GroupBoxStyle}" >
+            <Grid >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="300"/>
                     <ColumnDefinition Width="*"/>

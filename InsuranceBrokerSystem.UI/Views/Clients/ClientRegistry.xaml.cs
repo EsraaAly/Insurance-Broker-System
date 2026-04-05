@@ -34,5 +34,39 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         {
 
         }
+
+        private void btnRegisterNewClient_Click(object sender, RoutedEventArgs e)
+        {
+            RegisterNewClient popup = new RegisterNewClient();
+            popup.ShowDialog();
+        }
+
+        private void btnRefresh_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnExportExcel_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnPrintList_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void btnClose_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void PrintButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

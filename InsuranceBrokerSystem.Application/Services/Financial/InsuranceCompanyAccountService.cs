@@ -12,33 +12,40 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
             _accountService = accountService;
         }
 
+        /// <summary>
+        /// Initiates the automated generation of GL accounts for an Insurance Company.
+        /// Orchestrates the template definition and internal execution logic.
+        /// </summary>
         public async Task<Result<bool>> GenerateAccountsAsync(int companyId)
         {
+            // 1. Resolve insurance company and its metadata
             var company = await _unitOfWork.InsuranceCompanyRepository.GetEntityByIdAsync(companyId);
             if (company == null)
             {
                 return Result<bool>.Failure("Insurance Company not found");
             }
 
+            // 2. Define Account Templates (Strategy: Suffix, Parent, Mapping Action)
             var accountDefinitions = new List<(string Suffix, int ParentId, Action<string> SetField)>
             {
                 ("Commission Accrued", await GetParentIdByCodeAsync("002-001-001-000"), val => company.AccNoCommAccrued = val),
-                ("Commission Due", await GetParentIdByCodeAsync("002-001-001-000"), val => company.AccNoCommDue = val),
-                ("VAT Accrued", await GetParentIdByCodeAsync("002-001-002-000"), val => company.AccNoVATAccrued = val),
-                ("VAT Receivable", await GetParentIdByCodeAsync("001-001-002-000"), val => company.AccNoVATReceivable = val),
-                ("Gross Premium", await GetParentIdByCodeAsync("004-001-001-000"), val => company.AccNoGrossPremium = val),
-                ("Gross VAT", await GetParentIdByCodeAsync("004-001-002-000"), val => company.AccNoGrossVAT = val),
-                ("Net Premium", await GetParentIdByCodeAsync("004-001-001-000"), val => company.AccNoNetPremium = val),
-                ("UW VAT Payable", await GetParentIdByCodeAsync("002-001-002-000"), val => company.AccNoUWVATPayable = val)
+                ("Commission Due",     await GetParentIdByCodeAsync("002-001-001-000"), val => company.AccNoCommDue = val),
+                ("VAT Accrued",        await GetParentIdByCodeAsync("002-001-002-000"), val => company.AccNoVATAccrued = val),
+                ("VAT Receivable",     await GetParentIdByCodeAsync("001-001-002-000"), val => company.AccNoVATReceivable = val),
+                ("Gross Premium",      await GetParentIdByCodeAsync("004-001-001-000"), val => company.AccNoGrossPremium = val),
+                ("Gross VAT",          await GetParentIdByCodeAsync("004-001-002-000"), val => company.AccNoGrossVAT = val),
+                ("Net Premium",        await GetParentIdByCodeAsync("004-001-001-000"), val => company.AccNoNetPremium = val),
+                ("UW VAT Payable",     await GetParentIdByCodeAsync("002-001-002-000"), val => company.AccNoUWVATPayable = val)
             };
 
+            // 3. Execute transactional generation
             bool success = await ExecuteGenerationAsync(company, accountDefinitions);
             if (success)
             {
-                return Result<bool>.Success(true, "Accounts generated successfully for the insurance company");
+                return Result<bool>.Success(true, "Accounts generated and mapped successfully.");
             }
 
-            return Result<bool>.Failure("Failed to generate some or all accounts for the insurance company");
+            return Result<bool>.Failure("Failed to complete automated account registration.");
         }
 
         private async Task<int> GetParentIdByCodeAsync(string code)
@@ -47,6 +54,9 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
             return account?.Id ?? 0;
         }
 
+        /// <summary>
+        /// Internal implementation of the recursive account creation and sibling-based numbering.
+        /// </summary>
         private async Task<bool> ExecuteGenerationAsync(InsuranceCompany company, List<(string Suffix, int ParentId, Action<string> SetField)> accountDefinitions)
         {
             foreach (var def in accountDefinitions)
@@ -58,12 +68,13 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
 
                 var account = new Account
                 {
-                    AccountNumber = await _unitOfWork.AccountNumberRepository.GenerateAsync(parent, parent.Children,(int)parent.AccountType),
+                    // 🔥 Business Rule: Auto-calculate unique suffix based on existing siblings
+                    AccountNumber = await _unitOfWork.AccountNumberRepository.GenerateAsync(parent, parent.Children, (int)parent.AccountType),
                     AccountName = $"{company.Abbreviation} - {def.Suffix}",
                     Description = $"{def.Suffix} account for {company.CompanyName}",
                     ParentId = def.ParentId,
                     AccountType = parent.AccountType,
-                    Level = parent.Level+1,
+                    Level = parent.Level + 1,
                     IsPostable = true
                 };
 
@@ -74,9 +85,8 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
                 }
             }
 
+            // Update company with newly assigned account numbers
             await _unitOfWork.InsuranceCompanyRepository.UpdateEntityAsync(company);
-            //await _unitOfWork.CommitAsync();
-
             return true;
         }
     }

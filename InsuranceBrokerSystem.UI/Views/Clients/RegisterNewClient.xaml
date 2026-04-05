@@ -1,0 +1,380 @@
+<Window x:Class="InsuranceBrokerSystem.UI.Views.Clients.RegisterNewClient"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1200" >
+
+    <Window.Resources>
+        <ResourceDictionary Source="/Style.xaml"/>
+    </Window.Resources>
+
+    
+    <Grid Background="{StaticResource BackgroundBrush}" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="70"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <Border Background="#0D3559" Padding="15,12">
+            <TextBlock Text="Register New Clients" 
+                       Foreground="White" 
+                       FontSize="18" 
+                       FontWeight="SemiBold"/>
+        </Border>
+        
+        <TabControl Grid.Row="1" Margin="12,8,12,0" Style="{StaticResource {x:Type TabControl}}">
+            <!-- Main Content -->
+            <TabItem Header="Main Content">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="380"/>
+                            <ColumnDefinition Width="380"/>
+                            <ColumnDefinition Width="380"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Column 1: Clients Details + Retail -->
+                        <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                            <GroupBox Header="Clients Details" Style="{StaticResource GroupBoxStyle}">
+                                <StackPanel Margin="8">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="10"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="10"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="10"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="10"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="10"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="10"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="10"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <Label Content="Policy Type" Grid.Row="0"/>
+                                        <ComboBox x:Name="CombPolicyType" Grid.Row="0" Grid.Column="1" />
+
+                                        <Label Content="Client Name" Grid.Row="2"/>
+                                        <TextBox x:Name="txtClientName" Grid.Row="2" Grid.Column="1"/>
+
+                                        <Label Content="Client Name (Arabic)" Grid.Row="4"/>
+                                        <TextBox x:Name="txtClientNameAr" Grid.Row="4" Grid.Column="1" FlowDirection="RightToLeft"/>
+
+                                        <Label Content="Official Name" Grid.Row="6"/>
+                                        <TextBox x:Name="txtOfficialName" Grid.Row="6" Grid.Column="1"/>
+
+                                        <Label Content="Relationship Status" Grid.Row="8"/>
+                                        <ComboBox x:Name="ComboRelationshipStatus" Grid.Row="8" Grid.Column="1"/>
+
+                                        <Label Content="Business Type" Grid.Row="10"/>
+                                        <ComboBox x:Name="CombBusinessType" Grid.Row="10" Grid.Column="1"/>
+
+                                        <Label Content="Client Type" Grid.Row="12"/>
+                                        <ComboBox x:Name="CmbProspectType" Grid.Row="12" Grid.Column="1"/>
+                                    </Grid>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <!-- Retail Section -->
+                            <GroupBox Header="Retail" Style="{StaticResource GroupBoxStyle}" Margin="0,2,0,0">
+                                <StackPanel Margin="8">
+                                    <Label Content="Identity No."/>
+                                    <TextBox x:Name="txtIDNo"/>
+
+                                    <Label Content="ID Expiry Date"/>
+                                    <DatePicker x:Name="DTPIDExpiryDate" SelectedDateFormat="Short"/>
+
+                                    <Label Content="ID Expiry Date (Hijri)"/>
+                                    <TextBox x:Name="txtIdExpirydateHijir"/>
+
+                                    <Label Content="Nationality"/>
+                                    <ComboBox x:Name="CombNationality"/>
+
+                                    <Label Content="Source of Income"/>
+                                    <ComboBox x:Name="CombSourceofIncome"/>
+
+                                    <Label Content="Email"/>
+                                    <TextBox x:Name="txtEmail"/>
+
+                                    <Label Content="BirthDay"/>
+                                    <DatePicker x:Name="txtBirthDay"/>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+
+                        <!-- Column 2: Corporate -->
+                        <StackPanel Grid.Column="1" Margin="0,0,10,0">
+                            <GroupBox Header="Corporate" Style="{StaticResource GroupBoxStyle}">
+                                <StackPanel Margin="8">
+                                    <Label Content="Registration Status"/>
+                                    <ComboBox x:Name="ComboRegistrationStatus"/>
+
+                                    <Label Content="Business Activity"/>
+                                    <ComboBox x:Name="cmbBusinessActivity"/>
+
+                                    <Label Content="Market Segment"/>
+                                    <ComboBox x:Name="cmbMarketSegmant"/>
+
+                                    <Label Content="Date of Incorporation"/>
+                                    <DatePicker x:Name="DTPIncorporation" />
+
+                                    <Label Content="Date of Incorporation (Hijri)"/>
+                                    <TextBox x:Name="txtDateofIncorporationHijri"/>
+
+                                    <Label Content="Commercial Registration No."/>
+                                    <TextBox x:Name="txtCommercialNo"/>
+
+                                    <Label Content="CR Expiry Date"/>
+                                    <DatePicker x:Name="DTPExpiryDate"/>
+
+                                    <Label Content="CR Expiry Date (Hijri)"/>
+                                    <TextBox x:Name="txtExpiryHijri"/>
+
+                                    <Label Content="Sponsor ID"/>
+                                    <TextBox x:Name="txtSponsorID"/>
+
+                                    <Label Content="Unified No."/>
+                                    <TextBox x:Name="txtUnifiedNo"/>
+
+                                    <Label Content="VAT No."/>
+                                    <TextBox x:Name="txtVatNo"/>
+
+                                    <Label Content="Capital"/>
+                                    <TextBox x:Name="txtCapital"/>
+
+                                    <Label Content="Premium"/>
+                                    <ComboBox x:Name="CombPremium"/>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+
+                        <!-- Column 3: National Address + Other -->
+                        <StackPanel Grid.Column="2" Margin="0,0,0,0">
+                            <GroupBox Header="National Address" Style="{StaticResource GroupBoxStyle}">
+                                <StackPanel Margin="8">
+                                    <Label Content="Location"/>
+                                    <ComboBox x:Name="CombLocation"/>
+
+                                    <Label Content="Building No."/>
+                                    <TextBox x:Name="txtBuildingNo"/>
+
+                                    <Label Content="District"/>
+                                    <TextBox x:Name="txtDistrict"/>
+
+                                    <Label Content="P.O. Box"/>
+                                    <TextBox x:Name="txtProspPoBox"/>
+
+                                    <Label Content="Tele."/>
+                                    <TextBox x:Name="txtTele"/>
+
+                                    <Label Content="Fax No."/>
+                                    <TextBox x:Name="txtFax"/>
+
+                                    <Label Content="Channel"/>
+                                    <ComboBox x:Name="CombChannel"/>
+
+                                    <Label Content="Interface"/>
+                                    <ComboBox x:Name="CombInterface"/>
+
+                                    <Label Content="Producer (Salesman)"/>
+                                    <ComboBox x:Name="CombProducers"/>
+
+                                    <Label Content="2nd Producer (Salesman)"/>
+                                    <ComboBox x:Name="CombProducers2nd"/>
+
+                                    <Label Content="Screening Result"/>
+                                    <ComboBox x:Name="CombScreeningResult"/>
+
+                                    <Label Content="IBAN Number"/>
+                                    <TextBox x:Name="txtIBANNumber"/>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
+            </TabItem>
+            <TabItem Header="Contacts &amp; Documents">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="1.45*"/>
+                        <RowDefinition Height="1.55*"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Contacts Grid -->
+                    <StackPanel Grid.Row="0" Margin="0,0,0,12">
+                        <Border Background="#0D3559" CornerRadius="8,8,0,0" Padding="15,9">
+                            <DockPanel>
+                                <TextBlock Text="Contacts List" 
+                                           Foreground="White" 
+                                           FontWeight="Bold" 
+                                           VerticalAlignment="Center"/>
+                                <Button Content="+" 
+                                        HorizontalAlignment="Right" 
+                                        Style="{StaticResource SecondaryButtonStyle}" 
+                                        Padding="12,5" 
+                                        Foreground="White" 
+                                        Click="btnAddContact_Click"/>
+                            </DockPanel>
+                        </Border>
+
+                        <DataGrid x:Name="GridContactPersons" 
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  RowHeight="40"
+                                  Margin="0,0,0,8">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*"/>
+                                <DataGridComboBoxColumn Header="Position" Width="1.2*"/>
+                                <DataGridTextColumn Header="Extension" Binding="{Binding Extension}" Width="100"/>
+                                <DataGridTextColumn Header="Mobile" Binding="{Binding Mobile}" Width="130"/>
+                                <DataGridTextColumn Header="Tele" Binding="{Binding Tele}" Width="130"/>
+                                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="1.8*"/>
+                                <DataGridCheckBoxColumn Header="Saddad Invoice" Width="110"/>
+                                <DataGridComboBoxColumn Header="Branch" Width="120"/>
+                                <DataGridTemplateColumn Header="Action" Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="Delete" 
+                                                    Style="{StaticResource GridDeleteButton}" 
+                                                    Click="DeleteContact_Click"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </StackPanel>
+
+                    <!-- Documents and Bank Accounts -->
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.1*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Documents -->
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <Border Background="#0D3559" CornerRadius="8,8,0,0" Padding="15,9">
+                                <DockPanel>
+                                    <TextBlock Text="📎 Documents" 
+                                               Foreground="White" 
+                                               FontWeight="Bold" 
+                                               FontSize="14"
+                                               VerticalAlignment="Center"/>
+                                    <!-- Upload from browser button -->
+                                    <Button x:Name="btnBrowseDocument"
+                                            Content="📂 Browse &amp; Upload"
+                                            HorizontalAlignment="Right"
+                                            Style="{StaticResource SecondaryButtonStyle}"
+                                            Background="#27AE60"
+                                            Padding="12,5"
+                                            Foreground="White"
+                                            Click="btnBrowseDocument_Click"/>
+                                </DockPanel>
+                            </Border>
+
+                            <!-- DataGrid with built-in Drag & Drop -->
+                            <DataGrid x:Name="GridFiles"
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      RowHeight="40"
+                                      MinHeight="80"
+                                      MaxHeight="220"
+                                      AllowDrop="True"
+                                      Drop="DropZone_Drop"
+                                      DragOver="DropZone_DragOver"
+                                      DragLeave="DropZone_DragLeave"
+                                      BorderBrush="#27AE60"
+                                      BorderThickness="0,2,0,0">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="35" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Document Type" Binding="{Binding DocumentType}" Width="1.2*"/>
+                                    <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" Width="2*" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Size" Binding="{Binding FileSize}" Width="80" IsReadOnly="True"/>
+                                    <DataGridTextColumn Header="Uploaded" Binding="{Binding UploadDate}" Width="100" IsReadOnly="True"/>
+                                    <DataGridTemplateColumn Header="Actions" Width="130">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Button Content="👁"
+                                                            Style="{StaticResource SecondaryButtonStyle}"
+                                                            Width="60" Margin="2"
+                                                            Click="OpenDocument_Click"
+                                                            Tag="{Binding FilePath}"/>
+                                                    <Button Content="🗑"
+                                                            Style="{StaticResource GridDeleteButton}"
+                                                            Width="35" Margin="2"
+                                                            Click="DeleteDocument_Click"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+
+                        <!-- Bank Accounts -->
+                        <StackPanel Grid.Column="1">
+                            <Border Background="#0D3559" CornerRadius="8,8,0,0" Padding="15,9">
+                                <DockPanel>
+                                    <TextBlock Text="Bank Accounts" 
+                                               Foreground="White" 
+                                               FontWeight="Bold" 
+                                               VerticalAlignment="Center"/>
+                                    <Button Content="+" 
+                                            HorizontalAlignment="Right" 
+                                            Style="{StaticResource SecondaryButtonStyle}" 
+                                            Padding="12,5" 
+                                            Foreground="White" 
+                                            Click="btnAddBank_Click"/>
+                                </DockPanel>
+                            </Border>
+                            <DataGrid x:Name="GridBankAccounts" 
+                                      AutoGenerateColumns="False"
+                                      CanUserAddRows="False"
+                                      RowHeight="40">
+                                <DataGrid.Columns>
+                                    <DataGridComboBoxColumn Header="Bank Name" Width="1.6*"/>
+                                    <DataGridTextColumn Header="Branch" Binding="{Binding Branch}" Width="1.2*"/>
+                                    <DataGridTextColumn Header="IBAN" Binding="{Binding IBAN}" Width="1.8*"/>
+                                    <DataGridTextColumn Header="Swift Code" Binding="{Binding SwiftCode}" Width="120"/>
+                                    <DataGridTemplateColumn Header="Action" Width="80">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="Delete" 
+                                                        Style="{StaticResource GridDeleteButton}" 
+                                                        Click="DeleteBank_Click"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <!-- Action Buttons -->
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="15" Grid.Row="2" >
+            <Button Content="Save" Width="110" Height="38" Margin="8,0"
+                    Style="{StaticResource SecondaryButtonStyle}" Background="#27AE60" Click="btnSave_Click"/>
+
+            <Button Content="Clear" Width="110" Height="38" Margin="8,0"
+                    Style="{StaticResource SecondaryButtonStyle}" Click="btnClear_Click"/>
+
+            <Button Content="Close" Width="110" Height="38" Margin="8,0"
+                    Style="{StaticResource SecondaryButtonStyle}" Background="#EF4444" Click="btnClose_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

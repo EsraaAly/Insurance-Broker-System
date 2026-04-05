@@ -121,7 +121,7 @@ namespace InsuranceBrokerSystem.UI
                     {
                         // Explicitly use the full namespace if it's in a different folder
                         // Example: var newView = new InsuranceBrokerSystem.UI.Views.InsuranceClassesRegistry();
-                        var newView = new InsuranceBrokerSystem.UI.Views.Financial.ApproveInsuranceCompany();
+                        var newView = new InsuranceBrokerSystem.UI.Views.Clients.ClientRegistry();
 
                         MainContent.Content = newView;
                     }

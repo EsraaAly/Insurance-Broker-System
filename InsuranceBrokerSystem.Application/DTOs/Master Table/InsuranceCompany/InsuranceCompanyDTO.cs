@@ -96,6 +96,10 @@ namespace InsuranceBrokerSystem.Application.DTOs.Master_Table.InsuranceCompany
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        public string? ApprovedBy { get; set; }
+        public DateTime? ApprovedDate { get; set; }
+        public string? RejectedBy { get; set; }
+        public DateTime? RejectedDate { get; set; }
 
         public List<GetInsuranceProductDTO> Products { get; set; } = new List<GetInsuranceProductDTO>();
         public List<GetInsuranceContractDTO> Contacts { get; set; } = new List<GetInsuranceContractDTO>();

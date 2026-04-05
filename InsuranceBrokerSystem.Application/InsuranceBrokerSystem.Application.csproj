@@ -25,6 +25,9 @@
 
   <ItemGroup>
     <Folder Include="Common\Behaviors\" />
+    <Folder Include="Common\Interfaces\Persistence\Clients\" />
+    <Folder Include="Common\Interfaces\Service\Clients\" />
+    <Folder Include="Features\Clients\" />
     <Folder Include="Features\Financial\Account\Commands\" />
     <Folder Include="Features\InsuranceClass\" />
   </ItemGroup>

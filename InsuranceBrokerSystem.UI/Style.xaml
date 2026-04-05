@@ -860,8 +860,8 @@
 
                             <!-- Check Mark -->
                             <Path x:Name="CheckMark"
-                              Width="15"
-                              Height="11"
+                              Width="20"
+                              Height="15"
                               Data="M 2.5,6 L 8.5,12 L 16,3"
                               Stroke="White"
                               StrokeThickness="2.8"

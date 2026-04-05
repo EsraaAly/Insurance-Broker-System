@@ -19,6 +19,11 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
 
         public DbSet<Account> accounts { get; set; }
 
+        public DbSet<Domain.Entities.Client.Client> Clients { get; set; }
+        public DbSet<ClientContact> ClientContacts { get; set; }
+        public DbSet<ClientDocument> ClientDocuments { get; set; }
+        public DbSet<ClientBankAccount> ClientBankAccounts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             #region "InsuranceClass"
@@ -94,6 +99,40 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
                 .WithMany(c=>c.Children)
                 .HasForeignKey(p=>p.ParentId)
                 .OnDelete(DeleteBehavior.Restrict);
+            #endregion
+
+            #region "Client"
+            modelBuilder.Entity<Domain.Entities.Client.Client>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<Domain.Entities.Client.Client>()
+                .HasIndex(x => x.ClientName)
+                .HasFilter("[IsDeleted] = 0")
+                .IsUnique();
+
+            modelBuilder.Entity<ClientContact>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<ClientDocument>()
+                .HasKey(x => x.Id);
+            modelBuilder.Entity<ClientBankAccount>()
+                .HasKey(x => x.Id);
+
+            modelBuilder.Entity<Domain.Entities.Client.Client>()
+                .HasMany(c => c.Contacts)
+                .WithOne(p => p.Client)
+                .HasForeignKey(p => p.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Domain.Entities.Client.Client>()
+                .HasMany(c => c.Documents)
+                .WithOne(p => p.Client)
+                .HasForeignKey(p => p.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Domain.Entities.Client.Client>()
+                .HasMany(c => c.BankAccounts)
+                .WithOne(p => p.Client)
+                .HasForeignKey(p => p.ClientId)
+                .OnDelete(DeleteBehavior.Cascade);
             #endregion
         }
     }

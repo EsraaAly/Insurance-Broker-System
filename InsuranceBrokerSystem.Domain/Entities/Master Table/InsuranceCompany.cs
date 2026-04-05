@@ -52,6 +52,9 @@ namespace InsuranceBrokerSystem.Domain.Entities.Master_Table
         public string? ApprovedBy { get; set; }
         public DateTime? ApprovedDate { get; set; }
 
+        public string? RejectedBy { get; set; }
+        public DateTime? RejectedDate { get; set; }
+
         public List<InsuranceProduct> Products { get; set; } = new List<InsuranceProduct>();
         public List<InsuranceContact> Contacts { get; set; } = new List<InsuranceContact>();
     }

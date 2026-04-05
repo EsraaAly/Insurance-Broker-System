@@ -12,6 +12,7 @@ namespace InsuranceBrokerSystem.Infrastructure.UnitOfWork
         private IInsuranceContactRepository _InsuranceContactRepository;
         private IInsuranceProductRepository _InsuranceProductRepository;
         private IAccountNumberRepository _AccountNumberRepository;
+        private IClientRepository _ClientRepository;
 
         public UnitOfWork(AppDbContext context)
         {
@@ -23,6 +24,7 @@ namespace InsuranceBrokerSystem.Infrastructure.UnitOfWork
         public IInsuranceContactRepository InsuranceContractRepository => _InsuranceContactRepository ??= new InsuranceContactRepository(_context);
         public IInsuranceProductRepository InsuranceProductRepository => _InsuranceProductRepository ??= new InsuranceProductRepository(_context);        
         public IAccountNumberRepository AccountNumberRepository => _AccountNumberRepository ??= new AccountNumberRepository(_context);
+        public IClientRepository ClientRepository => _ClientRepository ??= new ClientRepository(_context);
         public async Task CommitAsync() => await _context.SaveChangesAsync();
 
 

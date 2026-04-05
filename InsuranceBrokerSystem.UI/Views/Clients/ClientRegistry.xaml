@@ -39,11 +39,6 @@
                                   Background="#FFE9DC62" Width="100" />
                         <!-- Keep background if you want colored label -->
 
-                        <CheckBox x:Name="chPendingActivation" 
-                                  Content="Pending Activation" 
-                                  IsChecked="True"
-                                  Style="{StaticResource ModernCheckBoxStyle}"
-                                  Background="Orange" Width="157"/>
 
                         <CheckBox x:Name="ChActive" 
                                   Content="Active" 
@@ -54,7 +49,7 @@
                         <CheckBox x:Name="ChBlocked" 
                                   Content="Blocked"
                                   Style="{StaticResource ModernCheckBoxStyle}"
-                                  Background="Gray" Width="157"/>
+                                  Background="Gray" Width="100"/>
 
                         <CheckBox x:Name="chRejected" 
                                   Content="Rejected" 

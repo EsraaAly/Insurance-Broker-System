@@ -12,4 +12,5 @@ global using System.Threading.Tasks;
 
 // ── Domain — Entities ─────────────────────────────────────────
 global using InsuranceBrokerSystem.Domain.Enums.Master_Table;
+global using InsuranceBrokerSystem.Domain.Enums.Client;
 

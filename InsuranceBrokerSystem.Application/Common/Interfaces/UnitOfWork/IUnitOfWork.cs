@@ -18,6 +18,7 @@ namespace InsuranceBrokerSystem.Application.Common.Interfaces.UnitOfWork
         IInsuranceContactRepository InsuranceContractRepository { get; }
         IInsuranceProductRepository InsuranceProductRepository { get; }
         IAccountNumberRepository AccountNumberRepository { get; }
+        IClientRepository ClientRepository { get; }
         public Task CommitAsync();
         //public void Dispose();
 

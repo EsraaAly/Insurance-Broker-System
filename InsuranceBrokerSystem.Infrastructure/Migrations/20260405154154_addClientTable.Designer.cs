@@ -4,6 +4,7 @@ using InsuranceBrokerSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InsuranceBrokerSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260405154154_addClientTable")]
+    partial class addClientTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -29,21 +32,6 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("AccountPremium")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ApprovedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ApprovedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("BlockedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("BlockedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("BuildingNo")
                         .HasColumnType("nvarchar(max)");
@@ -117,16 +105,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Property<string>("Interface")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsApproved")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsBlocked")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsRejected")
                         .HasColumnType("bit");
 
                     b.Property<string>("Location")
@@ -159,12 +138,6 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
 
                     b.Property<string>("RegistrationStatus")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RejectedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("RejectedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("RelationshipStatus")
                         .HasColumnType("int");
@@ -622,12 +595,6 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Property<string>("PostalZIPCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("RejectedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("RejectedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("State")
                         .IsRequired()

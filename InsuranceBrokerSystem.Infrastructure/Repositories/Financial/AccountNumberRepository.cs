@@ -1,12 +1,12 @@
 namespace InsuranceBrokerSystem.Infrastructure.Repositories.Financial
 {
-    public class RepoAccountNumber: GenericRepository<Account>, IRepoAccountNumber
+    public class AccountNumberRepository: GenericRepository<Account>, IAccountNumberRepository
     {
         private readonly AppDbContext _context;
         private const int MaxLevel = 4;
         private const int MaxSegmentLength = 3;
 
-        public RepoAccountNumber(AppDbContext context):base(context)
+        public AccountNumberRepository(AppDbContext context):base(context)
         {
             _context = context;
         }

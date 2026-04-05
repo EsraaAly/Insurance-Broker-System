@@ -14,7 +14,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<List<GetInsuranceContractDTO>>> GetInsuranceContactByInsuranceIdAsync(int id)
         {
-            var contacts = await _unitOfWork.InsuranceContract.GetInsuranceContactsByInsuranceIdAsync(id);
+            var contacts = await _unitOfWork.InsuranceContractRepository.GetInsuranceContactsByInsuranceIdAsync(id);
             if (contacts == null)
             {
                 return Result<List<GetInsuranceContractDTO>>.Failure("No contacts found for this insurance company");

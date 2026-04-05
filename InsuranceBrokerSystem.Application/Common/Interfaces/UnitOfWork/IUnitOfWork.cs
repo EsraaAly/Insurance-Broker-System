@@ -12,12 +12,12 @@ namespace InsuranceBrokerSystem.Application.Common.Interfaces.UnitOfWork
 
         //IRepoInsuranceClass repoInsuranceClass { get; }
 
-        IRepoInsuranceLOB InsuranceLOB { get; }
+        IInsuranceLOBRepository InsuranceLOBRepository { get; }
 
-        IRepoInsuranceCompany InsuranceCompany { get; }
-        IRepoInsuranceContact InsuranceContract { get; }
-        IRepoInsuranceProduct InsuranceProduct { get; }
-        IRepoAccountNumber AccountNumber { get; }
+        IInsuranceCompanyRepository InsuranceCompanyRepository { get; }
+        IInsuranceContactRepository InsuranceContractRepository { get; }
+        IInsuranceProductRepository InsuranceProductRepository { get; }
+        IAccountNumberRepository AccountNumberRepository { get; }
         public Task CommitAsync();
         //public void Dispose();
 

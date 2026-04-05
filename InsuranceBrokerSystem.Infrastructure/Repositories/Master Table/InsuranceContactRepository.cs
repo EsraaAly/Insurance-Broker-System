@@ -1,11 +1,11 @@
 
 namespace InsuranceBrokerSystem.Infrastructure.Repositories.Master_Table
 {
-    public class RepoInsuranceContact : GenericRepository<InsuranceContact>,IRepoInsuranceContact
+    public class InsuranceContactRepository : GenericRepository<InsuranceContact>,IInsuranceContactRepository
     {
         private readonly AppDbContext _context;
 
-        public RepoInsuranceContact(AppDbContext context):base(context) 
+        public InsuranceContactRepository(AppDbContext context):base(context) 
         {
             _context = context;
         }

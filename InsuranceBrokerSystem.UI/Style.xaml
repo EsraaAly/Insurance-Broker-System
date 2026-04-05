@@ -830,5 +830,75 @@
             </EventTrigger>
         </Style.Triggers>
     </Style>
+    <!-- ==================== MODERN CHECKBOX STYLE ==================== -->
+    <!-- ==================== MODERN UNIFORM CHECKBOX STYLE ==================== -->
+            <Style x:Key="ModernCheckBoxStyle" TargetType="CheckBox">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="{StaticResource ModernTextPrimary}"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="6,8"/>
+        <Setter Property="Background" Value="#3B82F6"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="CheckBox">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
+                        <!-- Checkbox Box -->
+                        <Border x:Name="CheckBorder"
+                            Width="24"
+                            Height="24"
+                            CornerRadius="6"
+                            BorderThickness="2"
+                            BorderBrush="{Binding Background, RelativeSource={RelativeSource TemplatedParent}}"
+                            Background="White"
+                            VerticalAlignment="Center"
+                            Margin="0,0,12,0">
+
+                            <!-- Check Mark -->
+                            <Path x:Name="CheckMark"
+                              Width="15"
+                              Height="11"
+                              Data="M 2.5,6 L 8.5,12 L 16,3"
+                              Stroke="White"
+                              StrokeThickness="2.8"
+                              StrokeLineJoin="Round"
+                              Opacity="0"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+                        </Border>
+
+                        <!-- Checkbox Text -->
+                        <ContentPresenter Grid.Column="1"
+                                      VerticalAlignment="Center"
+                                      Margin="2,0,0,0"
+                                      RecognizesAccessKey="True"/>
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <!-- Checked State -->
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="CheckBorder" Property="Background" Value="{Binding Path=Background, RelativeSource={RelativeSource TemplatedParent}}"/>
+                            <Setter TargetName="CheckMark" Property="Opacity" Value="1"/>
+                        </Trigger>
+
+                        <!-- Mouse Over -->
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="{StaticResource SecondaryBrush}"/>
+                        </Trigger>
+
+                        <!-- Disabled -->
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="CheckBorder" Property="Background" Value="#F1F5F9"/>
+                            <Setter TargetName="CheckBorder" Property="BorderBrush" Value="#CBD5E1"/>
+                            <Setter Property="Foreground" Value="{StaticResource DisabledBrush}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 </ResourceDictionary>

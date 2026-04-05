@@ -1,11 +1,11 @@
 
 namespace InsuranceBrokerSystem.Infrastructure.Repositories.Master_Table
 {
-    public class RepoInsuranceLOB: GenericRepository<InsuranceLineOfBusiness>,IRepoInsuranceLOB
+    public class InsuranceLOBRepository: GenericRepository<InsuranceLineOfBusiness>,IInsuranceLOBRepository
     {
         private readonly AppDbContext _appDbContext;
         
-        public RepoInsuranceLOB(AppDbContext appDbContext):base(appDbContext) 
+        public InsuranceLOBRepository(AppDbContext appDbContext):base(appDbContext) 
         {
             _appDbContext = appDbContext;
         }

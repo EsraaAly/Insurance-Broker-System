@@ -23,15 +23,15 @@ namespace InsuranceBrokerSystem.Api
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             //builder.Services.AddScoped<IRepoInsuranceClass, RepoInsuranceClass>();
             builder.Services.AddScoped<IInsuranceClassService, InsuranceClassService>();
-            builder.Services.AddScoped<IRepoInsuranceLOB, RepoInsuranceLOB>();
+            builder.Services.AddScoped<IInsuranceLOBRepository, InsuranceLOBRepository>();
             builder.Services.AddScoped<IInsuranceLOBService, InsuranceLOBService>();
-            builder.Services.AddScoped<IRepoInsuranceCompany, RepoInsuranceCompany>();
-            builder.Services.AddScoped<IRepoInsuranceContact, RepoInsuranceContact>();
-            builder.Services.AddScoped<IRepoInsuranceProduct, RepoInsuranceProduct>();
+            builder.Services.AddScoped<IInsuranceCompanyRepository, InsuranceCompanyRepository>();
+            builder.Services.AddScoped<IInsuranceContactRepository, InsuranceContactRepository>();
+            builder.Services.AddScoped<IInsuranceProductRepository, InsuranceProductRepository>();
             builder.Services.AddScoped<IInsuranceCompanyService, InsuranceCompanyService>();
             builder.Services.AddScoped<IInsuranceContractService, InsuranceContractService>();
             builder.Services.AddScoped<IInsuranceProductService, InsuranceProductService>();
-            builder.Services.AddScoped<IRepoAccountNumber, RepoAccountNumber>();
+            builder.Services.AddScoped<IAccountNumberRepository, AccountNumberRepository>();
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<IInsuranceCompanyAccountService, InsuranceCompanyAccountService>();
 

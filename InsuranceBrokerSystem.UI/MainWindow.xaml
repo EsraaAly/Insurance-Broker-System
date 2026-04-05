@@ -58,7 +58,7 @@
                         <!-- CLIENTS REGISTRY -->
                         <Expander Header="CLIENTS REGISTRY" Style="{StaticResource ModernExpander}">
                             <StackPanel>
-                                
+                                <Button Content="Client List" Style="{StaticResource SidebarItemStyle}"/> 
                             </StackPanel>
                         </Expander>
 

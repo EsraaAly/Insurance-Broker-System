@@ -13,7 +13,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
         }
         public async Task<Result<List<GetInsuranceProductDTO>>> GetInsuranceProductByInsuranceIdAsync(int id)
         {
-            var products = await _unitOfWork.InsuranceProduct.GetInsuranceProductsByInsuranceIdAsync(id);
+            var products = await _unitOfWork.InsuranceProductRepository.GetInsuranceProductsByInsuranceIdAsync(id);
             if (products == null)
             {
                 return Result<List<GetInsuranceProductDTO>>.Failure("No products found for this insurance company");

@@ -17,24 +17,24 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
         {
             if (dto == null) return Result<GetAccountDTO>.Failure("Account data is null");
 
-            var existingDeleted = await _unitOfWork.AccountNumber.GetByExpressionAsync(x => x.AccountName == dto.AccountName && x.IsDeleted == true);
+            var existingDeleted = await _unitOfWork.AccountNumberRepository.GetByExpressionAsync(x => x.AccountName == dto.AccountName && x.IsDeleted == true);
 
             if (existingDeleted != null)
             {
                 existingDeleted.IsDeleted = false;
                 existingDeleted.UpdatedDate = DateTime.Now;
 
-                await _unitOfWork.AccountNumber.UpdateEntityAsync(existingDeleted);
+                await _unitOfWork.AccountNumberRepository.UpdateEntityAsync(existingDeleted);
                 await _unitOfWork.CommitAsync();
                 return Result<GetAccountDTO>.Success(_mapper.Map<GetAccountDTO>(existingDeleted), "Account restored successfully");
             }
 
             Account acc = _mapper.Map<Account>(dto);
-            var parent = await _unitOfWork.AccountNumber.GetEntityByIdAsync(dto.ParentId ?? 0);
-            var siblingsResponse = parent != null ? await _unitOfWork.AccountNumber.GetAllEntitytiesAsync() : null;
+            var parent = await _unitOfWork.AccountNumberRepository.GetEntityByIdAsync(dto.ParentId ?? 0);
+            var siblingsResponse = parent != null ? await _unitOfWork.AccountNumberRepository.GetAllEntitytiesAsync() : null;
             var siblings = siblingsResponse != null ? siblingsResponse.Where(s => s.ParentId == parent!.Id).ToList() : null;
             
-            string newAccountNumber = await _unitOfWork.AccountNumber.GenerateAsync(parent, siblings, (int)dto.AccountType);
+            string newAccountNumber = await _unitOfWork.AccountNumberRepository.GenerateAsync(parent, siblings, (int)dto.AccountType);
 
             acc.AccountNumber = newAccountNumber;
             acc.CreatedBy = "Israa";
@@ -48,7 +48,7 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
                 acc.Level = dto.Level + 1;
             }
 
-            acc = await _unitOfWork.AccountNumber.AddEntityAsync(acc);
+            acc = await _unitOfWork.AccountNumberRepository.AddEntityAsync(acc);
             await _unitOfWork.CommitAsync();
 
             GetAccountDTO accDTO = _mapper.Map<GetAccountDTO>(acc);
@@ -57,7 +57,7 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
 
         public async Task<Result<GetAccountDTO>> GetAccountByIdAsync(int id)
         {
-            var entity = await _unitOfWork.AccountNumber.GetEntityByIdAsync(id);
+            var entity = await _unitOfWork.AccountNumberRepository.GetEntityByIdAsync(id);
             if (entity == null)
             {
                 return Result<GetAccountDTO>.Failure("Account not found");
@@ -67,14 +67,14 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
 
         public async Task<Result<GetAccountDTO>> UpdateAccountAsync(EditAccountDTO dto)
         {
-            var existing = await _unitOfWork.AccountNumber.GetEntityByIdAsync(dto.Id);
+            var existing = await _unitOfWork.AccountNumberRepository.GetEntityByIdAsync(dto.Id);
             if (existing == null)
             {
                 return Result<GetAccountDTO>.Failure("Account not found");
             }
 
             _mapper.Map(dto, existing);
-            bool success = await _unitOfWork.AccountNumber.UpdateEntityAsync(existing);
+            bool success = await _unitOfWork.AccountNumberRepository.UpdateEntityAsync(existing);
             if (success)
             {
                 await _unitOfWork.CommitAsync();
@@ -86,7 +86,7 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
 
         public async Task<Result<List<GetAccountDTO>>> GetAllAccountsAsync()
         {
-            var accounts = await _unitOfWork.AccountNumber.GetAllEntitytiesAsync();
+            var accounts = await _unitOfWork.AccountNumberRepository.GetAllEntitytiesAsync();
             if (accounts == null)
             {
                 return Result<List<GetAccountDTO>>.Failure("No accounts found");
@@ -107,19 +107,19 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
 
         public async Task<Result<bool>> DeleteAccountAsync(int id)
         {
-            var existing = await _unitOfWork.AccountNumber.GetEntityByIdAsync(id);
+            var existing = await _unitOfWork.AccountNumberRepository.GetEntityByIdAsync(id);
             if (existing == null)
             {
                 return Result<bool>.Failure("Account not found");
             }
 
-            var allAccounts = await _unitOfWork.AccountNumber.GetAllEntitytiesAsync();
+            var allAccounts = await _unitOfWork.AccountNumberRepository.GetAllEntitytiesAsync();
             if (allAccounts != null && allAccounts.Any(a => a.ParentId == id))
             {
                 return Result<bool>.Failure("Cannot delete parent account with children");
             }
 
-            bool success = await _unitOfWork.AccountNumber.DeleteEntityAsync(existing.Id);
+            bool success = await _unitOfWork.AccountNumberRepository.DeleteEntityAsync(existing.Id);
             if (success)
             {
                 await _unitOfWork.CommitAsync();
@@ -131,7 +131,7 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
 
         //public async Task<GetAccountDTO> GetAccountByIdAsync(int id)
         //{
-        //    var account = await _unitOfWork.AccountNumber.GetEntityByIdAsync(id);
+        //    var account = await _unitOfWork.AccountNumberRepository.GetEntityByIdAsync(id);
         //    return _mapper.Map<GetAccountDTO>(account);
         //}
     }

@@ -1,7 +1,7 @@
 
 namespace InsuranceBrokerSystem.Application.Interfaces.Master_Table
 {
-    public interface IRepoInsuranceCompany: IGenericRepository<InsuranceCompany>
+    public interface IInsuranceCompanyRepository: IGenericRepository<InsuranceCompany>
     {
         //public Task<List<InsuranceCompany>> GetAllInsuranceCompaniesAsync();
 

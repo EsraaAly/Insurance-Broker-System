@@ -29,7 +29,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                     UpdatedDate = DateTime.Now,
                     IsDeleted = false,
                 };
-                var entity = await _unitOfWork.InsuranceLOB.AddEntityAsync(insuranceLine1);
+                var entity = await _unitOfWork.InsuranceLOBRepository.AddEntityAsync(insuranceLine1);
                 if (entity != null)
                 {
                     await _unitOfWork.CommitAsync();
@@ -41,11 +41,11 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<bool>> DeleteLOBAsync(int id)
         {
-            var insuranceLine = await _unitOfWork.InsuranceLOB.GetEntityByIdAsync(id);
+            var insuranceLine = await _unitOfWork.InsuranceLOBRepository.GetEntityByIdAsync(id);
 
             if (insuranceLine != null)
             {
-                var success = await _unitOfWork.InsuranceLOB.DeleteEntityAsync(id);
+                var success = await _unitOfWork.InsuranceLOBRepository.DeleteEntityAsync(id);
                 if (success)
                 {
                     await _unitOfWork.CommitAsync();
@@ -59,7 +59,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
         public async Task<Result<List<GetInsuranceLOBDTO>>> GetAllLOBsAsync()
         {
             var masterClasses = await _unitOfWork.GInsuranceClass.GetAllEntitytiesAsync();
-            var entities = await _unitOfWork.InsuranceLOB.GetAllEntitytiesAsync();
+            var entities = await _unitOfWork.InsuranceLOBRepository.GetAllEntitytiesAsync();
             
             if (entities == null)
             {
@@ -84,7 +84,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<List<GetInsuranceLOBDTO>>> GetInsuranceLOBByClassIdAsync(int classId)
         {
-            var LOB_List = await _unitOfWork.InsuranceLOB.GetInsuranceLOBByClassIdAsync(classId);
+            var LOB_List = await _unitOfWork.InsuranceLOBRepository.GetInsuranceLOBByClassIdAsync(classId);
             if (LOB_List == null)
             {
                 return Result<List<GetInsuranceLOBDTO>>.Failure("No Lines of Business found for this class");
@@ -95,7 +95,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<GetInsuranceLOBDTO>> GetLOBByidAsync(int id)
         {
-            var entity = await _unitOfWork.InsuranceLOB.GetEntityByIdAsync(id);
+            var entity = await _unitOfWork.InsuranceLOBRepository.GetEntityByIdAsync(id);
 
             if (entity == null)
             {
@@ -119,7 +119,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
         public async Task<Result<GetInsuranceLOBDTO>> UpdateLOBAsync(UpdateInsuranceLOBDTO dto)
         {
             var Insureanceclass = await _unitOfWork.GInsuranceClass.GetEntityByIdAsync(dto.ClassID);
-            var entity = await _unitOfWork.InsuranceLOB.GetEntityByIdAsync(dto.Id);
+            var entity = await _unitOfWork.InsuranceLOBRepository.GetEntityByIdAsync(dto.Id);
 
             if (entity == null)
             {
@@ -134,7 +134,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             entity.UpdatedBy = "Israa";
             entity.UpdatedDate = DateTime.Now;
 
-            bool isUpdated = await _unitOfWork.InsuranceLOB.UpdateEntityAsync(entity);
+            bool isUpdated = await _unitOfWork.InsuranceLOBRepository.UpdateEntityAsync(entity);
 
             if (isUpdated)
             {

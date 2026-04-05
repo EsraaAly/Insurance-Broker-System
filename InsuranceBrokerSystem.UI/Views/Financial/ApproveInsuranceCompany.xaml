@@ -20,10 +20,10 @@
 
         <Border Background="White" Padding="15" Margin="10" CornerRadius="8">
             <StackPanel Orientation="Horizontal">
-                <GroupBox Header="Current Status" Margin="0,0,25,0">
+                <GroupBox Header="Current Status" Style="{StaticResource GroupBoxStyle}" Margin="0,0,25,0">
                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                        <CheckBox x:Name="ChPending" Content="Pending" IsChecked="{Binding IsPending}" Margin="10,0"/>
-                        <CheckBox x:Name="ChRejected" Content="Rejected" IsChecked="{Binding IsRejected}" Margin="10,0"/>
+                        <CheckBox x:Name="ChPending" Style="{StaticResource ModernCheckBoxStyle}" Content="Pending" IsChecked="{Binding IsPending}" Margin="10,0"/>
+                        <CheckBox x:Name="ChRejected" Style="{StaticResource ModernCheckBoxStyle}" Content="Rejected" IsChecked="{Binding IsRejected}" Margin="10,0"/>
                     </StackPanel>
                 </GroupBox>
 

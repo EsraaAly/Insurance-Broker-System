@@ -39,7 +39,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                 e.InsuranceCompanyId = entry.Id;
             }
 
-            entry = await _unitOfWork.InsuranceCompany.AddEntityAsync(entry);
+            entry = await _unitOfWork.InsuranceCompanyRepository.AddEntityAsync(entry);
             await _unitOfWork.CommitAsync();
 
             GetInsuranceCompanyDTO company = _mapper.Map<GetInsuranceCompanyDTO>(entry);
@@ -48,7 +48,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<bool>> DeleteInsuranceCompaniesAsync(int id)
         {
-            var success = await _unitOfWork.InsuranceCompany.DeleteEntityAsync(id);
+            var success = await _unitOfWork.InsuranceCompanyRepository.DeleteEntityAsync(id);
 
             if (success)
             {
@@ -60,7 +60,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<List<GetInsuranceCompanyDTO>>> GetAllInsuranceCompaniesAsync()
         {
-            var entries = await _unitOfWork.InsuranceCompany.GetAllEntitytiesAsync();
+            var entries = await _unitOfWork.InsuranceCompanyRepository.GetAllEntitytiesAsync();
             if (entries == null)
             {
                 return Result<List<GetInsuranceCompanyDTO>>.Failure("No insurance companies found");
@@ -71,7 +71,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<GetInsuranceCompanyDTO>> GetInsuranceCompaniesByIdAsync(int id)
         {
-            var entry = await _unitOfWork.InsuranceCompany.GetEntityByIdAsync(id);
+            var entry = await _unitOfWork.InsuranceCompanyRepository.GetEntityByIdAsync(id);
             if (entry == null)
             {
                 return Result<GetInsuranceCompanyDTO>.Failure("Insurance Company not found");
@@ -83,7 +83,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<GetInsuranceCompanyDTO>> GetInsuranceCompaniesByNameAsync(string companyName)
         {
-            var entry = await _unitOfWork.InsuranceCompany.GetInsuranceCompaniesByNameAsync(companyName);
+            var entry = await _unitOfWork.InsuranceCompanyRepository.GetInsuranceCompaniesByNameAsync(companyName);
             if (entry == null)
             {
                 return Result<GetInsuranceCompanyDTO>.Failure("Insurance Company not found");
@@ -95,7 +95,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<GetInsuranceCompanyDTO>> UpdateInsuranceCompaniesAsync(UpdateInsuranceCompanyDTO dto)
         {
-            var existingEntry = await _unitOfWork.InsuranceCompany.GetEntityByIdWithIncludesAsync(dto.Id, x => x.Products, x => x.Contacts);
+            var existingEntry = await _unitOfWork.InsuranceCompanyRepository.GetEntityByIdWithIncludesAsync(dto.Id, x => x.Products, x => x.Contacts);
 
             if (existingEntry == null)
             {
@@ -107,7 +107,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             existingEntry.UpdatedBy = "Israa";
             existingEntry.UpdatedDate = DateTime.Now;
 
-            var success = await _unitOfWork.InsuranceCompany.UpdateEntityAsync(existingEntry);
+            var success = await _unitOfWork.InsuranceCompanyRepository.UpdateEntityAsync(existingEntry);
             if (success)
             {
                 await _unitOfWork.CommitAsync();
@@ -118,7 +118,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<bool>> ApproveInsuranceCompaniesAsync(int id)
         {
-            var existingEntry = await _unitOfWork.InsuranceCompany.GetEntityByIdAsync(id);
+            var existingEntry = await _unitOfWork.InsuranceCompanyRepository.GetEntityByIdAsync(id);
 
             if (existingEntry == null)
             {
@@ -130,7 +130,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             existingEntry.ApprovedBy = "Israa";
             existingEntry.ApprovedDate = DateTime.Now;
 
-            var success = await _unitOfWork.InsuranceCompany.UpdateEntityAsync(existingEntry);
+            var success = await _unitOfWork.InsuranceCompanyRepository.UpdateEntityAsync(existingEntry);
             if (success)
             {
                 var accountResult = await _insuranceCompanyAccountService.GenerateAccountsAsync(existingEntry.Id);
@@ -146,7 +146,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
 
         public async Task<Result<bool>> RejectInsuranceCompaniesAsync(int id)
         {
-            var success = await _unitOfWork.InsuranceCompany.RejectInsuranceCompaniesAsync(id);
+            var success = await _unitOfWork.InsuranceCompanyRepository.RejectInsuranceCompaniesAsync(id);
             if (success)
             {
                 return Result<bool>.Success(true, "Insurance Company rejected successfully");

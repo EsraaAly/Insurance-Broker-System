@@ -14,7 +14,7 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
 
         public async Task<Result<bool>> GenerateAccountsAsync(int companyId)
         {
-            var company = await _unitOfWork.InsuranceCompany.GetEntityByIdAsync(companyId);
+            var company = await _unitOfWork.InsuranceCompanyRepository.GetEntityByIdAsync(companyId);
             if (company == null)
             {
                 return Result<bool>.Failure("Insurance Company not found");
@@ -43,7 +43,7 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
 
         private async Task<int> GetParentIdByCodeAsync(string code)
         {
-            var account = await _unitOfWork.AccountNumber.GetByExpressionAsync(a => a.AccountNumber.Trim().ToLower() == code.Trim().ToLower());
+            var account = await _unitOfWork.AccountNumberRepository.GetByExpressionAsync(a => a.AccountNumber.Trim().ToLower() == code.Trim().ToLower());
             return account?.Id ?? 0;
         }
 
@@ -53,12 +53,12 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
             {
                 if (def.ParentId == 0) continue;
 
-                var parent = await _unitOfWork.AccountNumber.GetEntityByIdAsync(def.ParentId);
+                var parent = await _unitOfWork.AccountNumberRepository.GetEntityByIdAsync(def.ParentId);
                 if (parent == null) continue;
 
                 var account = new Account
                 {
-                    AccountNumber = await _unitOfWork.AccountNumber.GenerateAsync(parent, parent.Children,(int)parent.AccountType),
+                    AccountNumber = await _unitOfWork.AccountNumberRepository.GenerateAsync(parent, parent.Children,(int)parent.AccountType),
                     AccountName = $"{company.Abbreviation} - {def.Suffix}",
                     Description = $"{def.Suffix} account for {company.CompanyName}",
                     ParentId = def.ParentId,
@@ -67,14 +67,14 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
                     IsPostable = true
                 };
 
-                var result = await _unitOfWork.AccountNumber.AddEntityAsync(account);
+                var result = await _unitOfWork.AccountNumberRepository.AddEntityAsync(account);
                 if (result != null)
                 {
                     def.SetField(result.AccountNumber);
                 }
             }
 
-            await _unitOfWork.InsuranceCompany.UpdateEntityAsync(company);
+            await _unitOfWork.InsuranceCompanyRepository.UpdateEntityAsync(company);
             //await _unitOfWork.CommitAsync();
 
             return true;

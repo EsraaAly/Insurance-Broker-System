@@ -116,6 +116,21 @@ namespace InsuranceBrokerSystem.UI
                         MessageBox.Show($"Error loading page: {ex.Message}\n\nInternal: {ex.InnerException?.Message}");
                     }
                     break;
+                case "Client List":
+                    try
+                    {
+                        // Explicitly use the full namespace if it's in a different folder
+                        // Example: var newView = new InsuranceBrokerSystem.UI.Views.InsuranceClassesRegistry();
+                        var newView = new InsuranceBrokerSystem.UI.Views.Financial.ApproveInsuranceCompany();
+
+                        MainContent.Content = newView;
+                    }
+                    catch (Exception ex)
+                    {
+                        // This will pop up a window telling you EXACTLY why it failed
+                        MessageBox.Show($"Error loading page: {ex.Message}\n\nInternal: {ex.InnerException?.Message}");
+                    }
+                    break;
 
             }
         }

@@ -1,21 +1,21 @@
+
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
 
     [ApiController]
     public class InsuranceProductController : ControllerBase
     {
-        private readonly IInsuranceProductService _InsuranceProductService;
+        private readonly ISender _mediator;
 
-        public InsuranceProductController(IInsuranceProductService InsuranceProductService)
+        public InsuranceProductController(ISender mediator)
         {
-            _InsuranceProductService = InsuranceProductService;
+            _mediator = mediator;
         }
 
-        
         [HttpGet(ApiRoutes.MasterTable.InsuranceCompProduct.GetInsuranceProductByInsuranceIdAsync + "/{id}")]
         public async Task<IActionResult> GetInsuranceProductByInsuranceIdAsync(int id)
         {
-            var result = await _InsuranceProductService.GetInsuranceProductByInsuranceIdAsync(id);
+            var result = await _mediator.Send(new GetInsuranceProductsByCompanyIdQuery { CompanyId = id });
             return result.ToActionResult();
         }
 

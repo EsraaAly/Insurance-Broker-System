@@ -1,4 +1,6 @@
 
+using InsuranceBrokerSystem.Domain.Entities.Financial;
+
 namespace InsuranceBrokerSystem.Application.Common.Mapping.Financial
 {
     public class AccountMappingProfile:Profile

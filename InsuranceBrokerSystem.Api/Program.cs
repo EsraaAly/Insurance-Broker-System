@@ -1,3 +1,7 @@
+using InsuranceBrokerSystem.Application.Common.Interfaces.Persistence.Clients;
+using InsuranceBrokerSystem.Application.Common.Mapping.Clients;
+using InsuranceBrokerSystem.Infrastructure.Repositories.Clients;
+
 namespace InsuranceBrokerSystem.Api
 {
     public class Program
@@ -15,25 +19,23 @@ namespace InsuranceBrokerSystem.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddMediatR(cfg => {
+                cfg.RegisterServicesFromAssembly(typeof(GetAccountByIdQuery).Assembly);
+            });
+
             builder.Services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(InsuranceMappingProfile).Assembly);});
-            builder.Services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(InsuranceLOBMappingProfile).Assembly); });
-            builder.Services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(AccountMappingProfile).Assembly); });
-            builder.Services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(AccountMappingProfileUI).Assembly); });
+            //builder.Services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(InsuranceLOBMappingProfile).Assembly); });
+            //builder.Services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(AccountMappingProfile).Assembly); });
+            //builder.Services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(AccountMappingProfileUI).Assembly); });
+            //builder.Services.AddAutoMapper(cfg => { cfg.AddMaps(typeof(ClientMappingProfile).Assembly); });
 
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            //builder.Services.AddScoped<IRepoInsuranceClass, RepoInsuranceClass>();
-            builder.Services.AddScoped<IInsuranceClassService, InsuranceClassService>();
             builder.Services.AddScoped<IInsuranceLOBRepository, InsuranceLOBRepository>();
-            builder.Services.AddScoped<IInsuranceLOBService, InsuranceLOBService>();
             builder.Services.AddScoped<IInsuranceCompanyRepository, InsuranceCompanyRepository>();
             builder.Services.AddScoped<IInsuranceContactRepository, InsuranceContactRepository>();
             builder.Services.AddScoped<IInsuranceProductRepository, InsuranceProductRepository>();
-            builder.Services.AddScoped<IInsuranceCompanyService, InsuranceCompanyService>();
-            builder.Services.AddScoped<IInsuranceContractService, InsuranceContractService>();
-            builder.Services.AddScoped<IInsuranceProductService, InsuranceProductService>();
             builder.Services.AddScoped<IAccountNumberRepository, AccountNumberRepository>();
-            builder.Services.AddScoped<IAccountService, AccountService>();
-            builder.Services.AddScoped<IInsuranceCompanyAccountService, InsuranceCompanyAccountService>();
+            builder.Services.AddScoped<IClientRepository, ClientRepository>();
 
 
             var app = builder.Build();

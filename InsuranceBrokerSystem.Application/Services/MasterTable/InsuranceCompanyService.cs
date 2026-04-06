@@ -4,17 +4,15 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
     public class InsuranceCompanyService : IInsuranceCompanyService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IAccountService _accountService;
         private readonly IInsuranceCompanyAccountService _insuranceCompanyAccountService;
         private readonly IMapper _mapper;
         
         public InsuranceCompanyService(IUnitOfWork unitOfWork,
-                                       IMapper mapper,IAccountService accountService,
+                                       IMapper mapper,
                                        IInsuranceCompanyAccountService insuranceCompanyAccountService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _accountService = accountService;
             _insuranceCompanyAccountService = insuranceCompanyAccountService;
         }
 

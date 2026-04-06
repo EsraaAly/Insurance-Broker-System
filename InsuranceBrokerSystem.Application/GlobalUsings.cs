@@ -13,9 +13,9 @@ global using System.Threading.Tasks;
 
 // ── Third-party ──────────────────────────────────────────────
 global using AutoMapper;
-
+global using MediatR;
 // ── Domain ───────────────────────────────────────────────────
-global using InsuranceBrokerSystem.Domain.Entities;
+global using InsuranceBrokerSystem.Domain.Entities.Financial;
 global using InsuranceBrokerSystem.Domain.Entities.Master_Table;
 global using InsuranceBrokerSystem.Domain.Enums.Master_Table;
 global using InsuranceBrokerSystem.Domain.Entities.Client;

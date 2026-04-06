@@ -1,4 +1,6 @@
 
+using InsuranceBrokerSystem.Domain.Entities.Financial;
+
 namespace InsuranceBrokerSystem.Infrastructure.Data
 {
     public class AppDbContext:DbContext

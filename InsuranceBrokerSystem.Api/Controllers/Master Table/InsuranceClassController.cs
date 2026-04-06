@@ -1,39 +1,46 @@
 
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
-    //[Route("api/[controller]")]
+
     [ApiController]
     public class InsuranceClassController : ControllerBase
     {
-        private readonly IInsuranceClassService _insuranceClassService;
+        private readonly ISender _mediator;
 
-        public InsuranceClassController(IInsuranceClassService insuranceClassService)
+        public InsuranceClassController(ISender mediator)
         {
-            _insuranceClassService = insuranceClassService;
+            _mediator = mediator;
         }
 
         [HttpGet(ApiRoutes.MasterTable.InsuranceClass.GetAllInsuranceClasses)]
         public async Task<IActionResult> GetAllClassesAsync()
         {
-            var result = await _insuranceClassService.GetAllClassesAsync();
+            var result = await _mediator.Send(new GetAllInsuranceClassesQuery());
+            return result.ToActionResult();
+        }
+
+        [HttpGet("api/v1/InsuranceClass/GetById/{id}")]
+        public async Task<IActionResult> GetClassByIdAsync(int id)
+        {
+            var result = await _mediator.Send(new GetInsuranceClassByIdQuery { Id = id });
             return result.ToActionResult();
         }
 
         [HttpPost(ApiRoutes.MasterTable.InsuranceClass.AddInsuranceClass)]
-        public async Task<IActionResult> AddClassAsync(AddInsuranceClassDTO dto)
+        public async Task<IActionResult> AddClassAsync(AddInsuranceClassCommand command)
         {
-            if (dto == null) return BadRequest("Data is null");
+            if (command == null) return BadRequest("Data is null");
 
-            var result = await _insuranceClassService.AddClassAsync(dto);
+            var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
 
         [HttpPut(ApiRoutes.MasterTable.InsuranceClass.UpdateInsuranceClass)]
-        public async Task<IActionResult> UpdateClassAsync(UpdateInsuranceClassDTO dto)
+        public async Task<IActionResult> UpdateClassAsync(UpdateInsuranceClassCommand command)
         {
-            if (dto is null) return BadRequest("Data is null");
+            if (command is null) return BadRequest("Data is null");
 
-            var result = await _insuranceClassService.UpdateClassAsync(dto);
+            var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
 
@@ -42,7 +49,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         {
             if (id == 0) return BadRequest("Id isn't valid");
 
-            var result = await _insuranceClassService.DeleteClassAsync(id);
+            var result = await _mediator.Send(new DeleteInsuranceClassCommand { Id = id });
             return result.ToActionResult();
         }
     }

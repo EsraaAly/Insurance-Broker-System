@@ -4,12 +4,10 @@ namespace InsuranceBrokerSystem.Application.Services.Financial
     public class InsuranceCompanyAccountService : IInsuranceCompanyAccountService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IAccountService _accountService;
 
-        public InsuranceCompanyAccountService(IUnitOfWork unitOfWork, IAccountService accountService)
+        public InsuranceCompanyAccountService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _accountService = accountService;
         }
 
         /// <summary>

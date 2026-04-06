@@ -1,4 +1,4 @@
-namespace InsuranceBrokerSystem.Domain.Entities.Master_Table
+namespace InsuranceBrokerSystem.Domain.Entities.Financial
 {
     public class Account:BaseEntity
     {

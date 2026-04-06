@@ -5,17 +5,17 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
     [ApiController]
     public class InsuranceContactController : ControllerBase
     {
-        private readonly IInsuranceContractService _InsuranceContractService;
+        private readonly ISender _mediator;
 
-        public InsuranceContactController(IInsuranceContractService InsuranceContractService)
+        public InsuranceContactController(ISender mediator)
         {
-            _InsuranceContractService = InsuranceContractService;
+            _mediator = mediator;
         }
 
         [HttpGet(ApiRoutes.MasterTable.InsuranceCompContact.GetInsuranceContactByInsuranceIdAsync + "/{id}")]
         public async Task<IActionResult> GetInsuranceContactByInsuranceIdAsync(int id)
         {
-            var result = await _InsuranceContractService.GetInsuranceContactByInsuranceIdAsync(id);
+            var result = await _mediator.Send(new GetInsuranceContactsByCompanyIdQuery { CompanyId = id });
             return result.ToActionResult();
         }
 

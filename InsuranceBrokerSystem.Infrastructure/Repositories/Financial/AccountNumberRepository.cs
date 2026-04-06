@@ -1,3 +1,5 @@
+using InsuranceBrokerSystem.Domain.Entities.Financial;
+
 namespace InsuranceBrokerSystem.Infrastructure.Repositories.Financial
 {
     public class AccountNumberRepository: GenericRepository<Account>, IAccountNumberRepository

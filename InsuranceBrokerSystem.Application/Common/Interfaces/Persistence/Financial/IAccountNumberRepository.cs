@@ -1,4 +1,6 @@
 
+using InsuranceBrokerSystem.Domain.Entities.Financial;
+
 namespace InsuranceBrokerSystem.Application.Common.Interfaces.Persistence.Financial
 {
     public interface IAccountNumberRepository:IGenericRepository<Account>

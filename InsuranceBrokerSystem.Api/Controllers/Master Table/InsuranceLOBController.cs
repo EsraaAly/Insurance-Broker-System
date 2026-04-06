@@ -1,46 +1,53 @@
 
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
-    //[Route("api/[controller]")]
+
     [ApiController]
     public class InsuranceLOBController : ControllerBase
     {
-        private readonly IInsuranceLOBService _insuranceLOBService;
+        private readonly ISender _mediator;
 
-        public InsuranceLOBController(IInsuranceLOBService insuranceLOBService)
+        public InsuranceLOBController(ISender mediator)
         {
-            _insuranceLOBService = insuranceLOBService;
+            _mediator = mediator;
         }
 
         [HttpGet(ApiRoutes.MasterTable.InsuranceLOB.GetAllInsuranceLOBs)]
         public async Task<IActionResult> GetAllLOBsAsync()
         {
-            var result = await _insuranceLOBService.GetAllLOBsAsync();
+            var result = await _mediator.Send(new GetAllInsuranceLOBsQuery());
             return result.ToActionResult();
         }
 
         [HttpGet(ApiRoutes.MasterTable.InsuranceLOB.GetLOBByClassIdAsync + "/{id}")]
         public async Task<IActionResult> GetLOBByClassIdAsync(int id)
         {
-            var result = await _insuranceLOBService.GetInsuranceLOBByClassIdAsync(id);
+            var result = await _mediator.Send(new GetInsuranceLOBByClassIdQuery { ClassId = id });
+            return result.ToActionResult();
+        }
+
+        [HttpGet("api/v1/InsuranceLOB/GetById/{id}")]
+        public async Task<IActionResult> GetLOBByIdAsync(int id)
+        {
+            var result = await _mediator.Send(new GetInsuranceLOBByIdQuery { Id = id });
             return result.ToActionResult();
         }
 
         [HttpPost(ApiRoutes.MasterTable.InsuranceLOB.AddInsuranceLOB)]
-        public async Task<IActionResult> AddLOBAsync(AddInsuranceLOBDTO dto)
+        public async Task<IActionResult> AddLOBAsync(AddInsuranceLOBCommand command)
         {
-            if (dto == null) return BadRequest("Data is null");
+            if (command == null) return BadRequest("Data is null");
 
-            var result = await _insuranceLOBService.AddLOBAsync(dto);
+            var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
 
         [HttpPut(ApiRoutes.MasterTable.InsuranceLOB.UpdateInsuranceLOB)]
-        public async Task<IActionResult> UpdateLOBAsync(UpdateInsuranceLOBDTO dto)
+        public async Task<IActionResult> UpdateLOBAsync(UpdateInsuranceLOBCommand command)
         {
-            if (dto is null) return BadRequest("Data is null");
+            if (command is null) return BadRequest("Data is null");
 
-            var result = await _insuranceLOBService.UpdateLOBAsync(dto);
+            var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
 
@@ -49,7 +56,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         {
             if (id == 0) return BadRequest("Id isn't valid");
 
-            var result = await _insuranceLOBService.DeleteLOBAsync(id);
+            var result = await _mediator.Send(new DeleteInsuranceLOBCommand { Id = id });
             return result.ToActionResult();
         }
     }

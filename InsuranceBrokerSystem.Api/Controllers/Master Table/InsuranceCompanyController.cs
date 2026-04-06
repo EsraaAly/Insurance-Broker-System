@@ -5,41 +5,49 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
     [ApiController]
     public class InsuranceCompanyController : ControllerBase
     {
-        private readonly IInsuranceCompanyService _InsuranceCompanyService;
+        private readonly ISender _mediator;
 
-        public InsuranceCompanyController(IInsuranceCompanyService InsuranceCompanyService)
+        public InsuranceCompanyController(ISender mediator)
         {
-            _InsuranceCompanyService = InsuranceCompanyService;
+            _mediator = mediator;
         }
 
         [HttpPost(ApiRoutes.MasterTable.InsuranceComp.AddInsuranceComp)]
-        public async Task<IActionResult> AddInsuranceCompanyAsync(AddInsuranceCompanyDTO dto)
+        public async Task<IActionResult> AddInsuranceCompanyAsync(AddInsuranceCompanyCommand command)
         {
-            if (dto == null) return BadRequest("Data is null");
+            if (command == null) return BadRequest("Data is null");
 
-            var result = await _InsuranceCompanyService.AddInsuranceCompaniesAsync(dto);
+            var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
 
         [HttpGet(ApiRoutes.MasterTable.InsuranceComp.GetAllInsuranceCompanies)]
         public async Task<IActionResult> GetAllInsuranceCompaniesAsync()
         {
-            var result = await _InsuranceCompanyService.GetAllInsuranceCompaniesAsync();
+            var result = await _mediator.Send(new GetAllInsuranceCompaniesQuery());
             return result.ToActionResult();
         }
+
         [HttpGet(ApiRoutes.MasterTable.InsuranceComp.GetInsuranceCompanyByName)]
         public async Task<IActionResult> GetInsuranceCompanyByNameAsync([FromQuery] string Name)
         {
-            var result = await _InsuranceCompanyService.GetInsuranceCompaniesByNameAsync(Name);
+            var result = await _mediator.Send(new GetInsuranceCompanyByNameQuery { Name = Name });
+            return result.ToActionResult();
+        }
+
+        [HttpGet("api/v1/InsuranceComp/GetById/{id}")]
+        public async Task<IActionResult> GetInsuranceCompanyByIdAsync(int id)
+        {
+            var result = await _mediator.Send(new GetInsuranceCompanyByIdQuery { Id = id });
             return result.ToActionResult();
         }
 
         [HttpPut(ApiRoutes.MasterTable.InsuranceComp.UpdateInsuranceComp)]
-        public async Task<IActionResult> UpdateInsuranceCompanyAsync(UpdateInsuranceCompanyDTO dto)
+        public async Task<IActionResult> UpdateInsuranceCompanyAsync(UpdateInsuranceCompanyCommand command)
         {
-            if (dto == null) return BadRequest("Data is null");
+            if (command == null) return BadRequest("Data is null");
 
-            var result = await _InsuranceCompanyService.UpdateInsuranceCompaniesAsync(dto);
+            var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
 
@@ -48,7 +56,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         {
             if (id == 0) return BadRequest("Id is not valid");
 
-            var result = await _InsuranceCompanyService.ApproveInsuranceCompaniesAsync(id);
+            var result = await _mediator.Send(new ApproveInsuranceCompanyCommand { Id = id });
             return result.ToActionResult();
         }
 
@@ -57,7 +65,16 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         {
             if (id == 0) return BadRequest("Id is not valid");
 
-            var result = await _InsuranceCompanyService.RejectInsuranceCompaniesAsync(id);
+            var result = await _mediator.Send(new RejectInsuranceCompanyCommand { Id = id });
+            return result.ToActionResult();
+        }
+
+        [HttpDelete(ApiRoutes.MasterTable.InsuranceComp.DeleteInsuranceComp + "/{id}")]
+        public async Task<IActionResult> DeleteInsuranceCompanyAsync(int id)
+        {
+            if (id == 0) return BadRequest("Id is not valid");
+
+            var result = await _mediator.Send(new DeleteInsuranceCompanyCommand { Id = id });
             return result.ToActionResult();
         }
     }

@@ -1,6 +1,6 @@
 namespace InsuranceBrokerSystem.Infrastructure.Repositories.Clients
 {
-    public class ClientRepository : GenericRepository<Client>
+    public class ClientRepository : GenericRepository<Client>, IClientRepository
     {
         private readonly AppDbContext _context;
 

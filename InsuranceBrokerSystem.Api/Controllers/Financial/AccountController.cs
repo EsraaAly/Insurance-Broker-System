@@ -1,20 +1,23 @@
 
+
+using InsuranceBrokerSystem.Application.Features.Financial.Accounts.Commands;
+
 namespace InsuranceBrokerSystem.Api.Controllers.Financial
 {
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountService _accountService;
+        private readonly IMediator _mediator;
 
-        public AccountController(IAccountService accountService)
+        public AccountController(IMediator mediator)
         {
-            _accountService = accountService;
+            _mediator = mediator;
         }
 
         [HttpGet(ApiRoutes.Financial.Account.GetAllAccounts)]
         public async Task<IActionResult> GetAllAccountsAsync()
         {
-            var result = await _accountService.GetAllAccountsAsync();
+            var result = await _mediator.Send(new GetAllAccountsQuery());
             return result.ToActionResult();
         }
 
@@ -22,14 +25,14 @@ namespace InsuranceBrokerSystem.Api.Controllers.Financial
         public async Task<IActionResult> UpdateAccountAsync(EditAccountDTO dto)
         {
             if (dto == null) return BadRequest("Data is null");
-            var result = await _accountService.UpdateAccountAsync(dto);
+            var result = await _mediator.Send(new UpdateAccountCommand(dto));
             return result.ToActionResult();
         }
 
         [HttpDelete(ApiRoutes.Financial.Account.DeleteAccount + "/{id}")]
         public async Task<IActionResult> DeleteAccountAsync(int id)
         {
-            var result = await _accountService.DeleteAccountAsync(id);
+            var result = await _mediator.Send(new DeleteAccountCommand(id));
             return result.ToActionResult();
         }
 
@@ -38,7 +41,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Financial
         {
             if (dto == null) return BadRequest("Data is null");
 
-            var result = await _accountService.AddAccountAsync(dto);
+            var result = await _mediator.Send(new AddAccountCommand(dto));
             return result.ToActionResult();
         }
     }

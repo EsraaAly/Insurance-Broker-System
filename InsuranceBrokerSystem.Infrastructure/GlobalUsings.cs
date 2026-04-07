@@ -14,7 +14,8 @@ global using System.Threading.Tasks;
 
 // ── EF Core ──────────────────────────────────────────────────
 global using Microsoft.EntityFrameworkCore;
-
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
 // ── Domain ───────────────────────────────────────────────────
 global using InsuranceBrokerSystem.Domain.Entities;
 global using InsuranceBrokerSystem.Domain.Entities.Master_Table;

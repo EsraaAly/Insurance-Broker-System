@@ -42,17 +42,15 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands
     public class AddInsuranceCompanyHandler : IRequestHandler<AddInsuranceCompanyCommand, Result<GetInsuranceCompanyDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public AddInsuranceCompanyHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public AddInsuranceCompanyHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<Result<GetInsuranceCompanyDTO>> Handle(AddInsuranceCompanyCommand request, CancellationToken cancellationToken)
         {
-            InsuranceCompany entry = _mapper.Map<InsuranceCompany>(request);
+            InsuranceCompany entry = request.Adapt<InsuranceCompany>();
             entry.CreatedBy = "Israa";
             entry.CreatedDate = DateTime.Now;
 
@@ -73,7 +71,7 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands
             entry = await _unitOfWork.InsuranceCompanyRepository.AddEntityAsync(entry);
             await _unitOfWork.CommitAsync();
 
-            GetInsuranceCompanyDTO companyRes = _mapper.Map<GetInsuranceCompanyDTO>(entry);
+            GetInsuranceCompanyDTO companyRes = entry.Adapt<GetInsuranceCompanyDTO>();
             return Result<GetInsuranceCompanyDTO>.Success(companyRes, "Insurance Company added successfully");
         }
     }

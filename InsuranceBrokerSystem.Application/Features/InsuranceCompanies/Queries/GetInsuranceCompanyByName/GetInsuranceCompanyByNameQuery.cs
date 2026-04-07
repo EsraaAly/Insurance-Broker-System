@@ -8,12 +8,10 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Queries.
     public class GetInsuranceCompanyByNameHandler : IRequestHandler<GetInsuranceCompanyByNameQuery, Result<GetInsuranceCompanyDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public GetInsuranceCompanyByNameHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetInsuranceCompanyByNameHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<Result<GetInsuranceCompanyDTO>> Handle(GetInsuranceCompanyByNameQuery request, CancellationToken cancellationToken)
@@ -24,7 +22,7 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Queries.
                 return Result<GetInsuranceCompanyDTO>.Failure("Insurance Company not found");
             }
 
-            GetInsuranceCompanyDTO dto = _mapper.Map<GetInsuranceCompanyDTO>(entry);
+            GetInsuranceCompanyDTO dto = entry.Adapt<GetInsuranceCompanyDTO>();
             return Result<GetInsuranceCompanyDTO>.Success(dto);
         }
     }

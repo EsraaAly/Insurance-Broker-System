@@ -5,11 +5,11 @@
     public class GetAccountByIdHandler : IRequestHandler<GetAccountByIdQuery, Result<GetAccountDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        public GetAccountByIdHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        //private readonly IMapper _mapper;
+        public GetAccountByIdHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            //_mapper = mapper;
         }
         public async Task<Result<GetAccountDTO>> Handle(GetAccountByIdQuery request, CancellationToken cancellationToken)
         {
@@ -18,7 +18,7 @@
             {
                 return Result<GetAccountDTO>.Failure("No accounts found.");
             }
-            return Result<GetAccountDTO>.Success(_mapper.Map<GetAccountDTO>(accounts));
+            return Result<GetAccountDTO>.Success(accounts.Adapt<GetAccountDTO>());
         }
     }
 }

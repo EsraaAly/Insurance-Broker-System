@@ -11,11 +11,11 @@ namespace InsuranceBrokerSystem.Application.Features.Financial.Accounts.Queries
     public class GetRootAccountHandler : IRequestHandler<GetRootAccountQuery, Result<List<GetAccountDTO>>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        public GetRootAccountHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        //private readonly IMapper _mapper;
+        public GetRootAccountHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
+            //_mapper = mapper;
         }
         public async Task<Result<List<GetAccountDTO>>> Handle(GetRootAccountQuery request, CancellationToken cancellationToken)
         {
@@ -26,7 +26,7 @@ namespace InsuranceBrokerSystem.Application.Features.Financial.Accounts.Queries
             }
             var rootAccounts = accounts.Where(a => a.ParentId == 1).ToList();
 
-            return Result<List<GetAccountDTO>>.Success(_mapper.Map<List<GetAccountDTO>>(rootAccounts));
+            return Result<List<GetAccountDTO>>.Success(rootAccounts.Adapt<List<GetAccountDTO>>());
         }
     }
 }

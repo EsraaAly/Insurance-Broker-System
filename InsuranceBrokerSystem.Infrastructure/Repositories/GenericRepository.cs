@@ -26,9 +26,19 @@ namespace InsuranceBrokerSystem.Infrastructure.Repositories
             return false;
         }
 
-        public async Task<List<TEntity>> GetAllEntitytiesAsync()
+        public async Task<List<TEntity>> GetAllEntitytiesAsync(params Expression<Func<TEntity, object>>[] includes)
         {
-            return await _appDbContext.Set<TEntity>().Where(i=>i.IsDeleted == false).ToListAsync();
+            IQueryable<TEntity> query = _appDbContext.Set<TEntity>().AsNoTracking(); 
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
+
+            return await query.Where(i => !i.IsDeleted).ToListAsync();
         }
 
         public async Task<TEntity> GetEntityByIdAsync(int Id)

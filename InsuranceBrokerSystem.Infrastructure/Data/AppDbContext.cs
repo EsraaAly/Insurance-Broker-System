@@ -28,6 +28,8 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //modelBuilder.Entity<TEntity>().HasQueryFilter(i => !i.IsDeleted)
+
             #region "InsuranceClass"
             modelBuilder.Entity<InsuranceClass>()
                 .HasKey(x => x.Id);

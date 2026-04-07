@@ -34,12 +34,10 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands
     public class UpdateInsuranceCompanyHandler : IRequestHandler<UpdateInsuranceCompanyCommand, Result<GetInsuranceCompanyDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public UpdateInsuranceCompanyHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public UpdateInsuranceCompanyHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<Result<GetInsuranceCompanyDTO>> Handle(UpdateInsuranceCompanyCommand request, CancellationToken cancellationToken)
@@ -51,7 +49,7 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands
                 return Result<GetInsuranceCompanyDTO>.Failure("Insurance Company not found");
             }
 
-            _mapper.Map(request, existingEntry);
+            request.Adapt(existingEntry);
             existingEntry.UpdatedBy = "SystemAudit";
             existingEntry.UpdatedDate = DateTime.Now;
 
@@ -59,7 +57,7 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands
             if (success)
             {
                 await _unitOfWork.CommitAsync();
-                return Result<GetInsuranceCompanyDTO>.Success(_mapper.Map<GetInsuranceCompanyDTO>(existingEntry), "Insurance Company updated successfully");
+                return Result<GetInsuranceCompanyDTO>.Success(existingEntry.Adapt<GetInsuranceCompanyDTO>(), "Insurance Company updated successfully");
             }
             return Result<GetInsuranceCompanyDTO>.Failure("Failed to update Insurance Company");
         }

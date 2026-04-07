@@ -1,4 +1,5 @@
-﻿namespace InsuranceBrokerSystem.Application.Common.Mapping.Clients
+/*
+namespace InsuranceBrokerSystem.Application.Common.Mapping.Clients
 {
     public class ClientMappingProfile:Profile
     {
@@ -22,3 +23,4 @@
         }
     }
 }
+*/

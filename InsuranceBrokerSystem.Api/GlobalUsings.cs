@@ -13,9 +13,8 @@ global using System.Text;
 global using System.Threading.Tasks;
 global using MediatR;
 global using FluentValidation;
-global using FluentValidation;
 global using FluentValidation.AspNetCore;
-global using MediatR;
+global using Mapster;
 
 
 // ── ASP.NET Core ─────────────────────────────────────────────
@@ -25,7 +24,6 @@ global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.DependencyInjection;
 
 // ── Third-party ──────────────────────────────────────────────
-global using AutoMapper;
 
 // ── UI (API Routes) ──────────────────────────────────────────
 global using InsuranceBrokerSystem.UI;
@@ -37,7 +35,6 @@ global using InsuranceBrokerSystem.Domain.Entities.Master_Table;
 global using InsuranceBrokerSystem.Application.Common.Interfaces.Persistence.Financial;
 global using InsuranceBrokerSystem.Application.Common.Interfaces.UnitOfWork;
 global using InsuranceBrokerSystem.Application.Common.Interfaces.Persistence.Clients;
-global using InsuranceBrokerSystem.Application.Common.Mapping.Clients;
 // ── Application — DTOs ───────────────────────────────────────
 global using InsuranceBrokerSystem.Application.DTOs.Financial.Account;
 global using InsuranceBrokerSystem.Application.DTOs.Financial.InsuranceCompanyAccount;
@@ -49,7 +46,7 @@ global using InsuranceBrokerSystem.Application.DTOs.Master_Table;
 global using InsuranceBrokerSystem.Application.Services.Master_Table;
 global using InsuranceBrokerSystem.Application.Services.Financial;
 global using InsuranceBrokerSystem.Application.Interfaces.Master_Table;
-
+global using InsuranceBrokerSystem.Application.Common.Mapping;
 // ── Application — Features ───────────────────────────────────
 global using InsuranceBrokerSystem.Application.Features.Financial.Accounts.Queries;
 global using InsuranceBrokerSystem.Application.Features.InsuranceClasses.Commands.AddInsuranceClass;
@@ -79,11 +76,10 @@ global using InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Comma
 global using InsuranceBrokerSystem.Infrastructure.Data;
 global using InsuranceBrokerSystem.Infrastructure.Repositories.Master_Table;
 global using InsuranceBrokerSystem.Infrastructure.Repositories.Financial;
-global using InsuranceBrokerSystem.Infrastructure.UnitOfWork;
 global using InsuranceBrokerSystem.Infrastructure.Repositories.Clients;
 // ── Mapping Profiles ─────────────────────────────────────────
-global using InsuranceBrokerSystem.Application.Common.Mapping.Financial;
-global using InsuranceBrokerSystem.Application.Common.Mapping.MasterTable;
-global using InsuranceBrokerSystem.UI.UIMappings;
-global using InsuranceBrokerSystem.UI.UI.MasterTable;
+
+
+
+global using InsuranceBrokerSystem.Domain.Entities.Financial;
 

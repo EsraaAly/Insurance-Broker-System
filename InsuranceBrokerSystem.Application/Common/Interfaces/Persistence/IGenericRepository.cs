@@ -3,7 +3,7 @@ namespace InsuranceBrokerSystem.Application.Common.Interfaces.Persistence
 {
     public interface IGenericRepository<TEntity>where TEntity : class
     {
-        Task<List<TEntity>> GetAllEntitytiesAsync();
+        Task<List<TEntity>> GetAllEntitytiesAsync(params Expression<Func<TEntity, object>>[] includes);
         Task<TEntity> GetEntityByIdAsync(int Id);
         Task<TEntity> GetEntityByIdWithIncludesAsync(int Id,params Expression<Func<TEntity, object>>[]includes);
 

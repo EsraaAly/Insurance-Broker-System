@@ -8,12 +8,10 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Queries.GetIn
     public class GetInsuranceLOBByClassIdHandler : IRequestHandler<GetInsuranceLOBByClassIdQuery, Result<List<GetInsuranceLOBDTO>>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public GetInsuranceLOBByClassIdHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public GetInsuranceLOBByClassIdHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
 
         public async Task<Result<List<GetInsuranceLOBDTO>>> Handle(GetInsuranceLOBByClassIdQuery request, CancellationToken cancellationToken)
@@ -23,7 +21,7 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Queries.GetIn
             {
                 return Result<List<GetInsuranceLOBDTO>>.Failure("No Lines of Business found for this class");
             }
-            List<GetInsuranceLOBDTO> dto = _mapper.Map<List<GetInsuranceLOBDTO>>(LOB_List);
+            List<GetInsuranceLOBDTO> dto = LOB_List.Adapt<List<GetInsuranceLOBDTO>>();
             return Result<List<GetInsuranceLOBDTO>>.Success(dto);
         }
     }

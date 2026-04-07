@@ -4,12 +4,10 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
     public class InsuranceProductService : IInsuranceProductService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public InsuranceProductService(IUnitOfWork unitOfWork, IMapper mapper)
+        public InsuranceProductService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
         public async Task<Result<List<GetInsuranceProductDTO>>> GetInsuranceProductByInsuranceIdAsync(int id)
         {
@@ -18,7 +16,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             {
                 return Result<List<GetInsuranceProductDTO>>.Failure("No products found for this insurance company");
             }
-            var dto = _mapper.Map<List<GetInsuranceProductDTO>>(products);
+            var dto = products.Adapt<List<GetInsuranceProductDTO>>();
             return Result<List<GetInsuranceProductDTO>>.Success(dto);
         }
     }

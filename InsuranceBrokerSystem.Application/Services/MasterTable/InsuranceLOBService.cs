@@ -4,13 +4,10 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
     public class InsuranceLOBService : IInsuranceLOBService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
 
-        public InsuranceLOBService(IUnitOfWork unitOfWork,IMapper mapper)
+        public InsuranceLOBService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
-
         }
         public async Task<Result<bool>> AddLOBAsync(AddInsuranceLOBDTO insuranceLine)
         {
@@ -89,7 +86,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             {
                 return Result<List<GetInsuranceLOBDTO>>.Failure("No Lines of Business found for this class");
             }
-            List<GetInsuranceLOBDTO> dto = _mapper.Map<List<GetInsuranceLOBDTO>>(LOB_List);
+            List<GetInsuranceLOBDTO> dto = LOB_List.Adapt<List<GetInsuranceLOBDTO>>();
             return Result<List<GetInsuranceLOBDTO>>.Success(dto);
         }
 

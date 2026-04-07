@@ -5,14 +5,11 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IInsuranceCompanyAccountService _insuranceCompanyAccountService;
-        private readonly IMapper _mapper;
         
         public InsuranceCompanyService(IUnitOfWork unitOfWork,
-                                       IMapper mapper,
                                        IInsuranceCompanyAccountService insuranceCompanyAccountService)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
             _insuranceCompanyAccountService = insuranceCompanyAccountService;
         }
 
@@ -20,7 +17,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
         {
             if (dto == null) return Result<GetInsuranceCompanyDTO>.Failure("Data is null");
 
-            InsuranceCompany entry = _mapper.Map<InsuranceCompany>(dto);
+            InsuranceCompany entry = dto.Adapt<InsuranceCompany>();
             entry.CreatedBy = "Israa";
             entry.CreatedDate = DateTime.Now;
 
@@ -40,7 +37,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             entry = await _unitOfWork.InsuranceCompanyRepository.AddEntityAsync(entry);
             await _unitOfWork.CommitAsync();
 
-            GetInsuranceCompanyDTO company = _mapper.Map<GetInsuranceCompanyDTO>(entry);
+            GetInsuranceCompanyDTO company = entry.Adapt<GetInsuranceCompanyDTO>();
             return Result<GetInsuranceCompanyDTO>.Success(company, "Insurance Company added successfully");
         }
 
@@ -63,7 +60,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             {
                 return Result<List<GetInsuranceCompanyDTO>>.Failure("No insurance companies found");
             }
-            List<GetInsuranceCompanyDTO> dto = _mapper.Map<List<GetInsuranceCompanyDTO>>(entries);
+            List<GetInsuranceCompanyDTO> dto = entries.Adapt<List<GetInsuranceCompanyDTO>>();
             return Result<List<GetInsuranceCompanyDTO>>.Success(dto);
         }
 
@@ -75,7 +72,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                 return Result<GetInsuranceCompanyDTO>.Failure("Insurance Company not found");
             }
 
-            GetInsuranceCompanyDTO dto = _mapper.Map<GetInsuranceCompanyDTO>(entry);
+            GetInsuranceCompanyDTO dto = entry.Adapt<GetInsuranceCompanyDTO>();
             return Result<GetInsuranceCompanyDTO>.Success(dto);
         }
 
@@ -87,13 +84,13 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
                 return Result<GetInsuranceCompanyDTO>.Failure("Insurance Company not found");
             }
 
-            GetInsuranceCompanyDTO dto = _mapper.Map<GetInsuranceCompanyDTO>(entry);
+            GetInsuranceCompanyDTO dto = entry.Adapt<GetInsuranceCompanyDTO>();
             return Result<GetInsuranceCompanyDTO>.Success(dto);
         }
 
         /// <summary>
         /// Updates an existing Insurance Company and its related entities using a transactional Unit of Work.
-        /// Demonstrates the use of AutoMapper for complex object-graph updates.
+        /// Demonstrates the use of Mapster for complex object-graph updates.
         /// </summary>
         public async Task<Result<GetInsuranceCompanyDTO>> UpdateInsuranceCompaniesAsync(UpdateInsuranceCompanyDTO dto)
         {
@@ -106,7 +103,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             }
 
             // 2. Map DTO changes onto the tracked entity
-            _mapper.Map(dto, existingEntry);
+            dto.Adapt(existingEntry);
 
             // 3. Audit trail tracking
             existingEntry.UpdatedBy = "SystemAudit";
@@ -117,7 +114,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             if (success)
             {
                 await _unitOfWork.CommitAsync();
-                return Result<GetInsuranceCompanyDTO>.Success(_mapper.Map<GetInsuranceCompanyDTO>(existingEntry), "Insurance Company updated successfully");
+                return Result<GetInsuranceCompanyDTO>.Success(existingEntry.Adapt<GetInsuranceCompanyDTO>(), "Insurance Company updated successfully");
             }
             return Result<GetInsuranceCompanyDTO>.Failure("Failed to update Insurance Company");
         }

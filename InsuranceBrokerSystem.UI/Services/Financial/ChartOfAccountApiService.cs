@@ -1,17 +1,13 @@
-
+﻿
 namespace InsuranceBrokerSystem.UI.Services.Financial
 {
     public class ChartOfAccountApiService
     {
-        private readonly HttpClient _httpClient;
-        
-        public ChartOfAccountApiService() 
+        private static readonly HttpClient _httpClient = new HttpClient
         {
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44314")
-            };
-        }
+            BaseAddress = new Uri("https://localhost:44314")
+        };
+        public ChartOfAccountApiService() { }
 
         public async Task<bool> AddAccountAsync(Account account)
         {
@@ -64,25 +60,17 @@ namespace InsuranceBrokerSystem.UI.Services.Financial
         {
             try
             {
-                // CHANGE: Use ApiResponse<List<GetAccountDTO>> here
                 var response = await _httpClient.GetFromJsonAsync<ApiResponse<List<GetAccountDTO>>>(ApiRoutes.Financial.Account.GetAllAccounts);
 
-                // Now 'response' is the envelope, which HAS .Success and .Data
                 if (response != null && response.Succeeded)
                 {
-                    List<GetAccountDTO> dtos = response.Data ?? new List<GetAccountDTO>();
-                    return dtos.Select(dto => MapDtoToUIModel(dto, "No Parent")).ToList();
+                    return response.Data.Select(dto => MapDtoToUIModel(dto)).ToList();
                 }
-                else
-                {
-                    string msg = response?.Message ?? "Unknown error";
-                    MessageBox.Show($"Server returned an error: {msg}");
-                    return new List<Account>();
-                }
+                return new List<Account>();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to load accounts: {ex.Message}");
+                MessageBox.Show($"Connection Error: {ex.Message}");
                 return new List<Account>();
             }
         }
@@ -114,6 +102,7 @@ namespace InsuranceBrokerSystem.UI.Services.Financial
 
         private Account MapDtoToUIModel(GetAccountDTO dto, string parentName = null)
         {
+
             var account = new Account
             {
                 Id = dto.Id,
@@ -127,10 +116,11 @@ namespace InsuranceBrokerSystem.UI.Services.Financial
                 IsPostable = dto.IsPostable
             };
 
-            if (dto.Children != null)
+            if (dto.Children != null && dto.Children.Any())
             {
                 foreach (var childDto in dto.Children)
                 {
+                    // تأكد إن الابن مش هو نفسه الأب عشان متدخلش في Infinite Loop
                     account.Children.Add(MapDtoToUIModel(childDto, account.AccountName));
                 }
             }

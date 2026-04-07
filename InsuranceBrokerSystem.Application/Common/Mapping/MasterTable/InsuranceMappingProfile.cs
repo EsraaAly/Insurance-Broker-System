@@ -1,4 +1,4 @@
-
+/*
 namespace InsuranceBrokerSystem.Application.Common.Mapping.MasterTable
 {
     public class InsuranceMappingProfile:Profile
@@ -22,3 +22,4 @@ namespace InsuranceBrokerSystem.Application.Common.Mapping.MasterTable
         }
     }
 }
+*/

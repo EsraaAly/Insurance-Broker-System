@@ -1,4 +1,4 @@
-
+/*
 namespace InsuranceBrokerSystem.UI.UIMappings
 {
     public class AccountMappingProfileUI:Profile
@@ -13,3 +13,4 @@ namespace InsuranceBrokerSystem.UI.UIMappings
         }
     }
 }
+*/

@@ -1,4 +1,4 @@
-
+/*
 using InsuranceBrokerSystem.Domain.Entities.Financial;
 
 namespace InsuranceBrokerSystem.Application.Common.Mapping.Financial
@@ -13,3 +13,4 @@ namespace InsuranceBrokerSystem.Application.Common.Mapping.Financial
         }
     }
 }
+*/

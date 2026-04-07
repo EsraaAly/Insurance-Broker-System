@@ -1,3 +1,4 @@
+/*
 using InsuranceBrokerSystem.Domain.Entities.Master_Table;
 
 namespace InsuranceBrokerSystem.UI.UI.MasterTable
@@ -13,3 +14,4 @@ namespace InsuranceBrokerSystem.UI.UI.MasterTable
         }
     }
 }
+*/

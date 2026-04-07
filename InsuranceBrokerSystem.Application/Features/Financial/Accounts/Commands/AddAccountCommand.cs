@@ -1,15 +1,13 @@
-﻿namespace InsuranceBrokerSystem.Application.Features.Financial.Accounts.Commands
+namespace InsuranceBrokerSystem.Application.Features.Financial.Accounts.Commands
 {
     public record AddAccountCommand(CreateAccountDTO dto):IRequest<Result<GetAccountDTO>>;
 
     public class AddAccountHandler : IRequestHandler<AddAccountCommand, Result<GetAccountDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        public AddAccountHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public AddAccountHandler(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
-            _mapper = mapper;
         }
         public async Task<Result<GetAccountDTO>> Handle(AddAccountCommand request, CancellationToken cancellationToken)
         {
@@ -24,9 +22,9 @@
 
                 await _unitOfWork.AccountNumberRepository.UpdateEntityAsync(existingDeleted);
                 await _unitOfWork.CommitAsync();
-                return Result<GetAccountDTO>.Success(_mapper.Map<GetAccountDTO>(existingDeleted), "Account restored successfully");
+                return Result<GetAccountDTO>.Success(existingDeleted.Adapt<GetAccountDTO>(), "Account restored successfully");
             }
-            Account acc = _mapper.Map<Account>(request.dto);
+            Account acc = request.dto.Adapt<Account>();
 
             var parent = await _unitOfWork.AccountNumberRepository.GetEntityByIdAsync(request.dto.ParentId ?? 0);
             var siblingsResponse = parent != null ? await _unitOfWork.AccountNumberRepository.GetAllEntitytiesAsync() : null;
@@ -49,7 +47,7 @@
             acc = await _unitOfWork.AccountNumberRepository.AddEntityAsync(acc);
             await _unitOfWork.CommitAsync();
 
-            GetAccountDTO accDTO = _mapper.Map<GetAccountDTO>(acc);
+            GetAccountDTO accDTO = acc.Adapt<GetAccountDTO>();
             return Result<GetAccountDTO>.Success(accDTO, "Account created successfully");
         }
     }

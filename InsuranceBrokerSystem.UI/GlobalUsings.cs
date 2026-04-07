@@ -26,7 +26,7 @@ global using System.Collections.ObjectModel;
 global using Azure;
 
 // ── Third-party ──────────────────────────────────────────────
-global using AutoMapper;
+global using Mapster;
 
 // ── Project Namespaces ───────────────────────────────────────
 global using InsuranceBrokerSystem.UI.Views;

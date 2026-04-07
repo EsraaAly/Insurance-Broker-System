@@ -1,5 +1,4 @@
-
-namespace InsuranceBrokerSystem.Infrastructure.UnitOfWork
+namespace InsuranceBrokerSystem.Infrastructure.Repositories
 {
     public class UnitOfWork:IUnitOfWork
     {

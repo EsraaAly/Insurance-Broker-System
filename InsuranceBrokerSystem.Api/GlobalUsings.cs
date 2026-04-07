@@ -12,6 +12,11 @@ global using System.Reflection;
 global using System.Text;
 global using System.Threading.Tasks;
 global using MediatR;
+global using FluentValidation;
+global using FluentValidation;
+global using FluentValidation.AspNetCore;
+global using MediatR;
+
 
 // ── ASP.NET Core ─────────────────────────────────────────────
 global using Microsoft.AspNetCore.Http;
@@ -31,6 +36,8 @@ global using InsuranceBrokerSystem.Domain.Enums.Master_Table;
 global using InsuranceBrokerSystem.Domain.Entities.Master_Table;
 global using InsuranceBrokerSystem.Application.Common.Interfaces.Persistence.Financial;
 global using InsuranceBrokerSystem.Application.Common.Interfaces.UnitOfWork;
+global using InsuranceBrokerSystem.Application.Common.Interfaces.Persistence.Clients;
+global using InsuranceBrokerSystem.Application.Common.Mapping.Clients;
 // ── Application — DTOs ───────────────────────────────────────
 global using InsuranceBrokerSystem.Application.DTOs.Financial.Account;
 global using InsuranceBrokerSystem.Application.DTOs.Financial.InsuranceCompanyAccount;
@@ -66,14 +73,14 @@ global using InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Queries.Ge
 global using InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Queries.GetInsuranceLOBByClassId;
 global using InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Queries.GetInsuranceLOBById;
 global using InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Queries.GetInsuranceProductsByCompanyId;
-
+global using InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands.GenerateInsuranceCompanyAccounts;
 
 // ── Infrastructure ───────────────────────────────────────────
 global using InsuranceBrokerSystem.Infrastructure.Data;
 global using InsuranceBrokerSystem.Infrastructure.Repositories.Master_Table;
 global using InsuranceBrokerSystem.Infrastructure.Repositories.Financial;
 global using InsuranceBrokerSystem.Infrastructure.UnitOfWork;
-
+global using InsuranceBrokerSystem.Infrastructure.Repositories.Clients;
 // ── Mapping Profiles ─────────────────────────────────────────
 global using InsuranceBrokerSystem.Application.Common.Mapping.Financial;
 global using InsuranceBrokerSystem.Application.Common.Mapping.MasterTable;

@@ -16,26 +16,35 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands
 
         public async Task<Result<bool>> Handle(GenerateInsuranceCompanyAccountsCommand request, CancellationToken cancellationToken)
         {
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+
             var company = await _unitOfWork.InsuranceCompanyRepository.GetEntityByIdAsync(request.CompanyId);
             if (company == null)
             {
                 return Result<bool>.Failure("Insurance Company not found");
             }
 
+            var parent1 = await GetParentIdByCodeAsync("002-001-001-000");
+            var parent2 = await GetParentIdByCodeAsync("002-001-002-000");
+            var parent3 = await GetParentIdByCodeAsync("001-001-002-000");
+            var parent4 = await GetParentIdByCodeAsync("004-001-001-000");
+            var parent5 = await GetParentIdByCodeAsync("004-001-002-000");
+
             var accountDefinitions = new List<(string Suffix, int ParentId, Action<string> SetField)>
             {
-                ("Commission Accrued", await GetParentIdByCodeAsync("002-001-001-000"), val => company.AccNoCommAccrued = val),
-                ("Commission Due",     await GetParentIdByCodeAsync("002-001-001-000"), val => company.AccNoCommDue = val),
-                ("VAT Accrued",        await GetParentIdByCodeAsync("002-001-002-000"), val => company.AccNoVATAccrued = val),
-                ("VAT Receivable",     await GetParentIdByCodeAsync("001-001-002-000"), val => company.AccNoVATReceivable = val),
-                ("Gross Premium",      await GetParentIdByCodeAsync("004-001-001-000"), val => company.AccNoGrossPremium = val),
-                ("Gross VAT",          await GetParentIdByCodeAsync("004-001-002-000"), val => company.AccNoGrossVAT = val),
-                ("Net Premium",        await GetParentIdByCodeAsync("004-001-001-000"), val => company.AccNoNetPremium = val),
-                ("UW VAT Payable",     await GetParentIdByCodeAsync("002-001-002-000"), val => company.AccNoUWVATPayable = val)
+                ("Commission Accrued", parent1, val => company.AccNoCommAccrued = val),
+                ("Commission Due",     parent1, val => company.AccNoCommDue = val),
+                ("VAT Accrued",        parent2, val => company.AccNoVATAccrued = val),
+                ("VAT Receivable",     parent3, val => company.AccNoVATReceivable = val),
+                ("Gross Premium",      parent4, val => company.AccNoGrossPremium = val),
+                ("Gross VAT",          parent5, val => company.AccNoGrossVAT = val),
+                ("Net Premium",        parent4, val => company.AccNoNetPremium = val),
+                ("UW VAT Payable",     parent2, val => company.AccNoUWVATPayable = val)
             };
 
-            bool success = await ExecuteGenerationAsync(company, accountDefinitions);
-            if (success)
+            var Result = await ExecuteGenerationAsync(company, accountDefinitions);
+            if (Result.Succeeded)
             {
                 await _unitOfWork.CommitAsync();
                 return Result<bool>.Success(true, "Accounts generated and mapped successfully.");
@@ -50,7 +59,7 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands
             return account?.Id ?? 0;
         }
 
-        private async Task<bool> ExecuteGenerationAsync(InsuranceCompany company, List<(string Suffix, int ParentId, Action<string> SetField)> accountDefinitions)
+        private async Task<Result<bool>> ExecuteGenerationAsync(InsuranceCompany company, List<(string Suffix, int ParentId, Action<string> SetField)> accountDefinitions)
         {
             foreach (var def in accountDefinitions)
             {
@@ -71,14 +80,26 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands
                 };
 
                 var result = await _unitOfWork.AccountNumberRepository.AddEntityAsync(account);
-                if (result != null)
-                {
-                    def.SetField(result.AccountNumber);
-                }
+                if (result == null)
+                    return Result<bool>.Failure($"Failed to create account for {def.Suffix}");
+
+                def.SetField(result.AccountNumber);
             }
 
             await _unitOfWork.InsuranceCompanyRepository.UpdateEntityAsync(company);
-            return true;
+
+            return Result<bool>.Success(true);
+        }
+    }
+
+    public class GenerateInsuranceCompanyAccountsValidator
+    : AbstractValidator<GenerateInsuranceCompanyAccountsCommand>
+    {
+        public GenerateInsuranceCompanyAccountsValidator()
+        {
+            RuleFor(x => x.CompanyId)
+             .GreaterThan(0)
+             .WithMessage("CompanyId must exist");
         }
     }
 }

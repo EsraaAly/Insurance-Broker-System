@@ -1,7 +1,3 @@
-using InsuranceBrokerSystem.Application.Common.Interfaces.Persistence.Clients;
-using InsuranceBrokerSystem.Application.Common.Mapping.Clients;
-using InsuranceBrokerSystem.Infrastructure.Repositories.Clients;
-
 namespace InsuranceBrokerSystem.Api
 {
     public class Program
@@ -13,6 +9,10 @@ namespace InsuranceBrokerSystem.Api
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddValidatorsFromAssembly(
+                    typeof(GenerateInsuranceCompanyAccountsValidator).Assembly);
+            builder.Services.AddFluentValidationAutoValidation();
+
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")));
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -46,6 +46,22 @@ namespace InsuranceBrokerSystem.Api
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
+
+            app.UseExceptionHandler(errorApp =>
+            {
+                errorApp.Run(async context =>
+                {
+                    var error = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+
+                    context.Response.StatusCode = 500;
+
+                    await context.Response.WriteAsJsonAsync(new
+                    {
+                        Message = error?.Error.Message,
+                        StackTrace = error?.Error.StackTrace
+                    });
+                });
+            });
 
             app.UseHttpsRedirection();
 

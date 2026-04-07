@@ -14,6 +14,7 @@ global using System.Threading.Tasks;
 // ── Third-party ──────────────────────────────────────────────
 global using AutoMapper;
 global using MediatR;
+global using FluentValidation;
 // ── Domain ───────────────────────────────────────────────────
 global using InsuranceBrokerSystem.Domain.Entities.Financial;
 global using InsuranceBrokerSystem.Domain.Entities.Master_Table;

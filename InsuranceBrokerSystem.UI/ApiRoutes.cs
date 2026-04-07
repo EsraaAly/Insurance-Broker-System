@@ -23,7 +23,7 @@ namespace InsuranceBrokerSystem.UI
             public static class InsuranceLOB
             {
                 public const string GetAllInsuranceLOBs = $"api/{Version}/InsuranceLOB/GetAll";
-                public const string GetLOBByClassIdAsync = $"api/{Version}/InsuranceLOB/GetById";
+                public const string GetLOBByClassIdAsync = $"api/{Version}/InsuranceLOB/GetByClassId";
                 public const string AddInsuranceLOB = $"api/{Version}/InsuranceLOB/Add";
                 public const string UpdateInsuranceLOB = $"api/{Version}/InsuranceLOB/Update";
                 public const string DeleteInsuranceLOB = $"api/{Version}/InsuranceLOB/Delete";

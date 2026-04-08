@@ -113,8 +113,22 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
                 .HasFilter("[IsDeleted] = 0")
                 .IsUnique();
 
+            modelBuilder.Entity<Domain.Entities.Client.Client>(entity =>
+            {
+                entity.Property(e => e.ClientName).IsRequired().HasMaxLength(200);
+                entity.Property(e => e.ClientNameAr).IsRequired().HasMaxLength(200);
+
+                entity.Property(e => e.IdentityNo).HasMaxLength(15);
+                entity.Property(e => e.Nationality).HasMaxLength(50);
+
+                entity.Property(e => e.CommercialRegistrationNo).HasMaxLength(20);
+                entity.Property(e => e.VATNo).HasMaxLength(15);
+            });
+            modelBuilder.Entity<Client>()
+            .ToTable(t => t.HasCheckConstraint("CK_Client_Validation",
+        "(ClientType = 1 AND IdentityNo IS NOT NULL) OR (ClientType = 2 AND CommercialRegistrationNo IS NOT NULL)"));
             modelBuilder.Entity<ClientContact>()
-                .HasKey(x => x.Id);
+            .HasKey(x => x.Id);
             modelBuilder.Entity<ClientDocument>()
                 .HasKey(x => x.Id);
             modelBuilder.Entity<ClientBankAccount>()

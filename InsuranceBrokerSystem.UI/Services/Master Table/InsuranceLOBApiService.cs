@@ -1,106 +1,119 @@
-﻿using Azure;
-using InsuranceBrokerSystem.Application.DTOs.Master_Table.Insurance_Class_and_Line;
-using System;
+﻿using InsuranceBrokerSystem.Application.DTOs.Master_Table;
 using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Documents;
 
 namespace InsuranceBrokerSystem.UI.Services.Master_Table
 {
     public class InsuranceLOBApiService
     {
         private readonly HttpClient _httpClient;
+        private const string BaseUrl = "https://localhost:44314";
 
         public InsuranceLOBApiService()
         {
             _httpClient = new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:44314")
+                BaseAddress = new Uri(BaseUrl)
             };
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
-        public async Task<List<GetInsuranceLOBDTO>> GetAllLOBAsync()
+        public async Task<ApiResponse<List<GetInsuranceLOBDTO>>> GetAllLOBAsync()
         {
-            var response = await _httpClient.GetAsync(ApiRoutes.MasterTable.InsuranceLOB.GetAllInsuranceLOBs);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"API Error: {response.StatusCode} - {error}");
+                var response = await _httpClient.GetAsync(ApiRoutes.MasterTable.InsuranceLOB.GetAllInsuranceLOBs);
+                return await ApiResponseHandler.HandleResponseAsync<List<GetInsuranceLOBDTO>>(response);
             }
-
-             var ApiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<List<GetInsuranceLOBDTO>>>();
-            return ApiResponse.Data ?? new List<GetInsuranceLOBDTO>();
+            catch (Exception ex)
+            {
+                ApiResponseHandler.ShowError($"Error retrieving insurance LOBs: {ex.Message}");
+                return ApiResponse<List<GetInsuranceLOBDTO>>.Failure("Failed to retrieve insurance LOBs");
+            }
         }
 
-        public async Task<List<GetInsuranceLOBDTO>> GetLOBByClassIdAsync(int classId)
+        public async Task<ApiResponse<List<GetInsuranceLOBDTO>>> GetLOBByClassIdAsync(int classId)
         {
-            var response = await _httpClient.GetAsync($"{ApiRoutes.MasterTable.InsuranceLOB.GetLOBByClassIdAsync}/{classId}");
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"API Error: {response.StatusCode} - {error}");
+                var url = ApiRoutes.MasterTable.InsuranceLOB.GetLOBByClassIdAsync.Replace("{id}", classId.ToString());
+                var response = await _httpClient.GetAsync(url);
+                return await ApiResponseHandler.HandleResponseAsync<List<GetInsuranceLOBDTO>>(response);
             }
-
-            var ApiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<List<GetInsuranceLOBDTO>>>();
-            return ApiResponse.Data ?? new List<GetInsuranceLOBDTO>();
-
+            catch (Exception ex)
+            {
+                ApiResponseHandler.ShowError($"Error retrieving insurance LOBs: {ex.Message}");
+                return ApiResponse<List<GetInsuranceLOBDTO>>.Failure("Failed to retrieve insurance LOBs");
+            }
         }
 
-        public async Task<bool> AddLOBAsync(AddInsuranceLOBDTO dto)
+        public async Task<ApiResponse<GetInsuranceLOBDTO>> AddLOBAsync(AddInsuranceLOBDTO dto)
         {
-            var response = await _httpClient.PostAsJsonAsync(ApiRoutes.MasterTable.InsuranceLOB.AddInsuranceLOB,dto);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                MessageBox.Show("Saved Successfully!");
-                return true;
-
+                var content = JsonContent.Create(dto);
+                var response = await _httpClient.PostAsync(ApiRoutes.MasterTable.InsuranceLOB.AddInsuranceLOB, content);
+                var result = await ApiResponseHandler.HandleResponseAsync<GetInsuranceLOBDTO>(response);
+                
+                if (result.Successed)
+                {
+                    ApiResponseHandler.ShowSuccess("Insurance LOB added successfully!");
+                }
+                
+                return result;
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Error: Could not save data to the server.");
+                ApiResponseHandler.ShowError($"Error adding insurance LOB: {ex.Message}");
+                return ApiResponse<GetInsuranceLOBDTO>.Failure("Failed to add insurance LOB");
             }
-            return false;
         }
 
-        public async Task UpdateLOBAsync(UpdateInsuranceLOBDTO dto)
+        public async Task<ApiResponse<string>> DeleteLOBAsync(int id)
         {
-            var response = await _httpClient.PutAsJsonAsync(ApiRoutes.MasterTable.InsuranceLOB.UpdateInsuranceLOB, dto);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                MessageBox.Show("Update Successfully!");
+                var url = ApiRoutes.MasterTable.InsuranceLOB.DeleteInsuranceLOB.Replace("{id}", id.ToString());
+                var response = await _httpClient.DeleteAsync(url);
+                var result = await ApiResponseHandler.HandleResponseAsync<string>(response);
+                
+                if (result.Successed)
+                {
+                    ApiResponseHandler.ShowSuccess("Insurance LOB deleted successfully!");
+                }
+                
+                return result;
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Error: Could not Update data to the server.");
-
+                ApiResponseHandler.ShowError($"Error deleting insurance LOB: {ex.Message}");
+                return ApiResponse<string>.Failure("Failed to delete insurance LOB");
             }
         }
 
-        public async Task DeleteLOBAsync(int id)
+        public async Task<ApiResponse<GetInsuranceLOBDTO>> UpdateLOBAsync(UpdateInsuranceLOBDTO dto)
         {
-            var response = await _httpClient.DeleteAsync($"{ApiRoutes.MasterTable.InsuranceLOB.DeleteInsuranceLOB}/{ id}");
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                MessageBox.Show("Update Successfully!");
+                var content = JsonContent.Create(dto);
+                var response = await _httpClient.PutAsync(ApiRoutes.MasterTable.InsuranceLOB.UpdateInsuranceLOB, content);
+                var result = await ApiResponseHandler.HandleResponseAsync<GetInsuranceLOBDTO>(response);
+                
+                if (result.Successed)
+                {
+                    ApiResponseHandler.ShowSuccess("Insurance LOB updated successfully!");
+                }
+                
+                return result;
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Error: Could not Update data to the server.");
-
+                ApiResponseHandler.ShowError($"Error updating insurance LOB: {ex.Message}");
+                return ApiResponse<GetInsuranceLOBDTO>.Failure("Failed to update insurance LOB");
             }
         }
-
-
     }
 }

@@ -62,7 +62,7 @@ namespace InsuranceBrokerSystem.UI.Services.Financial
             {
                 var response = await _httpClient.GetFromJsonAsync<ApiResponse<List<GetAccountDTO>>>(ApiRoutes.Financial.Account.GetAllAccounts);
 
-                if (response != null && response.Succeeded)
+                if (response != null && response.Data != null)
                 {
                     return response.Data.Select(dto => MapDtoToUIModel(dto)).ToList();
                 }

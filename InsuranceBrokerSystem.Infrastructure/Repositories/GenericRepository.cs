@@ -43,12 +43,12 @@ namespace InsuranceBrokerSystem.Infrastructure.Repositories
 
         public async Task<TEntity> GetEntityByIdAsync(int Id)
         {
-            return await _appDbContext.Set<TEntity>().Where(u => u.Id == Id && u.IsDeleted == false).FirstOrDefaultAsync();
+            return await _appDbContext.Set<TEntity>().AsNoTracking().Where(u => u.Id == Id && u.IsDeleted == false).FirstOrDefaultAsync();
         }
 
         public async Task<TEntity> GetEntityByIdWithIncludesAsync(int Id, params Expression<Func<TEntity, object>>[] includes)
         {
-            IQueryable<TEntity> query = _appDbContext.Set<TEntity>();
+            IQueryable<TEntity> query = _appDbContext.Set<TEntity>().AsNoTracking();
             if (includes != null) 
             {
                 foreach(var include in includes)

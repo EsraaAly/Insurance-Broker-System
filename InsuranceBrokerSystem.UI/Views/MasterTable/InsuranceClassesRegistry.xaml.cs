@@ -33,18 +33,21 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
             try
             {
-
-                var data = await service.AddClassAsync(newClass);
-                ClearClass();
-                LoadClassesDate();
-
-
+                var result = await service.AddClassAsync(newClass);
+                if (result.Successed)
+                {
+                    ClearClass();
+                    LoadClassesDate();
+                }
+                else
+                {
+                    ApiResponseHandler.ShowError($"Error saving class: {result.Message}");
+                }
             }
             catch (Exception ex)
             {
+                ApiResponseHandler.ShowError($"Error saving class: {ex.Message}");
             }
-
-
         }
 
         private void ClearClass_Click(object sender, RoutedEventArgs e)
@@ -74,8 +77,15 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
                     ClassName = selectedRowData.ClassName,
                     Abbreviation = selectedRowData.Abbreviation
                 };
-                await service.UpdateClassAsync(dto);
-                LoadClassesDate();
+                var result = await service.UpdateClassAsync(dto);
+                if (result.Successed)
+                {
+                    LoadClassesDate();
+                }
+                else
+                {
+                    ApiResponseHandler.ShowError($"Error updating class: {result.Message}");
+                }
             }
                       
         }
@@ -91,8 +101,15 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             if (selectedRowData != null)
             {
                 Id = selectedRowData.Id;
-                await service.DeleteClassAsync(Id);
-                LoadClassesDate();
+                var result = await service.DeleteClassAsync(Id);
+                if (result.Successed)
+                {
+                    LoadClassesDate();
+                }
+                else
+                {
+                    ApiResponseHandler.ShowError($"Error deleting class: {result.Message}");
+                }
             }
         }
 
@@ -106,11 +123,15 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
                 LineOfBusiness = txtLineOfBusiness.Text,
                 Abbreviation = txtAbb.Text,
             };
-            bool success = await LOBService.AddLOBAsync(addInsuranceLOBDTO);
-            if (success)
+            var result = await LOBService.AddLOBAsync(addInsuranceLOBDTO);
+            if (result.Successed)
             {
                 ClearLine();
                 LoadLOBsDate();
+            }
+            else
+            {
+                ApiResponseHandler.ShowError($"Error saving line of business: {result.Message}");
             }
         }
 
@@ -140,8 +161,15 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
                     Abbreviation = selectedRowData.Abbreviation,
                     ClassID = selectedRowData.ClassID,
                 };
-                await LOBService.UpdateLOBAsync(dto);
-               LoadLOBsDate();
+                var result = await LOBService.UpdateLOBAsync(dto);
+                if (result.Successed)
+                {
+                    LoadLOBsDate();
+                }
+                else
+                {
+                    ApiResponseHandler.ShowError($"Error updating line of business: {result.Message}");
+                }
             }
         }
 
@@ -154,8 +182,15 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             if (selectedRowData != null)
             {
                 Id = selectedRowData.Id;
-                await LOBService.DeleteLOBAsync(Id);
-                LoadLOBsDate();
+                var result = await LOBService.DeleteLOBAsync(Id);
+                if (result.Successed)
+                {
+                    LoadLOBsDate();
+                }
+                else
+                {
+                    ApiResponseHandler.ShowError($"Error deleting line of business: {result.Message}");
+                }
             }
         }
 
@@ -168,11 +203,18 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             try
             {
 
-                var data = await service.GetAllClassesAsync();
-
-                // Bind the result to your DataGrid
-                GridInsuranceClasses.ItemsSource = data;
-                CombClass.ItemsSource = data;
+                var response = await service.GetAllClassesAsync();
+                if (response.Successed)
+                {
+                    var data = response.Data;
+                    // Bind the result to your DataGrid
+                    GridInsuranceClasses.ItemsSource = data;
+                    CombClass.ItemsSource = data;
+                }
+                else
+                {
+                    ApiResponseHandler.ShowError($"Error loading classes: {response.Message}");
+                }
                 // This makes sure the first item is automatically selected!
                 if (CombClass.Items.Count > 0)
                 {
@@ -195,15 +237,17 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             try
             {
                 // 1. First, make sure the Master Classes are loaded
-                var dataList = await service.GetAllClassesAsync();
-                AllClassesList = new ObservableCollection<GetInsuranceClassDTO>(dataList);
+                var classResponse = await service.GetAllClassesAsync();
+                if (classResponse.Successed)
+                {
+                    AllClassesList = new ObservableCollection<GetInsuranceClassDTO>(classResponse.Data);
+                }
 
                 // 2. Load the Lines of Business
-                var data = await LOBService.GetAllLOBAsync();
-        
-                if (data != null)
+                var lobResponse = await LOBService.GetAllLOBAsync();
+                if (lobResponse.Successed)
                 {
-                    GridLines.ItemsSource = data;
+                    GridLines.ItemsSource = lobResponse.Data;
                 }
             }
 

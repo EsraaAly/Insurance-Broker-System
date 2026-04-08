@@ -71,8 +71,8 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
         private async void FillClassesDate()
         {
-            var ClassesDate = await _ClassService.GetAllClassesAsync();
-            InsuranceClasses = new ObservableCollection<GetInsuranceClassDTO>(ClassesDate);
+            var response = await _ClassService.GetAllClassesAsync();
+            InsuranceClasses = new ObservableCollection<GetInsuranceClassDTO>(response.Data);
 
         }
         
@@ -86,11 +86,11 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
             int selectedClassId = (int)CombBox.SelectedValue;
 
-            var LOBsDate = await _LOBService.GetLOBByClassIdAsync(selectedClassId);
+            var response = await _LOBService.GetLOBByClassIdAsync(selectedClassId);
 
             if (currentRow.avaiableLOBs != null) currentRow.avaiableLOBs.Clear();
 
-            currentRow.avaiableLOBs = new ObservableCollection<GetInsuranceLOBDTO>(LOBsDate);
+            currentRow.avaiableLOBs = new ObservableCollection<GetInsuranceLOBDTO>(response.Data);
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)

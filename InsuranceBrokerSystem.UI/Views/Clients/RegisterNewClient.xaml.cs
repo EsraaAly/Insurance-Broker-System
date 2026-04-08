@@ -8,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Win32;
+using InsuranceBrokerSystem.Application.DTOs.Client;
+using InsuranceBrokerSystem.UI.Services.Clients;
 
 namespace InsuranceBrokerSystem.UI.Views.Clients
 {
@@ -21,10 +23,25 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         public ObservableCollection<DocumentItem> Documents { get; set; }
         public ObservableCollection<BankAccountItem> BankAccounts { get; set; }
 
+        private readonly ClientService _clientService;
+        private readonly GetClientDTO _editingClient;
+
         public RegisterNewClient()
         {
             InitializeComponent();
+            _clientService = new ClientService();
+            InitializeWindow();
+        }
 
+        public RegisterNewClient(GetClientDTO clientToEdit) : this()
+        {
+            _editingClient = clientToEdit;
+            LoadClientData();
+            Title = "Edit Client";
+        }
+
+        private void InitializeWindow()
+        {
             // Initialize collections
             Contacts = new ObservableCollection<ContactItem>();
             Documents = new ObservableCollection<DocumentItem>();
@@ -38,13 +55,195 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
 
         // ====================== BUTTON EVENTS ======================
 
-        private void btnSave_Click(object sender, RoutedEventArgs e)
+        private async void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Add your save logic + validation here
-            MessageBox.Show("Client has been saved successfully!",
-                            "Success",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
+            try
+            {
+                if (!ValidateForm())
+                {
+                    MessageBox.Show("Please fill in all required fields.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (_editingClient != null)
+                {
+                    // Update existing client
+                    var updateDto = CreateUpdateClientDTO();
+                    var result = await _clientService.UpdateClientAsync(updateDto);
+                    if (result != null)
+                    {
+                        DialogResult = true;
+                        Close();
+                    }
+                }
+                else
+                {
+                    // Add new client
+                    var addDto = CreateAddClientDTO();
+                    var result = await _clientService.AddClientAsync(addDto);
+                    if (result != null)
+                    {
+                        DialogResult = true;
+                        Close();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving client: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void LoadClientData()
+        {
+            if (_editingClient == null) return;
+
+            // Load basic information
+            txtClientName.Text = _editingClient.ClientName ?? string.Empty;
+            txtClientNameAr.Text = _editingClient.ClientNameAr ?? string.Empty;
+            txtOfficialName.Text = _editingClient.OfficialName ?? string.Empty;
+            txtIDNo.Text = _editingClient.IdentityNo ?? string.Empty;
+            txtCommercialNo.Text = _editingClient.CommercialRegistrationNo ?? string.Empty;
+            txtTele.Text = _editingClient.Tele ?? string.Empty;
+            txtEmail.Text = _editingClient.Email ?? string.Empty;
+            txtBuildingNo.Text = _editingClient.BuildingNo ?? string.Empty;
+            txtDistrict.Text = _editingClient.District ?? string.Empty;
+            txtProspPoBox.Text = _editingClient.POBox ?? string.Empty;
+
+            // Load dropdowns
+            if (_editingClient.PolicyTypeId.HasValue)
+                CombPolicyType.SelectedValue = _editingClient.PolicyTypeId.Value;
+            
+            CmbProspectType.SelectedValue = _editingClient.ClientType;
+            ComboRelationshipStatus.SelectedValue = _editingClient.RelationshipStatus;
+
+            // Load dates
+            DTPIncorporation.SelectedDate = _editingClient.DateOfIncorporation;
+            DTPIDExpiryDate.SelectedDate = _editingClient.IDExpiryDate;
+            txtBirthDay.SelectedDate = _editingClient.DateOfBirth;
+
+            // Load contacts
+            Contacts.Clear();
+            foreach (var contact in _editingClient.Contacts)
+            {
+                Contacts.Add(new ContactItem
+                {
+                    Name = contact.Name ?? string.Empty,
+                    Position = contact.Position ?? string.Empty,
+                    Extension = contact.Extension ?? string.Empty,
+                    Mobile = contact.Mobile ?? string.Empty,
+                    Tele = contact.Tele ?? string.Empty,
+                    Email = contact.Email ?? string.Empty
+                });
+            }
+
+            // Load bank accounts
+            BankAccounts.Clear();
+            foreach (var bankAccount in _editingClient.BankAccounts)
+            {
+                BankAccounts.Add(new BankAccountItem
+                {
+                    BankName = bankAccount.BankName ?? string.Empty,
+                    Branch = bankAccount.Branch ?? string.Empty,
+                    IBAN = bankAccount.IBAN ?? string.Empty,
+                    SwiftCode = bankAccount.SwiftCode ?? string.Empty
+                });
+            }
+        }
+
+        private bool ValidateForm()
+        {
+            if (string.IsNullOrWhiteSpace(txtClientName.Text))
+                return false;
+
+            if (CmbProspectType.SelectedItem == null)
+                return false;
+
+            var clientType = int.Parse(CmbProspectType.SelectedItem.ToString());
+            if (clientType == 1 && string.IsNullOrWhiteSpace(txtIDNo.Text))
+                return false;
+
+            if (clientType == 2 && string.IsNullOrWhiteSpace(txtCommercialNo.Text))
+                return false;
+
+            return true;
+        }
+
+        private AddClientDTO CreateAddClientDTO()
+        {
+            return new AddClientDTO
+            {
+                ClientName = txtClientName.Text,
+                ClientNameAr = txtClientNameAr.Text,
+                OfficialName = txtOfficialName.Text,
+                ClientType = int.Parse(CmbProspectType.SelectedItem.ToString()),
+                RelationshipStatus = ComboRelationshipStatus.SelectedIndex,
+                IdentityNo = txtIDNo.Text,
+                CommercialRegistrationNo = txtCommercialNo.Text,
+                Email = txtEmail.Text,
+                Tele = txtTele.Text,
+                BuildingNo = txtBuildingNo.Text,
+                District = txtDistrict.Text,
+                POBox = txtProspPoBox.Text,
+                DateOfBirth = txtBirthDay.SelectedDate,
+                IDExpiryDate = DTPIDExpiryDate.SelectedDate,
+                DateOfIncorporation = DTPIncorporation.SelectedDate,
+                Contacts = Contacts.Select(c => new AddClientContactDTO
+                {
+                    Name = c.Name,
+                    Position = c.Position,
+                    Extension = c.Extension,
+                    Mobile = c.Mobile,
+                    Tele = c.Tele,
+                    Email = c.Email
+                }).ToList(),
+                BankAccounts = BankAccounts.Select(b => new AddClientBankAccountDTO
+                {
+                    BankName = b.BankName,
+                    Branch = b.Branch,
+                    IBAN = b.IBAN,
+                    SwiftCode = b.SwiftCode
+                }).ToList()
+            };
+        }
+
+        private UpdateClientDTO CreateUpdateClientDTO()
+        {
+            return new UpdateClientDTO
+            {
+                Id = _editingClient.Id,
+                ClientName = txtClientName.Text,
+                ClientNameAr = txtClientNameAr.Text,
+                OfficialName = txtOfficialName.Text,
+                ClientType = int.Parse(CmbProspectType.SelectedItem.ToString()),
+                RelationshipStatus = ComboRelationshipStatus.SelectedIndex,
+                IdentityNo = txtIDNo.Text,
+                CommercialRegistrationNo = txtCommercialNo.Text,
+                Email = txtEmail.Text,
+                Tele = txtTele.Text,
+                BuildingNo = txtBuildingNo.Text,
+                District = txtDistrict.Text,
+                POBox = txtProspPoBox.Text,
+                DateOfBirth = txtBirthDay.SelectedDate,
+                IDExpiryDate = DTPIDExpiryDate.SelectedDate,
+                DateOfIncorporation = DTPIncorporation.SelectedDate,
+                Contacts = Contacts.Select(c => new UpdateClientContactDTO
+                {
+                    Name = c.Name,
+                    Position = c.Position,
+                    Extension = c.Extension,
+                    Mobile = c.Mobile,
+                    Tele = c.Tele,
+                    Email = c.Email
+                }).ToList(),
+                BankAccounts = BankAccounts.Select(b => new UpdateClientBankAccountDTO
+                {
+                    BankName = b.BankName,
+                    Branch = b.Branch,
+                    IBAN = b.IBAN,
+                    SwiftCode = b.SwiftCode
+                }).ToList()
+            };
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)

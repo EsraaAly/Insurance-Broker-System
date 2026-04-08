@@ -32,8 +32,6 @@
     <Folder Include="Common\Behaviors\" />
     <Folder Include="Common\Interfaces\Persistence\Clients\" />
     <Folder Include="Common\Interfaces\Service\Clients\" />
-    <Folder Include="Features\Clients\Commands\" />
-    <Folder Include="Features\Clients\Queries\" />
   </ItemGroup>
 
 </Project>

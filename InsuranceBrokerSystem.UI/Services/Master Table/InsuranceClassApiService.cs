@@ -1,115 +1,103 @@
+using InsuranceBrokerSystem.Application.DTOs.Master_Table;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using System.Windows;
 
 namespace InsuranceBrokerSystem.UI.Services.Master_Table
 {
     public class InsuranceClassApiService
     {
         private readonly HttpClient _httpClient;
-        
+        private const string BaseUrl = "https://localhost:44314";
+
         public InsuranceClassApiService()
         {
-            _httpClient = new HttpClient{
-                BaseAddress = new Uri("https://localhost:44314")
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri(BaseUrl)
             };
+            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
         }
 
-        public async Task<List<GetInsuranceClassDTO>> GetAllClassesAsync()
+        public async Task<ApiResponse<List<GetInsuranceClassDTO>>> GetAllClassesAsync()
         {
             try
             {
-                // This sends a GET to https://localhost:7001/api/InsuranceClass
-               var response =  await _httpClient.GetFromJsonAsync< ApiResponse<List<GetInsuranceClassDTO>>>(ApiRoutes.MasterTable.InsuranceClass.GetAllInsuranceClasses);
-               return response.Data ?? new List<GetInsuranceClassDTO>();
+                var response = await _httpClient.GetAsync(ApiRoutes.MasterTable.InsuranceClass.GetAllInsuranceClasses);
+                return await ApiResponseHandler.HandleResponseAsync<List<GetInsuranceClassDTO>>(response);
             }
-            catch (HttpRequestException)
+            catch (Exception ex)
             {
-                // Handle connection errors (API is offline, etc.)
-                return new List<GetInsuranceClassDTO>();
-            }
-        }
-
-        public async Task<bool> AddClassAsync(AddInsuranceClassDTO newClass)
-        {
-            try
-            {
-
-                // This sends a GET to https://localhost:7001/api/InsuranceClass
-                //return await _httpClient.GetFromJsonAsync<List<GetInsuranceClassDTO>>("/api/InsuranceClass/AddClassAsync");
-
-                // Use PostAsJsonAsync to send the DTO
-                var response = await _httpClient.PostAsJsonAsync(ApiRoutes.MasterTable.InsuranceClass.AddInsuranceClass, newClass);
-
-                if (response.IsSuccessStatusCode)
-                {
-                    MessageBox.Show("Saved Successfully!");
-                    return true;
-
-                }
-                else
-                {
-                    MessageBox.Show("Error: Could not save data to the server.");
-                }
-                return false;
-
-
-            }
-            catch (HttpRequestException)
-            {
-                // Handle connection errors (API is offline, etc.)
-                return false;
+                ApiResponseHandler.ShowError($"Error retrieving insurance classes: {ex.Message}");
+                return ApiResponse<List<GetInsuranceClassDTO>>.Failure("Failed to retrieve insurance classes");
             }
         }
 
-        public async Task UpdateClassAsync(UpdateInsuranceClassDTO dto)
+        public async Task<ApiResponse<GetInsuranceClassDTO>> AddClassAsync(AddInsuranceClassDTO newClass)
         {
             try
             {
-                // Use PostAsJsonAsync to send the DTO
-                var response = await _httpClient.PutAsJsonAsync(ApiRoutes.MasterTable.InsuranceClass.UpdateInsuranceClass, dto);
-
-                if (response.IsSuccessStatusCode)
+                var content = JsonContent.Create(newClass);
+                var response = await _httpClient.PostAsync(ApiRoutes.MasterTable.InsuranceClass.AddInsuranceClass, content);
+                var result = await ApiResponseHandler.HandleResponseAsync<GetInsuranceClassDTO>(response);
+                
+                if (result.Successed)
                 {
-                    MessageBox.Show("Updated Successfully!");
-
+                    ApiResponseHandler.ShowSuccess("Insurance class added successfully!");
                 }
-                else
-                {
-                    MessageBox.Show("Error: Could not update data to the server.");
-                }
-
-
+                
+                return result;
             }
-            catch (HttpRequestException)
+            catch (Exception ex)
             {
-                // Handle connection errors (API is offline, etc.)
+                ApiResponseHandler.ShowError($"Error adding insurance class: {ex.Message}");
+                return ApiResponse<GetInsuranceClassDTO>.Failure("Failed to add insurance class");
             }
         }
 
-        public async Task DeleteClassAsync( int id)
+        public async Task<ApiResponse<GetInsuranceClassDTO>> UpdateClassAsync(UpdateInsuranceClassDTO dto)
         {
             try
             {
-
-                // This sends a GET to https://localhost:7001/api/InsuranceClass
-                //return await _httpClient.GetFromJsonAsync<List<GetInsuranceClassDTO>>("/api/InsuranceClass/AddClassAsync");
-
-                // Use PostAsJsonAsync to send the DTO
-                var response = await _httpClient.DeleteAsync($"{ApiRoutes.MasterTable.InsuranceClass.DeleteInsuranceClass}/{id}");
-
-                if (response.IsSuccessStatusCode)
+                var content = JsonContent.Create(dto);
+                var response = await _httpClient.PutAsync(ApiRoutes.MasterTable.InsuranceClass.UpdateInsuranceClass, content);
+                var result = await ApiResponseHandler.HandleResponseAsync<GetInsuranceClassDTO>(response);
+                
+                if (result.Successed)
                 {
-                    MessageBox.Show("Deleted Successfully!");
-
+                    ApiResponseHandler.ShowSuccess("Insurance class updated successfully!");
                 }
-                else
-                {
-                    MessageBox.Show("Error: Could not delete data to the server.");
-                }
-
-
+                
+                return result;
             }
-            catch (HttpRequestException)
+            catch (Exception ex)
             {
-                // Handle connection errors (API is offline, etc.)
+                ApiResponseHandler.ShowError($"Error updating insurance class: {ex.Message}");
+                return ApiResponse<GetInsuranceClassDTO>.Failure("Failed to update insurance class");
+            }
+        }
+
+        public async Task<ApiResponse<string>> DeleteClassAsync(int id)
+        {
+            try
+            {
+                var url = ApiRoutes.MasterTable.InsuranceClass.DeleteInsuranceClass.Replace("{id}", id.ToString());
+                var response = await _httpClient.DeleteAsync(url);
+                var result = await ApiResponseHandler.HandleResponseAsync<string>(response);
+                
+                if (result.Successed)
+                {
+                    ApiResponseHandler.ShowSuccess("Insurance class deleted successfully!");
+                }
+                
+                return result;
+            }
+            catch (Exception ex)
+            {
+                ApiResponseHandler.ShowError($"Error deleting insurance class: {ex.Message}");
+                return ApiResponse<string>.Failure("Failed to delete insurance class");
             }
         }
     }

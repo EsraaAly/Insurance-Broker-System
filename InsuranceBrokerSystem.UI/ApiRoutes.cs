@@ -69,6 +69,17 @@ namespace InsuranceBrokerSystem.UI
                 public const string GenerateAccounts = $"api/{Version}/InsuranceComp/GenerateAccounts";
             }
         }
+        public static class Clients
+        {
+            public const string GetAllClients = $"api/{Version}/Client/getAll";
+            public const string GetClientById = $"api/{Version}/Client/getById";
+            public const string AddClient = $"api/{Version}/Client/add";
+            public const string UpdateClient = $"api/{Version}/Client/update";
+            public const string DeleteClient = $"api/{Version}/Client/delete";
+            public const string ApproveClient = $"api/{Version}/Client/approve";
+            public const string RejectClient = $"api/{Version}/Client/reject";
+            public const string BlockClient = $"api/{Version}/Client/block";
+        }
 
     }
 }

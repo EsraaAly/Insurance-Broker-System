@@ -50,8 +50,8 @@ namespace InsuranceBrokerSystem.Domain.Entities.Client
         public string?   Fax         { get; set; }
         public string?   Channel     { get; set; }
         public string?   Interface   { get; set; }
-        public string?   ProducerId  { get; set; }
-        public string?   Producer2Id { get; set; }
+        public string?   Producer { get; set; }
+        public string?   Producer2 { get; set; }
         public string?   ScreeningResult { get; set; }
         public string?   IBANNumber  { get; set; }
 

@@ -29,7 +29,7 @@ namespace InsuranceBrokerSystem.Api
             app.UseAuthorization();
             app.MapControllers();
 
-            await app.UseWebApplicationWarmup();
+            //await app.UseWebApplicationWarmup();
 
             app.Run();
         }

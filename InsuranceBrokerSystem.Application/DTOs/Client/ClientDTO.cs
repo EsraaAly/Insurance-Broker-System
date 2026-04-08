@@ -1,4 +1,6 @@
 
+using InsuranceBrokerSystem.Domain.Enums.Client;
+
 namespace InsuranceBrokerSystem.Application.DTOs.Client
 {
     /// <summary>
@@ -25,10 +27,10 @@ namespace InsuranceBrokerSystem.Application.DTOs.Client
         {
             get
             {
-                if (IsBlocked) return 3;
-                if (IsRejected) return 4;
-                if (IsApproved) return 2;
-                return 1;
+                if (IsBlocked) return (int)ClientStatus.Blocked;
+                if (IsRejected) return (int)ClientStatus.Rejected;
+                if (IsApproved) return (int)ClientStatus.Active;
+                return (int)ClientStatus.Prospect;
             }
         }
 
@@ -65,8 +67,8 @@ namespace InsuranceBrokerSystem.Application.DTOs.Client
         public string?   Fax             { get; set; }
         public string?   Channel         { get; set; }
         public string?   Interface       { get; set; }
-        public string?   ProducerId      { get; set; }
-        public string?   Producer2Id     { get; set; }
+        public string?   Producer     { get; set; }
+        public string?   Producer2    { get; set; }
         public string?   ScreeningResult { get; set; }
         public string?   IBANNumber      { get; set; }
     }
@@ -98,8 +100,6 @@ namespace InsuranceBrokerSystem.Application.DTOs.Client
     }
     public class ApproveClientDTO 
     {
-        public int Id { get; set; }
-
         public string? AccountPremium { get; set; }
 
         public string? ApprovedBy { get; set; }

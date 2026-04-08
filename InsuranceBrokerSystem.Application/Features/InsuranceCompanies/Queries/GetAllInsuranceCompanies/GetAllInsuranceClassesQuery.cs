@@ -16,6 +16,7 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Queries.
         public async Task<Result<List<GetInsuranceCompanyDTO>>> Handle(GetAllInsuranceCompaniesQuery request, CancellationToken cancellationToken)
         {
             var entries = await _unitOfWork.InsuranceCompanyRepository.GetAllEntitytiesAsync();
+
             if (entries == null)
             {
                 return Result<List<GetInsuranceCompanyDTO>>.Failure("No insurance companies found");

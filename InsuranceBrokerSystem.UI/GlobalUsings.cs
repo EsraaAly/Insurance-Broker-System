@@ -24,6 +24,11 @@ global using System.Windows.Media.Imaging;
 global using System.Windows.Shapes;
 global using System.Collections.ObjectModel;
 global using Azure;
+global using System.Diagnostics;
+global using System.IO;
+
+global using Microsoft.Win32;
+
 
 // ── Third-party ──────────────────────────────────────────────
 global using Mapster;
@@ -40,5 +45,10 @@ global using InsuranceBrokerSystem.Application.DTOs.Financial.Account;
 global using InsuranceBrokerSystem.Application.DTOs.Financial.InsuranceCompanyAccount;
 global using InsuranceBrokerSystem.UI.Services.Financial;
 global using InsuranceBrokerSystem.Domain.Enums.Master_Table;
+global using InsuranceBrokerSystem.Application.DTOs.Client;
+global using InsuranceBrokerSystem.Domain.Enums.Client;
+global using InsuranceBrokerSystem.UI.Services.Clients;
+global using InsuranceBrokerSystem.UI.Views.MasterData;
+global using InsuranceBrokerSystem.Domain.Entities.MasterTable;
 
 

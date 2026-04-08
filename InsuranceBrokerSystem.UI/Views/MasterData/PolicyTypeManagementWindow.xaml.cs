@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using InsuranceBrokerSystem.Domain.Entities.MasterData;
 
 namespace InsuranceBrokerSystem.UI.Views.MasterData
 {
@@ -77,7 +76,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             {
                 Name = txtName.Text.Trim(),
                 Description = txtDescription.Text.Trim(),
-                CreatedAt = DateTime.UtcNow,
+                CreatedDate = DateTime.UtcNow,
                 CreatedBy = "CurrentUser" // TODO: Get actual user
             };
 
@@ -157,7 +156,6 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 {
                     // Check if item is in use (in real implementation, check against clients/policies)
                     // For now, we'll mark as inactive instead of deleting
-                    SelectedPolicyType.IsActive = false;
                     SelectedPolicyType.UpdatedDate = DateTime.UtcNow;
                     SelectedPolicyType.UpdatedBy = "CurrentUser";
 

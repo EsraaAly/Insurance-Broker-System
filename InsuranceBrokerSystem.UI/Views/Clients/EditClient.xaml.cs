@@ -15,13 +15,14 @@ using System.Windows.Shapes;
 using InsuranceBrokerSystem.Application.DTOs.Client;
 using InsuranceBrokerSystem.Domain.Enums.Client;
 using InsuranceBrokerSystem.UI.Services.Clients;
+using InsuranceBrokerSystem.UI.Views.MasterData;
 
 namespace InsuranceBrokerSystem.UI.Views.Clients
 {
     /// <summary>
     /// Interaction logic for EditClient.xaml
     /// </summary>
-    public partial class EditClient : UserControl
+    public partial class EditClient : Window
     {
         private readonly ClientService _clientService;
         private GetClientDTO _currentClient;
@@ -56,6 +57,58 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         }
 
         private void PopulateComboBoxes()
+        {
+            // Master Data Comboboxes
+            PopulateMasterDataComboBoxes();
+            
+            // Other comboboxes (keeping existing hardcoded values for now)
+            PopulateOtherComboBoxes();
+        }
+
+        private void PopulateMasterDataComboBoxes()
+        {
+            //// Policy Type
+            //CombPolicyType.Items.Clear();
+            //var policyTypes = PolicyType.GetMockData();
+            //foreach (var policyType in policyTypes.Where(p => p.IsActive))
+            //{
+            //    CombPolicyType.Items.Add(new ComboBoxItem { Content = policyType.Name, Tag = policyType.Id });
+            //}
+
+            //// Nationality
+            //CombNationality.Items.Clear();
+            //var nationalities = Nationality.GetMockData();
+            //foreach (var nationality in nationalities.Where(n => n.IsActive))
+            //{
+            //    CombNationality.Items.Add(new ComboBoxItem { Content = nationality.Name, Tag = nationality.Id });
+            //}
+
+            //// Source of Income
+            //CombSourceofIncome.Items.Clear();
+            //var sourcesOfIncome = SourceOfIncome.GetMockData();
+            //foreach (var source in sourcesOfIncome.Where(s => s.IsActive))
+            //{
+            //    CombSourceofIncome.Items.Add(new ComboBoxItem { Content = source.Name, Tag = source.Id });
+            //}
+
+            //// Business Activity
+            //cmbBusinessActivity.Items.Clear();
+            //var businessActivities = BusinessActivity.GetMockData();
+            //foreach (var activity in businessActivities.Where(a => a.IsActive))
+            //{
+            //    cmbBusinessActivity.Items.Add(new ComboBoxItem { Content = activity.Name, Tag = activity.Id });
+            //}
+
+            //// Location
+            //CombLocation.Items.Clear();
+            //var locations = Location.GetMockData();
+            //foreach (var location in locations.Where(l => l.IsActive))
+            //{
+            //    CombLocation.Items.Add(new ComboBoxItem { Content = location.Name, Tag = location.Id });
+            //}
+        }
+
+        private void PopulateOtherComboBoxes()
         {
             // Registration Status
             ComboRegistrationStatus.Items.Clear();
@@ -524,6 +577,58 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 // Ignore file access errors
             }
             return null;
+        }
+
+        // ====================== MASTER DATA MANAGEMENT BUTTONS ======================
+
+        private void btnAddPolicyType_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new PolicyTypeManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh combobox after closing management window
+            PopulateComboBoxes();
+        }
+
+        private void btnAddNationality_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new NationalityManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh combobox after closing management window
+            PopulateComboBoxes();
+        }
+
+        private void btnAddSourceOfIncome_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new SourceOfIncomeManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh combobox after closing management window
+            PopulateComboBoxes();
+        }
+
+        private void btnAddBusinessActivity_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new BusinessActivityManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh combobox after closing management window
+            PopulateComboBoxes();
+        }
+
+        private void btnAddLocation_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new LocationManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh combobox after closing management window
+            PopulateComboBoxes();
         }
     }
 

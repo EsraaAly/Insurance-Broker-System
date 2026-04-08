@@ -38,14 +38,14 @@ namespace InsuranceBrokerSystem.Application.DTOs.Client
         public string?   IdentityNo        { get; set; }
         public DateTime? IDExpiryDate      { get; set; }
         public string?   IDExpiryDateHijri { get; set; }
-        public string?   Nationality       { get; set; }
-        public string?   SourceOfIncome    { get; set; }
+        public int?      NationalityId     { get; set; }
+        public int?      SourceOfIncomeId  { get; set; }
         public string?   Email             { get; set; }
         public DateTime? DateOfBirth       { get; set; }
 
         // ─── Corporate Fields ─────────────────────────────────────────────
-        public string?   RegistrationStatus       { get; set; }
-        public string?   BusinessActivity         { get; set; }
+        public int RegistrationStatusid { get; set; }
+        public int?      BusinessActivityId        { get; set; }
         public string?   MarketSegment            { get; set; }
         public DateTime? DateOfIncorporation      { get; set; }
         public string?   DateOfIncorporationHijri { get; set; }
@@ -59,7 +59,7 @@ namespace InsuranceBrokerSystem.Application.DTOs.Client
         public string?   PremiumClass             { get; set; }
 
         // ─── National Address ─────────────────────────────────────────────
-        public string?   Location        { get; set; }
+        public int?      LocationId      { get; set; }
         public string?   BuildingNo      { get; set; }
         public string?   District        { get; set; }
         public string?   POBox           { get; set; }

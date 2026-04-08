@@ -13,7 +13,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
         {
             if (insuranceClass != null)
             {
-                var insuranceClass1 = new Domain.Entities.Master_Table.InsuranceClass
+                var insuranceClass1 = new Domain.Entities.MasterTable.InsuranceClass
                 {
                     ClassName = insuranceClass.ClassName,
                     Abbreviation = insuranceClass.Abbreviation,

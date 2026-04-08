@@ -14,7 +14,7 @@ namespace InsuranceBrokerSystem.Application.Services.Master_Table
             if (insuranceLine != null)
             {
                 var Insureanceclass = await _unitOfWork.GInsuranceClass.GetEntityByIdAsync(insuranceLine.ClassID);
-                var insuranceLine1 = new Domain.Entities.Master_Table.InsuranceLineOfBusiness
+                var insuranceLine1 = new Domain.Entities.MasterTable.InsuranceLineOfBusiness
                 {
                     ClassID = insuranceLine.ClassID,
                     InsuranceClass = Insureanceclass,

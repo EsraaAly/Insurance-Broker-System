@@ -18,9 +18,8 @@ global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 // ── Domain ───────────────────────────────────────────────────
 global using InsuranceBrokerSystem.Domain.Entities;
-global using InsuranceBrokerSystem.Domain.Entities.Master_Table;
-global using InsuranceBrokerSystem.Domain.Enums.Master_Table;
-global using InsuranceBrokerSystem.Domain.Entities.Client;
+global using InsuranceBrokerSystem.Domain.Entities.MasterTable;
+global using InsuranceBrokerSystem.Domain.Entities.Clients;
 global using InsuranceBrokerSystem.Domain.Enums.Client;
 global using InsuranceBrokerSystem.Domain.Entities.Financial;
 // ── Application — Interfaces ─────────────────────────────────

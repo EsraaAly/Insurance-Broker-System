@@ -22,7 +22,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Client.Client", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Clients.Client", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -48,8 +48,8 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Property<string>("BuildingNo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("BusinessActivity")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("BusinessActivityId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CRExpiryDate")
                         .HasColumnType("datetime2");
@@ -72,6 +72,9 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("ClientRelationshipStatus")
+                        .HasColumnType("int");
 
                     b.Property<int>("ClientType")
                         .HasColumnType("int");
@@ -133,15 +136,14 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Property<bool>("IsRejected")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Location")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("LocationId")
+                        .HasColumnType("int");
 
                     b.Property<string>("MarketSegment")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Nationality")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<int?>("NationalityId")
+                        .HasColumnType("int");
 
                     b.Property<string>("OfficialName")
                         .IsRequired()
@@ -162,8 +164,8 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Property<string>("Producer2")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RegistrationStatus")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("RegistrationStatus")
+                        .HasColumnType("int");
 
                     b.Property<string>("RejectedBy")
                         .HasColumnType("nvarchar(max)");
@@ -171,14 +173,11 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Property<DateTime?>("RejectedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("RelationshipStatus")
-                        .HasColumnType("int");
-
                     b.Property<string>("ScreeningResult")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SourceOfIncome")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("SourceOfIncomeId")
+                        .HasColumnType("int");
 
                     b.Property<string>("SponsorId")
                         .HasColumnType("nvarchar(max)");
@@ -204,9 +203,19 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BusinessActivityId");
+
                     b.HasIndex("ClientName")
                         .IsUnique()
                         .HasFilter("[IsDeleted] = 0");
+
+                    b.HasIndex("LocationId");
+
+                    b.HasIndex("NationalityId");
+
+                    b.HasIndex("PolicyTypeId");
+
+                    b.HasIndex("SourceOfIncomeId");
 
                     b.ToTable("Clients", t =>
                         {
@@ -214,7 +223,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                         });
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Client.ClientBankAccount", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Clients.ClientBankAccount", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -264,7 +273,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("ClientBankAccounts");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Client.ClientContact", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Clients.ClientContact", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -328,7 +337,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("ClientContacts");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Client.ClientDocument", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Clients.ClientDocument", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -444,17 +453,13 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("accounts");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.BusinessActivity", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.BusinessActivity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("BusinessActivityName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -463,8 +468,16 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
@@ -477,7 +490,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("businessActivities");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceClass", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceClass", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -514,7 +527,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("InsuranceClasses");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceCompany", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceCompany", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -683,7 +696,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("InsuranceCompanies");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceContact", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceContact", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -739,7 +752,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("InsuranceContacts");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceLineOfBusiness", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceLineOfBusiness", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -781,7 +794,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("InsuranceLines");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceProduct", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceProduct", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -827,13 +840,17 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("InsuranceProducts");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.Nationality", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.Location", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -842,10 +859,55 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("NationalityName")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("locations");
+                });
+
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.Nationality", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -860,7 +922,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("nationalities");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.PolicyType", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.PolicyType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -875,10 +937,14 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("PolicyTypeName")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -893,9 +959,84 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.ToTable("policyTypes");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Client.ClientBankAccount", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.SourceOfIncome", b =>
                 {
-                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.Client.Client", "Client")
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("sourceOfIncomes");
+                });
+
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Clients.Client", b =>
+                {
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.MasterTable.BusinessActivity", "BusinessActivity")
+                        .WithMany("Clients")
+                        .HasForeignKey("BusinessActivityId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.MasterTable.Location", "Location")
+                        .WithMany("Clients")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.MasterTable.Nationality", "ClientNationality")
+                        .WithMany("Clients")
+                        .HasForeignKey("NationalityId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.MasterTable.PolicyType", "PolicyType")
+                        .WithMany("Clients")
+                        .HasForeignKey("PolicyTypeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.MasterTable.SourceOfIncome", "SourceOfIncome")
+                        .WithMany("Clients")
+                        .HasForeignKey("SourceOfIncomeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("BusinessActivity");
+
+                    b.Navigation("ClientNationality");
+
+                    b.Navigation("Location");
+
+                    b.Navigation("PolicyType");
+
+                    b.Navigation("SourceOfIncome");
+                });
+
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Clients.ClientBankAccount", b =>
+                {
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.Clients.Client", "Client")
                         .WithMany("BankAccounts")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -904,9 +1045,9 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Client.ClientContact", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Clients.ClientContact", b =>
                 {
-                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.Client.Client", "Client")
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.Clients.Client", "Client")
                         .WithMany("Contacts")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -915,9 +1056,9 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Navigation("Client");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Client.ClientDocument", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Clients.ClientDocument", b =>
                 {
-                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.Client.Client", "Client")
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.Clients.Client", "Client")
                         .WithMany("Documents")
                         .HasForeignKey("ClientId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -936,9 +1077,9 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Navigation("Parent");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceContact", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceContact", b =>
                 {
-                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceCompany", "InsuranceCompany")
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceCompany", "InsuranceCompany")
                         .WithMany("Contacts")
                         .HasForeignKey("InsuranceCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -947,9 +1088,9 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Navigation("InsuranceCompany");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceLineOfBusiness", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceLineOfBusiness", b =>
                 {
-                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceClass", "InsuranceClass")
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceClass", "InsuranceClass")
                         .WithMany("Lines")
                         .HasForeignKey("ClassID")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -958,9 +1099,9 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Navigation("InsuranceClass");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceProduct", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceProduct", b =>
                 {
-                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceCompany", "InsuranceCompany")
+                    b.HasOne("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceCompany", "InsuranceCompany")
                         .WithMany("Products")
                         .HasForeignKey("InsuranceCompanyId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -969,7 +1110,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Navigation("InsuranceCompany");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Client.Client", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Clients.Client", b =>
                 {
                     b.Navigation("BankAccounts");
 
@@ -983,16 +1124,41 @@ namespace InsuranceBrokerSystem.Infrastructure.Migrations
                     b.Navigation("Children");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceClass", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.BusinessActivity", b =>
+                {
+                    b.Navigation("Clients");
+                });
+
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceClass", b =>
                 {
                     b.Navigation("Lines");
                 });
 
-            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.Master_Table.InsuranceCompany", b =>
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.InsuranceCompany", b =>
                 {
                     b.Navigation("Contacts");
 
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.Location", b =>
+                {
+                    b.Navigation("Clients");
+                });
+
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.Nationality", b =>
+                {
+                    b.Navigation("Clients");
+                });
+
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.PolicyType", b =>
+                {
+                    b.Navigation("Clients");
+                });
+
+            modelBuilder.Entity("InsuranceBrokerSystem.Domain.Entities.MasterTable.SourceOfIncome", b =>
+                {
+                    b.Navigation("Clients");
                 });
 #pragma warning restore 612, 618
         }

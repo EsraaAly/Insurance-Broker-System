@@ -1,16 +1,4 @@
-using Mapster;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using InsuranceBrokerSystem.Domain.Entities.Client;
-using InsuranceBrokerSystem.Domain.Entities.Financial;
-using InsuranceBrokerSystem.Domain.Entities.Master_Table;
-using InsuranceBrokerSystem.Application.DTOs.Client;
-using InsuranceBrokerSystem.Application.DTOs.Financial.Account;
-using InsuranceBrokerSystem.Application.DTOs.Master_Table.InsuranceCompany;
-using InsuranceBrokerSystem.Application.DTOs.Master_Table.Insurance_Class_and_Line;
+
 
 namespace InsuranceBrokerSystem.Application.Common.Mapping
 {

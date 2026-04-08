@@ -1,16 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
-using Microsoft.Win32;
-using InsuranceBrokerSystem.Application.DTOs.Client;
-using InsuranceBrokerSystem.Domain.Enums.Client;
-using InsuranceBrokerSystem.UI.Services.Clients;
+
 
 namespace InsuranceBrokerSystem.UI.Views.Clients
 {
@@ -56,17 +44,75 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             GridFiles.ItemsSource = Documents;
             GridBankAccounts.ItemsSource = BankAccounts;
         }
-
+        
         private void PopulateComboBoxes()
         {
-            // Registration Status
-            ComboRegistrationStatus.Items.Clear();
-            ComboRegistrationStatus.Items.Add("Joint Liability Company");
-            ComboRegistrationStatus.Items.Add("Limited Partnership Company");
-            ComboRegistrationStatus.Items.Add("Joint Venture");
-            ComboRegistrationStatus.Items.Add("Joint Stock");
-            ComboRegistrationStatus.Items.Add("Limited Liability Company");
+            // Master Data Comboboxes
+            PopulateMasterDataComboBoxes();
+            
+            // Other comboboxes (keeping existing hardcoded values for now)
+            PopulateOtherComboBoxes();
+        }
 
+        private void PopulateMasterDataComboBoxes()
+        {
+            //// Policy Type
+            //CombPolicyType.Items.Clear();
+            //var policyTypes = PolicyType.GetMockData();
+            //foreach (var policyType in policyTypes.Where(p => p.IsActive))
+            //{
+            //    CombPolicyType.Items.Add(new ComboBoxItem { Content = policyType.Name, Tag = policyType.Id });
+            //}
+
+            //// Nationality
+            //CombNationality.Items.Clear();
+            //var nationalities = Nationality.GetMockData();
+            //foreach (var nationality in nationalities.Where(n => n.IsActive))
+            //{
+            //    CombNationality.Items.Add(new ComboBoxItem { Content = nationality.Name, Tag = nationality.Id });
+            //}
+
+            //// Source of Income
+            //CombSourceofIncome.Items.Clear();
+            //var sourcesOfIncome = SourceOfIncome.GetMockData();
+            //foreach (var source in sourcesOfIncome.Where(s => s.IsActive))
+            //{
+            //    CombSourceofIncome.Items.Add(new ComboBoxItem { Content = source.Name, Tag = source.Id });
+            //}
+
+            //// Business Activity
+            //cmbBusinessActivity.Items.Clear();
+            //var businessActivities = BusinessActivity.GetMockData();
+            //foreach (var activity in businessActivities.Where(a => a.IsActive))
+            //{
+            //    cmbBusinessActivity.Items.Add(new ComboBoxItem { Content = activity.Name, Tag = activity.Id });
+            //}
+
+            //// Location
+            //CombLocation.Items.Clear();
+            //var locations = Location.GetMockData();
+            //foreach (var location in locations.Where(l => l.IsActive))
+            //{
+            //    CombLocation.Items.Add(new ComboBoxItem { Content = location.Name, Tag = location.Id });
+            //}
+        }
+
+        private void PopulateOtherComboBoxes()
+        {
+            // Registration Status
+            ComboCorporateRegistrationStatus.Items.Clear();
+            ComboCorporateRegistrationStatus.Items.Add("Joint Liability Company");
+            ComboCorporateRegistrationStatus.Items.Add("Limited Partnership Company");
+            ComboCorporateRegistrationStatus.Items.Add("Joint Venture");
+            ComboCorporateRegistrationStatus.Items.Add("Joint Stock");
+            ComboCorporateRegistrationStatus.Items.Add("Limited Liability Company");
+
+            ComboRelationshipStatus.Items.Clear();
+            ComboRelationshipStatus.Items.Add("Joint Liability Company");
+            ComboRelationshipStatus.Items.Add("Limited Partnership Company");
+            ComboRelationshipStatus.Items.Add("Joint Venture");
+            ComboRelationshipStatus.Items.Add("Joint Stock");
+            ComboRelationshipStatus.Items.Add("Limited Liability Company");
             // Market Segment
             cmbMarketSegmant.Items.Clear();
             cmbMarketSegmant.Items.Add("Local");
@@ -143,7 +189,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             txtBirthDay.IsEnabled = isRetail;
 
             // Corporate fields - enabled only for Corporate clients
-            ComboRegistrationStatus.IsEnabled = isCorporate;
+            ComboCorporateRegistrationStatus.IsEnabled = isCorporate;
             cmbBusinessActivity.IsEnabled = isCorporate;
             cmbMarketSegmant.IsEnabled = isCorporate;
             DTPIncorporation.IsEnabled = isCorporate;
@@ -171,7 +217,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
 
             if (!isCorporate)
             {
-                ComboRegistrationStatus.SelectedIndex = -1;
+                ComboCorporateRegistrationStatus.SelectedIndex = -1;
                 cmbBusinessActivity.SelectedIndex = -1;
                 cmbMarketSegmant.SelectedIndex = -1;
                 DTPIncorporation.SelectedDate = null;
@@ -250,7 +296,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             
             CmbProspectType.SelectedValue = _editingClient.ClientType;
             ComboRelationshipStatus.SelectedValue = _editingClient.RelationshipStatus;
-
+            ComboCorporateRegistrationStatus.SelectedValue = _editingClient.RegistrationStatusid;
             // Load dates
             DTPIncorporation.SelectedDate = _editingClient.DateOfIncorporation;
             DTPIDExpiryDate.SelectedDate = _editingClient.IDExpiryDate;
@@ -314,6 +360,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 RelationshipStatus = ComboRelationshipStatus.SelectedIndex,
                 IdentityNo = txtIDNo.Text,
                 CommercialRegistrationNo = txtCommercialNo.Text,
+                RegistrationStatusid = ComboCorporateRegistrationStatus.SelectedIndex,
                 Email = txtEmail.Text,
                 Tele = txtTele.Text,
                 BuildingNo = txtBuildingNo.Text,
@@ -359,6 +406,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 OfficialName = txtOfficialName.Text,
                 ClientType = int.Parse(CmbProspectType.SelectedItem.ToString()),
                 RelationshipStatus = ComboRelationshipStatus.SelectedIndex,
+                RegistrationStatusid = ComboCorporateRegistrationStatus.SelectedIndex,
                 IdentityNo = txtIDNo.Text,
                 CommercialRegistrationNo = txtCommercialNo.Text,
                 Email = txtEmail.Text,
@@ -382,21 +430,18 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 {
                     BankName = b.BankName,
                     Branch = b.Branch,
-                    IBAN = b.IBAN,
-                    SwiftCode = b.SwiftCode
+                    IBAN = b.IBAN
+                }).ToList(),
+                Documents = Documents.Select(d => new UpdateClientDocumentDTO
+                {
+                    FileName = d.FileName,
+                    FilePath = d.FilePath,
+                    DocumentType = d.DocumentType,
+                    FileSize = d.FileSize,
+                    UploadDate = DateTime.Parse(d.UploadDate)
                 }).ToList()
             };
         }
-
-        private void btnClear_Click(object sender, RoutedEventArgs e)
-        {
-            ClearAllFields();
-            MessageBox.Show("All fields have been cleared.",
-                            "Cleared",
-                            MessageBoxButton.OK,
-                            MessageBoxImage.Information);
-        }
-
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             Window.GetWindow(this)?.Close();
@@ -584,7 +629,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             ResetComboBox(ComboRelationshipStatus);
             ResetComboBox(CombBusinessType);
             ResetComboBox(CmbProspectType);
-            ResetComboBox(ComboRegistrationStatus);
+            ResetComboBox(ComboCorporateRegistrationStatus);
             ResetComboBox(cmbBusinessActivity);
             ResetComboBox(cmbMarketSegmant);
             ResetComboBox(CombLocation);
@@ -606,6 +651,63 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         {
             if (comboBox != null && comboBox.Items.Count > 0)
                 comboBox.SelectedIndex = 0;
+        }
+
+        // ====================== MASTER DATA MANAGEMENT BUTTONS ======================
+
+        private void btnAddPolicyType_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new PolicyTypeManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh combobox after closing management window
+            PopulateComboBoxes();
+        }
+
+        private void btnAddNationality_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new NationalityManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh combobox after closing management window
+            PopulateComboBoxes();
+        }
+
+        private void btnAddSourceOfIncome_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new SourceOfIncomeManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh combobox after closing management window
+            PopulateComboBoxes();
+        }
+
+        private void btnAddBusinessActivity_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new BusinessActivityManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh combobox after closing management window
+            PopulateComboBoxes();
+        }
+
+        private void btnAddLocation_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new LocationManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh combobox after closing management window
+            PopulateComboBoxes();
+        }
+
+        private void btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            ClearAllFields();
         }
     }
 

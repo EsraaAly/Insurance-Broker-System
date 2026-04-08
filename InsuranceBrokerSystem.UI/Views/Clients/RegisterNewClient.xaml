@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1200" >
+             mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1350" >
 
     <Window.Resources>
         <ResourceDictionary Source="/Style.xaml"/>
@@ -12,28 +12,28 @@
     
     <Grid Background="{StaticResource BackgroundBrush}" >
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="70"/>
         </Grid.RowDefinitions>
 
         <!-- Title -->
-        <Border Background="#0D3559" Padding="15,12">
+        <Border Background="#0D3559" Padding="15,12" Grid.Row="0" >
             <TextBlock Text="Register New Clients" 
                        Foreground="White" 
                        FontSize="18" 
-                       FontWeight="SemiBold"/>
+                       FontWeight="SemiBold" VerticalAlignment="Center" HorizontalAlignment="Left"/>
         </Border>
         
-        <TabControl Grid.Row="1" Margin="12,8,12,0" Style="{StaticResource {x:Type TabControl}}">
+        <TabControl Grid.Row="1" Style="{StaticResource {x:Type TabControl}}">
             <!-- Main Content -->
             <TabItem Header="Main Content">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="12">
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="380"/>
-                            <ColumnDefinition Width="380"/>
-                            <ColumnDefinition Width="380"/>
+                            <ColumnDefinition Width="430"/>
+                            <ColumnDefinition Width="430"/>
+                            <ColumnDefinition Width="430"/>
                         </Grid.ColumnDefinitions>
 
                         <!-- Column 1: Clients Details + Retail -->
@@ -64,7 +64,16 @@
                                         </Grid.RowDefinitions>
 
                                         <Label Content="Policy Type" Grid.Row="0"/>
-                                        <ComboBox x:Name="CombPolicyType" Grid.Row="0" Grid.Column="1" />
+                                        <Grid Grid.Row="0" Grid.Column="1">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+                                            <ComboBox x:Name="CombPolicyType" />
+                                            <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0" Padding="0"
+                                                    Style="{StaticResource SecondaryButtonStyle}" Foreground="White"  Background="#0D3559"
+                                                    Click="btnAddPolicyType_Click" ToolTip="Add Policy Type"/>
+                                        </Grid>
 
                                         <Label Content="Client Name" Grid.Row="2"/>
                                         <TextBox x:Name="txtClientName" Grid.Row="2" Grid.Column="1"/>
@@ -76,18 +85,10 @@
                                         <TextBox x:Name="txtOfficialName" Grid.Row="6" Grid.Column="1"/>
 
                                         <Label Content="Relationship Status" Grid.Row="8"/>
-                                        <ComboBox x:Name="ComboRelationshipStatus" Grid.Row="8" Grid.ColumnSpan="2" Height="32" Margin="142,0,0,0" VerticalAlignment="Top">
-                                            <ComboBoxItem Content="Captive"/>
-                                            <ComboBoxItem Content="Non Captive"/>
-                                        </ComboBox>
+                                        <ComboBox x:Name="ComboRelationshipStatus" Height="28" Grid.Row="8" Grid.Column="1"/>
+
                                         <Label Content="Business Type" Grid.Row="10"/>
-                                        <ComboBox x:Name="CombBusinessType" Grid.Row="10" Grid.Column="1">
-                                            <ComboBoxItem Content="Governmental Entities"/>
-                                            <ComboBoxItem Content="Semi-Government"/>
-                                            <ComboBoxItem Content="Publicly listed"/>
-                                            <ComboBoxItem Content="Corporation"/>
-                                            <ComboBoxItem Content="SME"/>
-                                        </ComboBox>
+                                        <ComboBox x:Name="CombBusinessType" Grid.Row="10" Grid.Column="1"/>
 
                                         <Label Content="Client Type" Grid.Row="12"/>
                                         <ComboBox x:Name="CmbProspectType" Grid.Row="12" Grid.Column="1" SelectionChanged="CmbProspectType_SelectionChanged"/>
@@ -108,10 +109,28 @@
                                     <TextBox x:Name="txtIdExpirydateHijir"/>
 
                                     <Label Content="Nationality"/>
-                                    <ComboBox x:Name="CombNationality"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox x:Name="CombNationality" />
+                                        <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0"
+                                                Style="{StaticResource SecondaryButtonStyle}" Background="#27AE60"
+                                                Click="btnAddNationality_Click" ToolTip="Add Nationality"/>
+                                    </Grid>
 
                                     <Label Content="Source of Income"/>
-                                    <ComboBox x:Name="CombSourceofIncome"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox x:Name="CombSourceofIncome" />
+                                        <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0"
+                                                Style="{StaticResource SecondaryButtonStyle}" Background="#27AE60"
+                                                Click="btnAddSourceOfIncome_Click" ToolTip="Add Source of Income"/>
+                                    </Grid>
 
                                     <Label Content="Email"/>
                                     <TextBox x:Name="txtEmail"/>
@@ -127,10 +146,19 @@
                             <GroupBox Header="Corporate" Style="{StaticResource GroupBoxStyle}">
                                 <StackPanel Margin="8">
                                     <Label Content="Registration Status"/>
-                                    <ComboBox x:Name="ComboRegistrationStatus"/>
+                                    <ComboBox x:Name="ComboCorporateRegistrationStatus"/>
 
                                     <Label Content="Business Activity"/>
-                                    <ComboBox x:Name="cmbBusinessActivity"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox x:Name="cmbBusinessActivity" />
+                                        <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0" Padding="0"
+                                                Style="{StaticResource SecondaryButtonStyle}" Background="#0D3559"
+                                                Click="btnAddBusinessActivity_Click" ToolTip="Add Business Activity"/>
+                                    </Grid>
 
                                     <Label Content="Market Segment"/>
                                     <ComboBox x:Name="cmbMarketSegmant"/>
@@ -173,7 +201,16 @@
                             <GroupBox Header="National Address" Style="{StaticResource GroupBoxStyle}">
                                 <StackPanel Margin="8">
                                     <Label Content="Location"/>
-                                    <ComboBox x:Name="CombLocation"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <ComboBox x:Name="CombLocation" />
+                                        <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0" Padding="0"
+                                                Style="{StaticResource SecondaryButtonStyle}" Background="#0D3559"
+                                                Click="btnAddLocation_Click" ToolTip="Add Location"/>
+                                    </Grid>
 
                                     <Label Content="Building No."/>
                                     <TextBox x:Name="txtBuildingNo"/>

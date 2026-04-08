@@ -17,7 +17,7 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceClasses.Commands.A
 
         public async Task<Result<bool>> Handle(AddInsuranceClassCommand request, CancellationToken cancellationToken)
         {
-            var entity = new Domain.Entities.Master_Table.InsuranceClass
+            var entity = new Domain.Entities.MasterTable.InsuranceClass
             {
                 ClassName = request.ClassName,
                 Abbreviation = request.Abbreviation,

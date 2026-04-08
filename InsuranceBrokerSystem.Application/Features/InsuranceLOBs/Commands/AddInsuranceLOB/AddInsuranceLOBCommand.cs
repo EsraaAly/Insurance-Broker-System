@@ -19,7 +19,7 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Commands.AddI
         public async Task<Result<bool>> Handle(AddInsuranceLOBCommand request, CancellationToken cancellationToken)
         {
             var Insureanceclass = await _unitOfWork.GInsuranceClass.GetEntityByIdAsync(request.ClassID);
-            var entity = new Domain.Entities.Master_Table.InsuranceLineOfBusiness
+            var entity = new Domain.Entities.MasterTable.InsuranceLineOfBusiness
             {
                 ClassID = request.ClassID,
                 InsuranceClass = Insureanceclass,

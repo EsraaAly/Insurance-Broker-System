@@ -18,10 +18,11 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
         public DbSet<PolicyType> policyTypes { get; set; }
         public DbSet<Nationality> nationalities { get; set; }
         public DbSet<BusinessActivity> businessActivities { get; set; }
-
+        public DbSet<SourceOfIncome> sourceOfIncomes { get; set; }
+        public DbSet<Location> locations { get; set; }
         public DbSet<Account> accounts { get; set; }
 
-        public DbSet<Domain.Entities.Client.Client> Clients { get; set; }
+        public DbSet<Client> Clients { get; set; }
         public DbSet<ClientContact> ClientContacts { get; set; }
         public DbSet<ClientDocument> ClientDocuments { get; set; }
         public DbSet<ClientBankAccount> ClientBankAccounts { get; set; }
@@ -57,6 +58,16 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
 
             #region "BusinessActivity"
             modelBuilder.Entity<BusinessActivity>()
+                .HasKey(x => x.Id);
+            #endregion
+
+            #region "SourceOfIncome"
+            modelBuilder.Entity<SourceOfIncome>()
+                .HasKey(x => x.Id);
+            #endregion
+
+            #region "Location"
+            modelBuilder.Entity<Location>()
                 .HasKey(x => x.Id);
             #endregion
 
@@ -106,20 +117,19 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
             #endregion
 
             #region "Client"
-            modelBuilder.Entity<Domain.Entities.Client.Client>()
+            modelBuilder.Entity<Client>()
                 .HasKey(x => x.Id);
-            modelBuilder.Entity<Domain.Entities.Client.Client>()
+            modelBuilder.Entity<Client>()
                 .HasIndex(x => x.ClientName)
                 .HasFilter("[IsDeleted] = 0")
                 .IsUnique();
 
-            modelBuilder.Entity<Domain.Entities.Client.Client>(entity =>
+            modelBuilder.Entity<Client>(entity =>
             {
                 entity.Property(e => e.ClientName).IsRequired().HasMaxLength(200);
                 entity.Property(e => e.ClientNameAr).IsRequired().HasMaxLength(200);
 
                 entity.Property(e => e.IdentityNo).HasMaxLength(15);
-                entity.Property(e => e.Nationality).HasMaxLength(50);
 
                 entity.Property(e => e.CommercialRegistrationNo).HasMaxLength(20);
                 entity.Property(e => e.VATNo).HasMaxLength(15);
@@ -134,23 +144,55 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
             modelBuilder.Entity<ClientBankAccount>()
                 .HasKey(x => x.Id);
 
-            modelBuilder.Entity<Domain.Entities.Client.Client>()
+            modelBuilder.Entity<Client>()
                 .HasMany(c => c.Contacts)
                 .WithOne(p => p.Client)
                 .HasForeignKey(p => p.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Domain.Entities.Client.Client>()
+            modelBuilder.Entity<Client>()
                 .HasMany(c => c.Documents)
                 .WithOne(p => p.Client)
                 .HasForeignKey(p => p.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            modelBuilder.Entity<Domain.Entities.Client.Client>()
+            modelBuilder.Entity<Client>()
                 .HasMany(c => c.BankAccounts)
                 .WithOne(p => p.Client)
                 .HasForeignKey(p => p.ClientId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Client Relationships with Master Data
+            modelBuilder.Entity<Client>()
+                .HasOne(c => c.PolicyType)
+                .WithMany(i=>i.Clients)
+                .HasForeignKey(c => c.PolicyTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Client>()
+                .HasOne(c => c.ClientNationality)
+                .WithMany(i => i.Clients)
+                .HasForeignKey(c => c.NationalityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Client>()
+                .HasOne(c => c.SourceOfIncome)
+                .WithMany(i => i.Clients)
+                .HasForeignKey(c => c.SourceOfIncomeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Client>()
+                .HasOne(c => c.BusinessActivity)
+                .WithMany(i => i.Clients)
+                .HasForeignKey(c => c.BusinessActivityId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            
+            modelBuilder.Entity<Client>()
+                .HasOne(c => c.Location)
+                .WithMany(i => i.Clients)
+                .HasForeignKey(c => c.LocationId)
+                .OnDelete(DeleteBehavior.Restrict);
             #endregion
         }
     }

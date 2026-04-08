@@ -31,7 +31,7 @@ global using InsuranceBrokerSystem.UI;
 // ── Application — Interfaces ─────────────────────────────────
 global using InsuranceBrokerSystem.Application.Common.Interfaces.Service.Financial;
 global using InsuranceBrokerSystem.Domain.Enums.Master_Table;
-global using InsuranceBrokerSystem.Domain.Entities.Master_Table;
+global using InsuranceBrokerSystem.Domain.Entities.MasterTable;
 global using InsuranceBrokerSystem.Application.Common.Interfaces.Persistence.Financial;
 global using InsuranceBrokerSystem.Application.Common.Interfaces.UnitOfWork;
 global using InsuranceBrokerSystem.Application.Common.Interfaces.Persistence.Clients;

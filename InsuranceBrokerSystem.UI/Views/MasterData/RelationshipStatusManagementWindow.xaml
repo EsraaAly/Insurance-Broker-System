@@ -1,0 +1,97 @@
+<Window x:Class="InsuranceBrokerSystem.UI.Views.MasterData.RelationshipStatusManagementWindow"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="600"
+             WindowStartupLocation="CenterOwner"
+             ResizeMode="NoResize"
+             Title="Relationship Status Management">
+
+    <Window.Resources>
+        <ResourceDictionary Source="/Style.xaml"/>
+    </Window.Resources>
+
+    <Grid Background="{StaticResource BackgroundBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="70"/>
+        </Grid.RowDefinitions>
+
+        <!-- Title -->
+        <Border Background="#0D3559" Padding="15,12">
+            <TextBlock Text="Relationship Status Management" 
+                       Foreground="White" 
+                       FontSize="18" 
+                       FontWeight="SemiBold"/>
+        </Border>
+
+        <!-- Content -->
+        <Grid Grid.Row="1" Margin="20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Existing Data List -->
+            <StackPanel Grid.Column="0" Margin="0,0,10,0">
+                <TextBlock Text="Existing Relationship Statuses" FontWeight="Bold" Margin="0,0,0,10"/>
+                <ListBox x:Name="lstRelationshipStatuses" 
+                         Height="250"
+                         SelectionChanged="lstRelationshipStatuses_SelectionChanged"
+                         DisplayMemberPath="Name"/>
+            </StackPanel>
+
+            <!-- Add/Edit Form -->
+            <StackPanel Grid.Column="1">
+                <TextBlock Text="Add/Edit Relationship Status" FontWeight="Bold" Margin="0,0,0,10"/>
+                
+                <Grid Margin="0,0,0,20">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="10"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Label Content="Name:" Grid.Row="0"/>
+                    <TextBox x:Name="txtName" Grid.Row="0" Grid.Column="1" Height="28"/>
+                    
+                    <Label Content="Description:" Grid.Row="2"/>
+                    <TextBox x:Name="txtDescription" Grid.Row="2" Grid.Column="1" Height="60" TextWrapping="Wrap"/>
+                </Grid>
+
+                <!-- Action Buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="btnAdd" Content="Add" Width="80" Height="35" Margin="5,0"
+                            Style="{StaticResource SecondaryButtonStyle}" Background="#27AE60"
+                            Click="btnAdd_Click"/>
+                    <Button x:Name="btnUpdate" Content="Update" Width="80" Height="35" Margin="5,0"
+                            Style="{StaticResource SecondaryButtonStyle}" Background="#3498DB"
+                            Click="btnUpdate_Click" IsEnabled="False"/>
+                    <Button x:Name="btnDelete" Content="Delete" Width="80" Height="35" Margin="5,0"
+                            Style="{StaticResource SecondaryButtonStyle}" Background="#E74C3C"
+                            Click="btnDelete_Click" IsEnabled="False"/>
+                    <Button x:Name="btnClear" Content="Clear" Width="80" Height="35" Margin="5,0"
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="btnClear_Click"/>
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!-- Bottom Buttons -->
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="15">
+            <Button Content="Refresh" Width="100" Height="38" Margin="8,0"
+                    Style="{StaticResource SecondaryButtonStyle}" 
+                    Click="btnRefresh_Click"/>
+            <Button Content="Close" Width="100" Height="38" Margin="8,0"
+                    Style="{StaticResource SecondaryButtonStyle}" Background="#EF4444"
+                    Click="btnClose_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

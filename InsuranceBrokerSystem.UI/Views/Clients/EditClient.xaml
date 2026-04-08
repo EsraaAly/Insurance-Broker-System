@@ -1,13 +1,13 @@
-<Window x:Class="InsuranceBrokerSystem.UI.Views.Clients.RegisterNewClient"
+<UserControl x:Class="InsuranceBrokerSystem.UI.Views.Clients.EditClient"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" d:DesignHeight="850" d:DesignWidth="1200" >
 
-    <Window.Resources>
+    <UserControl.Resources>
         <ResourceDictionary Source="/Style.xaml"/>
-    </Window.Resources>
+    </UserControl.Resources>
 
     
     <Grid Background="{StaticResource BackgroundBrush}" >
@@ -19,7 +19,7 @@
 
         <!-- Title -->
         <Border Background="#0D3559" Padding="15,12">
-            <TextBlock Text="Register New Clients" 
+            <TextBlock Text="Edit Client" 
                        Foreground="White" 
                        FontSize="18" 
                        FontWeight="SemiBold"/>
@@ -76,18 +76,10 @@
                                         <TextBox x:Name="txtOfficialName" Grid.Row="6" Grid.Column="1"/>
 
                                         <Label Content="Relationship Status" Grid.Row="8"/>
-                                        <ComboBox x:Name="ComboRelationshipStatus" Grid.Row="8" Grid.ColumnSpan="2" Height="32" Margin="142,0,0,0" VerticalAlignment="Top">
-                                            <ComboBoxItem Content="Captive"/>
-                                            <ComboBoxItem Content="Non Captive"/>
-                                        </ComboBox>
+                                        <ComboBox x:Name="ComboRelationshipStatus" Grid.Row="8" Grid.Column="1"/>
+
                                         <Label Content="Business Type" Grid.Row="10"/>
-                                        <ComboBox x:Name="CombBusinessType" Grid.Row="10" Grid.Column="1">
-                                            <ComboBoxItem Content="Governmental Entities"/>
-                                            <ComboBoxItem Content="Semi-Government"/>
-                                            <ComboBoxItem Content="Publicly listed"/>
-                                            <ComboBoxItem Content="Corporation"/>
-                                            <ComboBoxItem Content="SME"/>
-                                        </ComboBox>
+                                        <ComboBox x:Name="CombBusinessType" Grid.Row="10" Grid.Column="1"/>
 
                                         <Label Content="Client Type" Grid.Row="12"/>
                                         <ComboBox x:Name="CmbProspectType" Grid.Row="12" Grid.Column="1" SelectionChanged="CmbProspectType_SelectionChanged"/>
@@ -297,7 +289,6 @@
                                       AutoGenerateColumns="False"
                                       CanUserAddRows="False"
                                       RowHeight="40"
-                                      MinHeight="80"
                                       MaxHeight="220"
                                       AllowDrop="True"
                                       Drop="DropZone_Drop"
@@ -309,7 +300,7 @@
                                     <DataGridTextColumn Header="#" Binding="{Binding Index}" Width="35" IsReadOnly="True"/>
                                     <DataGridTextColumn Header="Document Type" Binding="{Binding DocumentType}" Width="1.2*"/>
                                     <DataGridTextColumn Header="File Name" Binding="{Binding FileName}" Width="2*" IsReadOnly="True"/>
-                                    <DataGridTextColumn Header="Size" Binding="{Binding FileSize}" Width="80" IsReadOnly="True"/>
+                                    <!--<DataGridTextColumn Header="Size" Binding="{Binding FileSize}" Width="80" IsReadOnly="True"/>-->
                                     <DataGridTextColumn Header="Uploaded" Binding="{Binding UploadDate}" Width="100" IsReadOnly="True"/>
                                     <DataGridTemplateColumn Header="Actions" Width="130">
                                         <DataGridTemplateColumn.CellTemplate>
@@ -375,8 +366,8 @@
         </TabControl>
         <!-- Action Buttons -->
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="15" Grid.Row="2" >
-            <Button Content="Save" Width="110" Height="38" Margin="8,0"
-                    Style="{StaticResource SecondaryButtonStyle}" Background="#27AE60" Click="btnSave_Click"/>
+            <Button Content="Update" Width="110" Height="38" Margin="8,0"
+                    Style="{StaticResource SecondaryButtonStyle}" Background="#27AE60" Click="btnUpdate_Click"/>
 
             <Button Content="Clear" Width="110" Height="38" Margin="8,0"
                     Style="{StaticResource SecondaryButtonStyle}" Click="btnClear_Click"/>
@@ -385,4 +376,4 @@
                     Style="{StaticResource SecondaryButtonStyle}" Background="#EF4444" Click="btnClose_Click"/>
         </StackPanel>
     </Grid>
-</Window>
+</UserControl>

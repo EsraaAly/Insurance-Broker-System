@@ -9,6 +9,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using Microsoft.Win32;
 using InsuranceBrokerSystem.Application.DTOs.Client;
+using InsuranceBrokerSystem.Domain.Enums.Client;
 using InsuranceBrokerSystem.UI.Services.Clients;
 
 namespace InsuranceBrokerSystem.UI.Views.Clients
@@ -46,11 +47,144 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             Contacts = new ObservableCollection<ContactItem>();
             Documents = new ObservableCollection<DocumentItem>();
             BankAccounts = new ObservableCollection<BankAccountItem>();
+            
+            // Populate comboboxes
+            PopulateComboBoxes();
 
             // Bind to DataGrids
             GridContactPersons.ItemsSource = Contacts;
             GridFiles.ItemsSource = Documents;
             GridBankAccounts.ItemsSource = BankAccounts;
+        }
+
+        private void PopulateComboBoxes()
+        {
+            // Registration Status
+            ComboRegistrationStatus.Items.Clear();
+            ComboRegistrationStatus.Items.Add("Joint Liability Company");
+            ComboRegistrationStatus.Items.Add("Limited Partnership Company");
+            ComboRegistrationStatus.Items.Add("Joint Venture");
+            ComboRegistrationStatus.Items.Add("Joint Stock");
+            ComboRegistrationStatus.Items.Add("Limited Liability Company");
+
+            // Market Segment
+            cmbMarketSegmant.Items.Clear();
+            cmbMarketSegmant.Items.Add("Local");
+            cmbMarketSegmant.Items.Add("Regional");
+            cmbMarketSegmant.Items.Add("Multi-National (local)");
+            cmbMarketSegmant.Items.Add("Multi-National (Regional)");
+
+            // Premium
+            CombPremium.Items.Clear();
+            CombPremium.Items.Add("<5,000 SAR");
+            CombPremium.Items.Add("5,000 SAR - 10,000 SAR");
+            CombPremium.Items.Add("10,000 SAR - 50,000 SAR");
+            CombPremium.Items.Add("50,000 SAR - 100,000 SAR");
+            CombPremium.Items.Add("100,000 SAR - 500,000 SAR");
+            CombPremium.Items.Add(">500,000 SAR");
+
+            // Channel
+            CombChannel.Items.Clear();
+            CombChannel.Items.Add("Business Development");
+            CombChannel.Items.Add("Direct");
+            CombChannel.Items.Add("Referral");
+
+            // Interface
+            CombInterface.Items.Clear();
+            CombInterface.Items.Add("Face-to-Face");
+            CombInterface.Items.Add("Conducted via phone");
+            CombInterface.Items.Add("Conducted via email");
+            CombInterface.Items.Add("Indirect Parties");
+
+            // Producer 1 and 2
+            CombProducers.Items.Clear();
+            CombProducers2nd.Items.Clear();
+            var producers = new List<string> { "Jeddah", "Riyadh", "Khobar" };
+            foreach (var producer in producers)
+            {
+                CombProducers.Items.Add(producer);
+                CombProducers2nd.Items.Add(producer);
+            }
+
+            // Screening Result
+            CombScreeningResult.Items.Clear();
+            CombScreeningResult.Items.Add("Other");
+            CombScreeningResult.Items.Add("Sanctioned");
+            CombScreeningResult.Items.Add("Politically Exposed Person(s)");
+            CombScreeningResult.Items.Add("No Match");
+
+            // Client Type
+            CmbProspectType.Items.Clear();
+            CmbProspectType.Items.Add(new ComboBoxItem { Content = "Retail", Tag = (int)ClientType.Retail });
+            CmbProspectType.Items.Add(new ComboBoxItem { Content = "Corporate", Tag = (int)ClientType.Corporate });
+        }
+
+        private void CmbProspectType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (CmbProspectType.SelectedItem is ComboBoxItem selectedItem)
+            {
+                int clientType = (int)selectedItem.Tag;
+                ToggleFieldsByClientType(clientType);
+            }
+        }
+
+        private void ToggleFieldsByClientType(int clientType)
+        {
+            bool isRetail = clientType == (int)ClientType.Retail;
+            bool isCorporate = clientType == (int)ClientType.Corporate;
+
+            // Retail fields - enabled only for Retail clients
+            txtIDNo.IsEnabled = isRetail;
+            DTPIDExpiryDate.IsEnabled = isRetail;
+            txtIdExpirydateHijir.IsEnabled = isRetail;
+            CombNationality.IsEnabled = isRetail;
+            CombSourceofIncome.IsEnabled = isRetail;
+            txtEmail.IsEnabled = isRetail;
+            txtBirthDay.IsEnabled = isRetail;
+
+            // Corporate fields - enabled only for Corporate clients
+            ComboRegistrationStatus.IsEnabled = isCorporate;
+            cmbBusinessActivity.IsEnabled = isCorporate;
+            cmbMarketSegmant.IsEnabled = isCorporate;
+            DTPIncorporation.IsEnabled = isCorporate;
+            txtDateofIncorporationHijri.IsEnabled = isCorporate;
+            txtCommercialNo.IsEnabled = isCorporate;
+            DTPExpiryDate.IsEnabled = isCorporate;
+            txtExpiryHijri.IsEnabled = isCorporate;
+            txtSponsorID.IsEnabled = isCorporate;
+            txtUnifiedNo.IsEnabled = isCorporate;
+            txtVatNo.IsEnabled = isCorporate;
+            txtCapital.IsEnabled = isCorporate;
+            CombPremium.IsEnabled = isCorporate;
+
+            // Clear fields when disabled
+            if (!isRetail)
+            {
+                txtIDNo.Clear();
+                DTPIDExpiryDate.SelectedDate = null;
+                txtIdExpirydateHijir.Clear();
+                CombNationality.SelectedIndex = -1;
+                CombSourceofIncome.SelectedIndex = -1;
+                txtEmail.Clear();
+                txtBirthDay.SelectedDate = null;
+            }
+
+            if (!isCorporate)
+            {
+                ComboRegistrationStatus.SelectedIndex = -1;
+                cmbBusinessActivity.SelectedIndex = -1;
+                cmbMarketSegmant.SelectedIndex = -1;
+                DTPIncorporation.SelectedDate = null;
+                txtDateofIncorporationHijri.Clear();
+                txtCommercialNo.Clear();
+                DTPExpiryDate.SelectedDate = null;
+                txtExpiryHijri.Clear();
+                txtSponsorID.Clear();
+                txtUnifiedNo.Clear();
+                txtVatNo.Clear();
+                txtCapital.Clear();
+                CombPremium.SelectedIndex = -1;
+            }
         }
 
         // ====================== BUTTON EVENTS ======================
@@ -203,6 +337,14 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                     Branch = b.Branch,
                     IBAN = b.IBAN,
                     SwiftCode = b.SwiftCode
+                }).ToList(),
+                Documents = Documents.Select(d => new AddClientDocumentDTO
+                {
+                    FileName = d.FileName,
+                    FilePath = d.FilePath,
+                    DocumentType = d.DocumentType,
+                    FileSize = d.FileSize,
+                    UploadDate = DateTime.Parse(d.UploadDate)
                 }).ToList()
             };
         }
@@ -469,31 +611,5 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
 
     // ====================== SUPPORTING MODEL CLASSES ======================
 
-    public class ContactItem
-    {
-        public string Name { get; set; }
-        public string Position { get; set; }
-        public string Extension { get; set; }
-        public string Mobile { get; set; }
-        public string Tele { get; set; }
-        public string Email { get; set; }
-    }
 
-    public class DocumentItem
-    {
-        public int    Index        { get; set; }
-        public string FileName     { get; set; } = string.Empty;
-        public string FilePath     { get; set; } = string.Empty;
-        public string DocumentType { get; set; } = "Other";
-        public string FileSize     { get; set; } = string.Empty;
-        public string UploadDate   { get; set; } = string.Empty;
-    }
-
-    public class BankAccountItem
-    {
-        public string BankName { get; set; }
-        public string Branch { get; set; }
-        public string IBAN { get; set; }
-        public string SwiftCode { get; set; }
-    }
 }

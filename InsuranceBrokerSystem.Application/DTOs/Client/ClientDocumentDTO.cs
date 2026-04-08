@@ -8,6 +8,7 @@ namespace InsuranceBrokerSystem.Application.DTOs.Client
         public string FilePath     { get; set; } = string.Empty;
         public string DocumentType { get; set; } = string.Empty;
         public string FileSize     { get; set; } = string.Empty;
+        public DateTime UploadDate { get; set; }
     }
 
     public class AddClientDocumentDTO : ClientDocumentBase
@@ -18,7 +19,7 @@ namespace InsuranceBrokerSystem.Application.DTOs.Client
     {
         public int Id { get; set; }
 
-        public DateTime UploadDate  { get; set; }
+        
 
         public string CreatedBy     { get; set; } = string.Empty;
         public DateTime CreatedDate { get; set; }

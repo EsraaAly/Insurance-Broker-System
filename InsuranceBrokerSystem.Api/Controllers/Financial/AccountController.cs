@@ -29,7 +29,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Financial
             return result.ToActionResult();
         }
 
-        [HttpDelete(ApiRoutes.Financial.Account.DeleteAccount + "/{id}")]
+        [HttpDelete(ApiRoutes.Financial.Account.DeleteAccount + "{id}")]
         public async Task<IActionResult> DeleteAccountAsync(int id)
         {
             var result = await _mediator.Send(new DeleteAccountCommand(id));

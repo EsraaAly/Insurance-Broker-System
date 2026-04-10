@@ -60,7 +60,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Clients
             return BadRequest(result.Message);
         }
 
-        [HttpDelete(ApiRoutes.Clients.DeleteClient+"/{id}")]
+        [HttpDelete(ApiRoutes.Clients.DeleteClient+"{id}")]
         public async Task<IActionResult> DeleteClientAsync(int id)
         {
             var result = await _mediator.Send(new DeleteClientCommand(id));

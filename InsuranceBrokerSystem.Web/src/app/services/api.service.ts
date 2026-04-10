@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'https://localhost:7039/api/v1'; // Update with your API base URL
+  private baseUrl = 'http://localhost:5041/api/v1'; // Update with your API base URL
   private httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };

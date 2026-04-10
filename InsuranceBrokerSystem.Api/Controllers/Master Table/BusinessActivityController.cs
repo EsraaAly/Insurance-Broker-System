@@ -44,7 +44,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
             return result.ToActionResult();
         }
 
-        [HttpDelete(ApiRoutes.MasterTable.BusinessActivity.DeleteBusinessActivity+"/{id}")]
+        [HttpDelete(ApiRoutes.MasterTable.BusinessActivity.DeleteBusinessActivity+"{id}")]
         public async Task<IActionResult> DeleteBusinessActivityAsync(int id)
         {
             if (id == 0) return BadRequest("Id is not valid");

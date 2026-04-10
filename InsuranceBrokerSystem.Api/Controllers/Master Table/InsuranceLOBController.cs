@@ -51,7 +51,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
             return result.ToActionResult();
         }
 
-        [HttpDelete(ApiRoutes.MasterTable.InsuranceLOB.DeleteInsuranceLOB + "/{id}")]
+        [HttpDelete(ApiRoutes.MasterTable.InsuranceLOB.DeleteInsuranceLOB + "{id}")]
         public async Task<IActionResult> DeleteLOBAsync(int id)
         {
             if (id == 0) return BadRequest("Id isn't valid");

@@ -12,7 +12,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
             _mediator = mediator;
         }
 
-        [HttpGet(ApiRoutes.MasterTable.InsuranceCompProduct.GetInsuranceProductByInsuranceIdAsync + "/{id}")]
+        [HttpGet(ApiRoutes.MasterTable.InsuranceCompProduct.GetInsuranceProductByInsuranceId + "/{id}")]
         public async Task<IActionResult> GetInsuranceProductByInsuranceIdAsync(int id)
         {
             var result = await _mediator.Send(new GetInsuranceProductsByCompanyIdQuery { CompanyId = id });

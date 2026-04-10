@@ -24,16 +24,17 @@ namespace InsuranceBrokerSystem.Application.Features.BusinessActivities.Queries.
                 return Result<GetBusinessActivityDTO>.Failure("Business Activity not found");
             }
 
-            var dto = new GetBusinessActivityDTO
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Description = entity.Description
-            };
+            var dto = entity.Adapt<GetBusinessActivityDTO>();
 
             return Result<GetBusinessActivityDTO>.Success(dto, "Business Activity retrieved successfully");
         }
     }
+    public class GetBusinessActivityByIdValidator : AbstractValidator<GetBusinessActivityByIdQuery>
+    {
+        public GetBusinessActivityByIdValidator()
+        {
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage("Id must be greater than 0");
+        }
+    }
 
-    
 }

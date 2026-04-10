@@ -1,13 +1,11 @@
 namespace InsuranceBrokerSystem.Application.Features.BusinessActivities.Commands.UpdateBusinessActivity
 {
-    public class UpdateBusinessActivityCommand : IRequest<Result<bool>>
+    public class UpdateBusinessActivityCommand : IRequest<Result<GetBusinessActivityDTO>>
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public UpdateBusinessActivityDTO _updateBusinessActivityDTO { get; set; }
     }
 
-    public class UpdateBusinessActivityHandler : IRequestHandler<UpdateBusinessActivityCommand, Result<bool>>
+    public class UpdateBusinessActivityHandler : IRequestHandler<UpdateBusinessActivityCommand, Result<GetBusinessActivityDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,27 +14,37 @@ namespace InsuranceBrokerSystem.Application.Features.BusinessActivities.Commands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<bool>> Handle(UpdateBusinessActivityCommand request, CancellationToken cancellationToken)
+        public async Task<Result<GetBusinessActivityDTO>> Handle(UpdateBusinessActivityCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _unitOfWork.GBusinessActivity.GetEntityByIdAsync(request.Id);
+            var entity = await _unitOfWork.GBusinessActivity.GetEntityByIdAsync(request._updateBusinessActivityDTO.Id);
             if (entity == null)
             {
-                return Result<bool>.Failure("Business Activity not found");
+                return Result<GetBusinessActivityDTO>.Failure("Business Activity not found");
             }
 
-            entity.Name = request.Name;
-            entity.Description = request.Description;
+            entity.Name = request._updateBusinessActivityDTO.Name;
+            entity.Description = request._updateBusinessActivityDTO.Description;
             entity.UpdatedBy = "Israa";
             entity.UpdatedDate = DateTime.Now;
 
             var updatedEntity = await _unitOfWork.GBusinessActivity.UpdateEntityAsync(entity);
             if (updatedEntity != null)
             {
+                var dto = updatedEntity.Adapt<GetBusinessActivityDTO>();
                 await _unitOfWork.CommitAsync();
-                return Result<bool>.Success(true, "Business Activity updated successfully");
+                return Result<GetBusinessActivityDTO>.Success(dto, "Business Activity updated successfully");
             }
 
-            return Result<bool>.Failure("Failed to update Business Activity");
+            return Result<GetBusinessActivityDTO>.Failure("Failed to update Business Activity");
+        }
+    }
+    public class UpdateBusinessActivityValidator : AbstractValidator<UpdateBusinessActivityCommand>
+    {
+        public UpdateBusinessActivityValidator()
+        {
+            RuleFor(x => x._updateBusinessActivityDTO.Id).GreaterThan(0).WithMessage("Id must be greater than 0");
+            RuleFor(x => x._updateBusinessActivityDTO.Name).NotEmpty().WithMessage("Name is required");
+            RuleFor(x => x._updateBusinessActivityDTO.Description).NotEmpty().WithMessage("Description is required");
         }
     }
 }

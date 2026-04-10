@@ -1,12 +1,11 @@
 namespace InsuranceBrokerSystem.Application.Features.BusinessActivities.Commands.AddBusinessActivity
 {
-    public class AddBusinessActivityCommand : IRequest<Result<bool>>
+    public class AddBusinessActivityCommand : IRequest<Result<GetBusinessActivityDTO>>
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public AddBusinessActivityDTO _addBusinessActivityDTO { get; set; }
     }
 
-    public class AddBusinessActivityHandler : IRequestHandler<AddBusinessActivityCommand, Result<bool>>
+    public class AddBusinessActivityHandler : IRequestHandler<AddBusinessActivityCommand, Result<GetBusinessActivityDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -15,12 +14,12 @@ namespace InsuranceBrokerSystem.Application.Features.BusinessActivities.Commands
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<bool>> Handle(AddBusinessActivityCommand request, CancellationToken cancellationToken)
+        public async Task<Result<GetBusinessActivityDTO>> Handle(AddBusinessActivityCommand request, CancellationToken cancellationToken)
         {
             var entity = new Domain.Entities.MasterTable.BusinessActivity
             {
-                Name = request.Name,
-                Description = request.Description,
+                Name = request._addBusinessActivityDTO.Name,
+                Description = request._addBusinessActivityDTO.Description,
                 CreatedBy = "Israa",
                 CreatedDate = DateTime.Now,
                 UpdatedBy = "",
@@ -31,11 +30,20 @@ namespace InsuranceBrokerSystem.Application.Features.BusinessActivities.Commands
             var addedEntity = await _unitOfWork.GBusinessActivity.AddEntityAsync(entity);
             if (addedEntity != null)
             {
+                var dto = addedEntity.Adapt<GetBusinessActivityDTO>();
                 await _unitOfWork.CommitAsync();
-                return Result<bool>.Success(true, "Business Activity added successfully");
+                return Result<GetBusinessActivityDTO>.Success(dto, "Business Activity added successfully");
             }
 
-            return Result<bool>.Failure("Failed to add Business Activity");
+            return Result<GetBusinessActivityDTO>.Failure("Failed to add Business Activity");
+        }
+    }
+    public class AddBusinessActivityValidator : AbstractValidator<AddBusinessActivityCommand>
+    {
+        public AddBusinessActivityValidator()
+        {
+            RuleFor(x => x._addBusinessActivityDTO.Name).NotEmpty().WithMessage("Name is required");
+            RuleFor(x => x._addBusinessActivityDTO.Description).NotEmpty().WithMessage("Description is required");
         }
     }
 }

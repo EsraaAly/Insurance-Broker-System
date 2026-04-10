@@ -36,4 +36,11 @@ namespace InsuranceBrokerSystem.Application.Features.BusinessActivities.Commands
             return Result<bool>.Failure("Failed to delete Business Activity");
         }
     }
+    public class DeleteBusinessActivityValidator : AbstractValidator<DeleteBusinessActivityCommand>
+    {
+        public DeleteBusinessActivityValidator()
+        {
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage("Id must be greater than 0");
+        }
+    }
 }

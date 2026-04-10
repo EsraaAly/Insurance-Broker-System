@@ -18,12 +18,7 @@ namespace InsuranceBrokerSystem.Application.Features.PolicyTypes.Queries.GetAllP
         public async Task<Result<IEnumerable<GetPolicyTypeDTO>>> Handle(GetAllPolicyTypesQuery request, CancellationToken cancellationToken)
         {
             var entities = await _unitOfWork.GPolicyType.GetAllEntitytiesAsync();
-            var dtos = entities.Select(entity => new GetPolicyTypeDTO
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Description = entity.Description
-            });
+            var dtos = entities.Adapt<IEnumerable<GetPolicyTypeDTO>>();
 
             return Result<IEnumerable<GetPolicyTypeDTO>>.Success(dtos, "Policy Types retrieved successfully");
         }

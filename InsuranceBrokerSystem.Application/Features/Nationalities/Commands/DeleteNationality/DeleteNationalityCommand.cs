@@ -36,4 +36,11 @@ namespace InsuranceBrokerSystem.Application.Features.Nationalities.Commands.Dele
             return Result<bool>.Failure("Failed to delete Nationality");
         }
     }
+    public class DeleteNationalityValidator : AbstractValidator<DeleteNationalityCommand>
+    {
+        public DeleteNationalityValidator()
+        {
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage("Id must be greater than 0");
+        }
+    }
 }

@@ -24,16 +24,17 @@ namespace InsuranceBrokerSystem.Application.Features.PolicyTypes.Queries.GetPoli
                 return Result<GetPolicyTypeDTO>.Failure("Policy Type not found");
             }
 
-            var dto = new GetPolicyTypeDTO
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Description = entity.Description
-            };
+            var dto = entity.Adapt<GetPolicyTypeDTO>();
 
             return Result<GetPolicyTypeDTO>.Success(dto, "Policy Type retrieved successfully");
         }
     }
+    class GetPolicyTypeByIdValidator : AbstractValidator<GetPolicyTypeByIdQuery>
+    {
+        public GetPolicyTypeByIdValidator()
+        {
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage("Id must be greater than 0");
+        }
+    }
 
-    
 }

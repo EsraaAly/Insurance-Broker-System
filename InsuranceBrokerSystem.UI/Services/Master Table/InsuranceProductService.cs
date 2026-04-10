@@ -26,7 +26,7 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
 
         public async Task<List<GetInsuranceProductDTO>> GetInsuranceProductByInsuranceIdAsync(int id)
         {
-            var response = await _httpClient.GetAsync($"{ ApiRoutes.MasterTable.InsuranceCompProduct.GetInsuranceProductByInsuranceIdAsync}/{id}");
+            var response = await _httpClient.GetAsync($"{ ApiRoutes.MasterTable.InsuranceCompProduct.GetInsuranceProductByInsuranceId}/{id}");
 
             if (!response.IsSuccessStatusCode)
             {

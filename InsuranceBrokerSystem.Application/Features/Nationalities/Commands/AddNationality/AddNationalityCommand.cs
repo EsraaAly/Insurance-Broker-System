@@ -1,13 +1,11 @@
 namespace InsuranceBrokerSystem.Application.Features.Nationalities.Commands.AddNationality
 {
-    public class AddNationalityCommand : IRequest<Result<bool>>
+    public class AddNationalityCommand : IRequest<Result<GetNationalityDTO>>
     {
-        public string Name { get; set; }
-        public string Code { get; set; }
-        public string Description { get; set; }
+        public AddNationalityDTO _addNationalityDTO { get; set; }
     }
 
-    public class AddNationalityHandler : IRequestHandler<AddNationalityCommand, Result<bool>>
+    public class AddNationalityHandler : IRequestHandler<AddNationalityCommand, Result<GetNationalityDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,13 +14,13 @@ namespace InsuranceBrokerSystem.Application.Features.Nationalities.Commands.AddN
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<bool>> Handle(AddNationalityCommand request, CancellationToken cancellationToken)
+        public async Task<Result<GetNationalityDTO>> Handle(AddNationalityCommand request, CancellationToken cancellationToken)
         {
             var entity = new Domain.Entities.MasterTable.Nationality
             {
-                Name = request.Name,
-                Code = request.Code,
-                Description = request.Description,
+                Name = request._addNationalityDTO.Name,
+                Code = request._addNationalityDTO.Code,
+                Description = request._addNationalityDTO.Description,
                 CreatedBy = "Israa",
                 CreatedDate = DateTime.Now,
                 UpdatedBy = "",
@@ -33,11 +31,20 @@ namespace InsuranceBrokerSystem.Application.Features.Nationalities.Commands.AddN
             var addedEntity = await _unitOfWork.GNationality.AddEntityAsync(entity);
             if (addedEntity != null)
             {
+                var dto = addedEntity.Adapt<GetNationalityDTO>();
                 await _unitOfWork.CommitAsync();
-                return Result<bool>.Success(true, "Nationality added successfully");
+                return Result<GetNationalityDTO>.Success(dto, "Nationality added successfully");
             }
 
-            return Result<bool>.Failure("Failed to add Nationality");
+            return Result<GetNationalityDTO>.Failure("Failed to add Nationality");
+        }
+    }
+    public class AddNationalityValidator : AbstractValidator<AddNationalityCommand>
+    {
+        public AddNationalityValidator()
+        {
+            RuleFor(x => x._addNationalityDTO.Name).NotEmpty().WithMessage("Name is required");
+            RuleFor(x => x._addNationalityDTO.Code).NotEmpty().WithMessage("Code is required");
         }
     }
 }

@@ -12,6 +12,14 @@ namespace InsuranceBrokerSystem.UI
 
         public static class MasterTable
         {
+            public static class BusinessActivity
+            {
+                public const string GetAllBusinessActivities = $"api/{Version}/BusinessActivity/GetAll";
+                public const string AddBusinessActivity = $"api/{Version}/BusinessActivity/Add";
+                public const string UpdateBusinessActivity = $"api/{Version}/BusinessActivity/Update";
+                public const string DeleteBusinessActivity = $"api/{Version}/BusinessActivity/Delete";
+                public const string GetBusinessActivityById = $"api/{Version}/BusinessActivity/GetById";
+            }
             public static class InsuranceClass
             {
                 public const string GetAllInsuranceClasses = $"api/{Version}/InsuranceClass/GetAll";
@@ -42,13 +50,45 @@ namespace InsuranceBrokerSystem.UI
             }
             public static class InsuranceCompProduct
             {
-                public const string GetInsuranceProductByInsuranceIdAsync = $"api/{Version}/InsuranceCompProduct/GetByInsuranceId";
-
+                public const string GetInsuranceProductByInsuranceId = $"api/{Version}/InsuranceCompProduct/GetByInsuranceId";
+                
             }
             public static class InsuranceCompContact
             {
-                public const string GetInsuranceContactByInsuranceIdAsync = $"api/{Version}/InsuranceCompContact/GetByInsuranceId";
-
+                public const string GetInsuranceContactByInsuranceIdAsync  = $"api/{Version}/InsuranceCompContact/GetByInsuranceId";
+                
+            }
+            public static class Location
+            {
+                public const string GetAllLocations = $"api/{Version}/Location/GetAll";
+                public const string AddLocation = $"api/{Version}/Location/Add";
+                public const string UpdateLocation = $"api/{Version}/Location/Update";
+                public const string DeleteLocation = $"api/{Version}/Location/Delete";
+                public const string GetLocationById = $"api/{Version}/Location/GetById";
+            }
+            public static class Nationality
+            {
+                public const string GetAllNationalities = $"api/{Version}/Nationality/GetAll";
+                public const string AddNationality = $"api/{Version}/Nationality/Add";
+                public const string UpdateNationality = $"api/{Version}/Nationality/Update";
+                public const string DeleteNationality = $"api/{Version}/Nationality/Delete";
+                public const string GetNationalityById = $"api/{Version}/Nationality/GetById";
+            }
+            public static class PolicyType
+            {
+                public const string GetAllPolicyTypes = $"api/{Version}/PolicyType/GetAll";
+                public const string AddPolicyType = $"api/{Version}/PolicyType/Add";
+                public const string UpdatePolicyType = $"api/{Version}/PolicyType/Update";
+                public const string DeletePolicyType = $"api/{Version}/PolicyType/Delete";
+                public const string GetPolicyTypeById = $"api/{Version}/PolicyType/GetById";
+            }
+            public static class SourceOfIncome
+            {
+                public const string GetAllSourceOfIncomes = $"api/{Version}/SourceOfIncome/GetAll";
+                public const string AddSourceOfIncome = $"api/{Version}/SourceOfIncome/Add";
+                public const string UpdateSourceOfIncome = $"api/{Version}/SourceOfIncome/Update";
+                public const string DeleteSourceOfIncome = $"api/{Version}/SourceOfIncome/Delete";
+                public const string GetSourceOfIncomeById = $"api/{Version}/SourceOfIncome/GetById";
             }
 
         }

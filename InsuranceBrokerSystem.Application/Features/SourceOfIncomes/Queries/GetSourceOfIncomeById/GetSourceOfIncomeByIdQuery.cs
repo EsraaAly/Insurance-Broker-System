@@ -1,5 +1,3 @@
-using InsuranceBrokerSystem.Application.DTOs.Master_Table.SourceOfIncome;
-
 namespace InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Queries.GetSourceOfIncomeById
 {
     public class GetSourceOfIncomeByIdQuery : IRequest<Result<GetSourceOfIncomeDTO>>
@@ -24,16 +22,18 @@ namespace InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Queries.Get
                 return Result<GetSourceOfIncomeDTO>.Failure("Source Of Income not found");
             }
 
-            var dto = new GetSourceOfIncomeDTO
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Description = entity.Description
-            };
+            var dto = entity.Adapt<GetSourceOfIncomeDTO>();
 
             return Result<GetSourceOfIncomeDTO>.Success(dto, "Source Of Income retrieved successfully");
         }
     }
+    public class GetSourceOfIncomeByIdValidator : AbstractValidator<GetSourceOfIncomeByIdQuery>
+    {
+        public GetSourceOfIncomeByIdValidator()
+        {
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage("Id must be greater than 0");
+        }
+    }
 
-    
+
 }

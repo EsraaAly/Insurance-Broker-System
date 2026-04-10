@@ -37,6 +37,11 @@ global using InsuranceBrokerSystem.Application.DTOs.Financial.InsuranceCompanyAc
 global using InsuranceBrokerSystem.Application.DTOs.Master_Table.InsuranceCompany;
 global using InsuranceBrokerSystem.Application.DTOs.Master_Table.Insurance_Class_and_Line;
 global using InsuranceBrokerSystem.Application.DTOs.Client;
+global using InsuranceBrokerSystem.Application.DTOs.Master_Table.Nationality;
+global using InsuranceBrokerSystem.Application.DTOs.Master_Table.SourceOfIncome;
+global using InsuranceBrokerSystem.Application.DTOs.Master_Table.PolicyType;
+global using InsuranceBrokerSystem.Application.DTOs.Master_Table.BusinessActivity;
+global using InsuranceBrokerSystem.Application.DTOs.Master_Table.Location;
 
 
 

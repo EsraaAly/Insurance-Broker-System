@@ -13,6 +13,18 @@ namespace InsuranceBrokerSystem.Api
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddApplicationServices();
 
+            // Add CORS
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngularApp", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200", "https://localhost:4200")
+                          .AllowAnyHeader()
+                          .AllowAnyMethod()
+                          .AllowCredentials();
+                });
+            });
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -26,6 +38,10 @@ namespace InsuranceBrokerSystem.Api
             }
 
             app.UseHttpsRedirection();
+            
+            // Use CORS
+            app.UseCors("AllowAngularApp");
+            
             app.UseAuthorization();
             app.MapControllers();
 

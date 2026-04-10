@@ -1,4 +1,3 @@
-using InsuranceBrokerSystem.Application.DTOs.Master_Table.SourceOfIncome;
 
 namespace InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Queries.GetAllSourceOfIncomes
 {
@@ -18,12 +17,8 @@ namespace InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Queries.Get
         public async Task<Result<IEnumerable<GetSourceOfIncomeDTO>>> Handle(GetAllSourceOfIncomesQuery request, CancellationToken cancellationToken)
         {
             var entities = await _unitOfWork.GSourceOfIncome.GetAllEntitytiesAsync();
-            var dtos = entities.Select(entity => new GetSourceOfIncomeDTO
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Description = entity.Description
-            });
+
+            var dtos = entities.Adapt<IEnumerable<GetSourceOfIncomeDTO>>();
 
             return Result<IEnumerable<GetSourceOfIncomeDTO>>.Success(dtos, "Source Of Incomes retrieved successfully");
         }

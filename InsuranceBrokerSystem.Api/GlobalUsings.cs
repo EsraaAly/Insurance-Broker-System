@@ -70,7 +70,30 @@ global using InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Queries.Ge
 global using InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Queries.GetInsuranceLOBByClassId;
 global using InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Queries.GetInsuranceLOBById;
 global using InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Queries.GetInsuranceProductsByCompanyId;
-global using InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands.GenerateInsuranceCompanyAccounts;
+global using InsuranceBrokerSystem.Application.Features.BusinessActivities.Queries.GetAllBusinessActivities;
+global using InsuranceBrokerSystem.Application.Features.BusinessActivities.Queries.GetBusinessActivityById;
+global using InsuranceBrokerSystem.Application.Features.BusinessActivities.Commands.AddBusinessActivity;
+global using InsuranceBrokerSystem.Application.Features.BusinessActivities.Commands.DeleteBusinessActivity;
+global using InsuranceBrokerSystem.Application.Features.BusinessActivities.Commands.UpdateBusinessActivity;
+global using InsuranceBrokerSystem.Application.Features.Locations.Queries.GetAllLocations;
+global using InsuranceBrokerSystem.Application.Features.Locations.Queries.GetLocationById;
+global using InsuranceBrokerSystem.Application.Features.Locations.Commands.AddLocation;
+global using InsuranceBrokerSystem.Application.Features.Locations.Commands.UpdateLocation;
+global using InsuranceBrokerSystem.Application.Features.Locations.Commands.DeleteLocation;
+global using InsuranceBrokerSystem.Application.Features.Nationalities.Commands.AddNationality;
+global using InsuranceBrokerSystem.Application.Features.Nationalities.Commands.DeleteNationality;
+global using InsuranceBrokerSystem.Application.Features.Nationalities.Commands.UpdateNationality;
+global using InsuranceBrokerSystem.Application.Features.PolicyTypes.Commands.AddPolicyType;
+global using InsuranceBrokerSystem.Application.Features.PolicyTypes.Commands.UpdatePolicyType;
+global using InsuranceBrokerSystem.Application.Features.PolicyTypes.Commands.DeletePolicyType;
+global using InsuranceBrokerSystem.Application.Features.PolicyTypes.Queries.GetAllPolicyTypes;
+global using InsuranceBrokerSystem.Application.Features.PolicyTypes.Queries.GetPolicyTypeById;
+global using InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Commands.AddSourceOfIncome;
+global using InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Commands.DeleteSourceOfIncome;
+global using InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Commands.UpdateSourceOfIncome;
+global using InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Queries.GetAllSourceOfIncomes;
+global using InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Queries.GetSourceOfIncomeById;
+
 
 // ── Infrastructure ───────────────────────────────────────────
 global using InsuranceBrokerSystem.Infrastructure.Data;

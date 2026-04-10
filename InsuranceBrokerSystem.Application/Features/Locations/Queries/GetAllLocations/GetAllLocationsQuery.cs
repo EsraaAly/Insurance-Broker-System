@@ -18,13 +18,7 @@ namespace InsuranceBrokerSystem.Application.Features.Locations.Queries.GetAllLoc
         public async Task<Result<IEnumerable<GetLocationDTO>>> Handle(GetAllLocationsQuery request, CancellationToken cancellationToken)
         {
             var entities = await _unitOfWork.GLocation.GetAllEntitytiesAsync();
-            var dtos = entities.Select(entity => new GetLocationDTO
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Code = entity.Code,
-                Description = entity.Description
-            });
+            var dtos = entities.Adapt<IEnumerable<GetLocationDTO>>();
 
             return Result<IEnumerable<GetLocationDTO>>.Success(dtos, "Locations retrieved successfully");
         }

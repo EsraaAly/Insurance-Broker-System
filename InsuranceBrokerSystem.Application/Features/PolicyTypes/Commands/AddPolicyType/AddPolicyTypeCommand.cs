@@ -1,12 +1,11 @@
 namespace InsuranceBrokerSystem.Application.Features.PolicyTypes.Commands.AddPolicyType
 {
-    public class AddPolicyTypeCommand : IRequest<Result<bool>>
+    public class AddPolicyTypeCommand : IRequest<Result<GetPolicyTypeDTO>>
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public AddPolicyTypeDTO _addPolicyTypeDTO { get; set; }
     }
 
-    public class AddPolicyTypeHandler : IRequestHandler<AddPolicyTypeCommand, Result<bool>>
+    public class AddPolicyTypeHandler : IRequestHandler<AddPolicyTypeCommand, Result<GetPolicyTypeDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -15,12 +14,12 @@ namespace InsuranceBrokerSystem.Application.Features.PolicyTypes.Commands.AddPol
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<bool>> Handle(AddPolicyTypeCommand request, CancellationToken cancellationToken)
+        public async Task<Result<GetPolicyTypeDTO>> Handle(AddPolicyTypeCommand request, CancellationToken cancellationToken)
         {
             var entity = new Domain.Entities.MasterTable.PolicyType
             {
-                Name = request.Name,
-                Description = request.Description,
+                Name = request._addPolicyTypeDTO.Name,
+                Description = request._addPolicyTypeDTO.Description,
                 CreatedBy = "Israa",
                 CreatedDate = DateTime.Now,
                 UpdatedBy = "",
@@ -31,11 +30,20 @@ namespace InsuranceBrokerSystem.Application.Features.PolicyTypes.Commands.AddPol
             var addedEntity = await _unitOfWork.GPolicyType.AddEntityAsync(entity);
             if (addedEntity != null)
             {
+                var dto = addedEntity.Adapt<GetPolicyTypeDTO>();
                 await _unitOfWork.CommitAsync();
-                return Result<bool>.Success(true, "Policy Type added successfully");
+                return Result<GetPolicyTypeDTO>.Success(dto, "Policy Type added successfully");
             }
 
-            return Result<bool>.Failure("Failed to add Policy Type");
+            return Result<GetPolicyTypeDTO>.Failure("Failed to add Policy Type");
+        }
+    }
+    public class AddPolicyTypeValidator : AbstractValidator<AddPolicyTypeCommand>
+    {
+        public AddPolicyTypeValidator()
+        {
+            RuleFor(x => x._addPolicyTypeDTO.Name).NotEmpty().WithMessage("Name is required");
+            RuleFor(x => x._addPolicyTypeDTO.Description).NotEmpty().WithMessage("Description is required");
         }
     }
 }

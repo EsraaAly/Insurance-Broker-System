@@ -36,4 +36,11 @@ namespace InsuranceBrokerSystem.Application.Features.Locations.Commands.DeleteLo
             return Result<bool>.Failure("Failed to delete Location");
         }
     }
+    public class DeleteLocationValidator : AbstractValidator<DeleteLocationCommand>
+    {
+        public DeleteLocationValidator()
+        {
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage("Id must be greater than 0");
+        }
+    }
 }

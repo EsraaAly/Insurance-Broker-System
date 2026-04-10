@@ -1,13 +1,12 @@
+
 namespace InsuranceBrokerSystem.Application.Features.PolicyTypes.Commands.UpdatePolicyType
 {
-    public class UpdatePolicyTypeCommand : IRequest<Result<bool>>
+    public class UpdatePolicyTypeCommand : IRequest<Result<GetPolicyTypeDTO>>
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
+        public UpdatePolicyTypeDTO _updatePolicyTypeDTO { get; set; }
     }
 
-    public class UpdatePolicyTypeHandler : IRequestHandler<UpdatePolicyTypeCommand, Result<bool>>
+    public class UpdatePolicyTypeHandler : IRequestHandler<UpdatePolicyTypeCommand, Result<GetPolicyTypeDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,27 +15,37 @@ namespace InsuranceBrokerSystem.Application.Features.PolicyTypes.Commands.Update
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<bool>> Handle(UpdatePolicyTypeCommand request, CancellationToken cancellationToken)
+        public async Task<Result<GetPolicyTypeDTO>> Handle(UpdatePolicyTypeCommand request, CancellationToken cancellationToken)
         {
-            var entity = await _unitOfWork.GPolicyType.GetEntityByIdAsync(request.Id);
+            var entity = await _unitOfWork.GPolicyType.GetEntityByIdAsync(request._updatePolicyTypeDTO.Id);
             if (entity == null)
             {
-                return Result<bool>.Failure("Policy Type not found");
+                return Result<GetPolicyTypeDTO>.Failure("Policy Type not found");
             }
 
-            entity.Name = request.Name;
-            entity.Description = request.Description;
+            entity.Name = request._updatePolicyTypeDTO.Name;
+            entity.Description = request._updatePolicyTypeDTO.Description;
             entity.UpdatedBy = "Israa";
             entity.UpdatedDate = DateTime.Now;
 
             var updatedEntity = await _unitOfWork.GPolicyType.UpdateEntityAsync(entity);
             if (updatedEntity != null)
             {
+                var dto = updatedEntity.Adapt<GetPolicyTypeDTO>();
                 await _unitOfWork.CommitAsync();
-                return Result<bool>.Success(true, "Policy Type updated successfully");
+                return Result<GetPolicyTypeDTO>.Success(dto, "Policy Type updated successfully");
             }
 
-            return Result<bool>.Failure("Failed to update Policy Type");
+            return Result<GetPolicyTypeDTO>.Failure("Failed to update Policy Type");
+        }
+    }
+    public class UpdatePolicyTypeValidator : AbstractValidator<UpdatePolicyTypeCommand>
+    {
+        public UpdatePolicyTypeValidator()
+        {
+            RuleFor(x => x._updatePolicyTypeDTO.Id).GreaterThan(0).WithMessage("Id must be greater than 0");
+            RuleFor(x => x._updatePolicyTypeDTO.Name).NotEmpty().WithMessage("Name is required");
+            RuleFor(x => x._updatePolicyTypeDTO.Description).NotEmpty().WithMessage("Description is required");
         }
     }
 }

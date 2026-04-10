@@ -1,13 +1,11 @@
 namespace InsuranceBrokerSystem.Application.Features.Locations.Commands.AddLocation
 {
-    public class AddLocationCommand : IRequest<Result<bool>>
+    public class AddLocationCommand : IRequest<Result<GetLocationDTO>>
     {
-        public string Name { get; set; }
-        public string Code { get; set; }
-        public string Description { get; set; }
+        public AddLocationDTO _addLocationDTO { get; set; }
     }
 
-    public class AddLocationHandler : IRequestHandler<AddLocationCommand, Result<bool>>
+    public class AddLocationHandler : IRequestHandler<AddLocationCommand, Result<GetLocationDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -16,13 +14,13 @@ namespace InsuranceBrokerSystem.Application.Features.Locations.Commands.AddLocat
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<bool>> Handle(AddLocationCommand request, CancellationToken cancellationToken)
+        public async Task<Result<GetLocationDTO>> Handle(AddLocationCommand request, CancellationToken cancellationToken)
         {
             var entity = new Domain.Entities.MasterTable.Location
             {
-                Name = request.Name,
-                Code = request.Code,
-                Description = request.Description,
+                Name = request._addLocationDTO.Name,
+                Code = request._addLocationDTO.Code,
+                Description = request._addLocationDTO.Description,
                 CreatedBy = "Israa",
                 CreatedDate = DateTime.Now,
                 UpdatedBy = "",
@@ -33,11 +31,20 @@ namespace InsuranceBrokerSystem.Application.Features.Locations.Commands.AddLocat
             var addedEntity = await _unitOfWork.GLocation.AddEntityAsync(entity);
             if (addedEntity != null)
             {
+                var dto = addedEntity.Adapt<GetLocationDTO>();
                 await _unitOfWork.CommitAsync();
-                return Result<bool>.Success(true, "Location added successfully");
+                return Result<GetLocationDTO>.Success(dto, "Location added successfully");
             }
 
-            return Result<bool>.Failure("Failed to add Location");
+            return Result<GetLocationDTO>.Failure("Failed to add Location");
+        }
+    }
+    public class AddLocationValidator : AbstractValidator<AddLocationCommand>
+    {
+        public AddLocationValidator()
+        {
+            RuleFor(x => x._addLocationDTO.Name).NotEmpty().WithMessage("Name is required");
+            RuleFor(x => x._addLocationDTO.Code).NotEmpty().WithMessage("Code is required");
         }
     }
 }

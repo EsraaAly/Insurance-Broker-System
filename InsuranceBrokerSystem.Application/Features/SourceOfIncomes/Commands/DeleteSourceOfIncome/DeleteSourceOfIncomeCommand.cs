@@ -36,4 +36,11 @@ namespace InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Commands.De
             return Result<bool>.Failure("Failed to delete Source Of Income");
         }
     }
+    public class DeleteSourceOfIncomeValidator : AbstractValidator<DeleteSourceOfIncomeCommand>
+    {
+        public DeleteSourceOfIncomeValidator()
+        {
+            RuleFor(x => x.Id).GreaterThan(0).WithMessage("Id must be greater than 0");
+        }
+    }
 }

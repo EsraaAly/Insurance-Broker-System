@@ -18,12 +18,7 @@ namespace InsuranceBrokerSystem.Application.Features.BusinessActivities.Queries.
         public async Task<Result<IEnumerable<GetBusinessActivityDTO>>> Handle(GetAllBusinessActivitiesQuery request, CancellationToken cancellationToken)
         {
             var entities = await _unitOfWork.GBusinessActivity.GetAllEntitytiesAsync();
-            var dtos = entities.Select(entity => new GetBusinessActivityDTO
-            {
-                Id = entity.Id,
-                Name = entity.Name,
-                Description = entity.Description
-            });
+            var dtos = entities.Adapt<IEnumerable<GetBusinessActivityDTO>>();
 
             return Result<IEnumerable<GetBusinessActivityDTO>>.Success(dtos, "Business Activities retrieved successfully");
         }

@@ -44,6 +44,7 @@ namespace InsuranceBrokerSystem.UI
                 public const string GetAllInsuranceCompanies = $"api/{Version}/InsuranceComp/GetAll";
                 public const string AddInsuranceComp = $"api/{Version}/InsuranceComp/Add";
                 public const string GetInsuranceCompanyByName = $"api/{Version}/InsuranceComp/GetByName";
+                public const string GetInsuranceCompanyById = $"api/{Version}/InsuranceComp/GetById";
                 public const string UpdateInsuranceComp = $"api/{Version}/InsuranceComp/Update";
                 public const string DeleteInsuranceComp = $"api/{Version}/InsuranceComp/Delete";
 

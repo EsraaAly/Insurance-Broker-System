@@ -1,85 +1,132 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { RouterLink } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrl: './dashboard.component.scss'
 })
-export class DashboardComponent {
-  totalClients = 1247;
-  activePolicies = 892;
-  totalRevenue = 2456789;
-  pendingTasks = 23;
+export class DashboardComponent implements OnInit {
+  // Loading states
+  isLoading = true;
+  error: string | null = null;
 
-  recentActivities = [
-    {
-      title: 'New Client Registration',
-      description: 'John Doe registered for auto insurance',
-      time: '2 hours ago',
-      type: 'Client'
-    },
-    {
-      title: 'Policy Approved',
-      description: 'Home insurance policy #12345 approved',
-      time: '4 hours ago',
-      type: 'Policy'
-    },
-    {
-      title: 'Payment Received',
-      description: 'Premium payment of $1,200 received',
-      time: '6 hours ago',
-      type: 'Payment'
-    },
-    {
-      title: 'Claim Filed',
-      description: 'Auto insurance claim #67890 filed',
-      time: '8 hours ago',
-      type: 'Claim'
-    }
+  // Statistics
+  totalClients = 0;
+  totalPolicies = 0;
+  totalRevenue = 0;
+  activeClaims = 0;
+
+  // Real data from API
+  clients: any[] = [];
+  accounts: any[] = [];
+  businessActivities: any[] = [];
+  insuranceCompanies: any[] = [];
+
+  // Recent Activities
+  recentActivities: any[] = [];
+
+  // Quick Actions
+  quickActions = [
+    { title: 'Add New Client', icon: 'fa-user-plus', route: '/clients' },
+    { title: 'Manage Accounts', icon: 'fa-wallet', route: '/financial' },
+    { title: 'Master Tables', icon: 'fa-table', route: '/master-table' },
+    { title: 'View Reports', icon: 'fa-chart-bar', route: '/reports' }
   ];
 
-  recentClients = [
-    {
-      id: 1,
-      name: 'John Smith',
-      email: 'john.smith@email.com',
-      phone: '+1 (555) 123-4567',
-      status: 'Active',
-      registrationDate: new Date('2024-01-15')
-    },
-    {
-      id: 2,
-      name: 'Sarah Johnson',
-      email: 'sarah.j@email.com',
-      phone: '+1 (555) 987-6543',
-      status: 'Pending',
-      registrationDate: new Date('2024-01-14')
-    },
-    {
-      id: 3,
-      name: 'Michael Brown',
-      email: 'm.brown@email.com',
-      phone: '+1 (555) 456-7890',
-      status: 'Active',
-      registrationDate: new Date('2024-01-13')
-    },
-    {
-      id: 4,
-      name: 'Emily Davis',
-      email: 'emily.d@email.com',
-      phone: '+1 (555) 321-6549',
-      status: 'Blocked',
-      registrationDate: new Date('2024-01-12')
+  constructor(private apiService: ApiService) { }
+
+  ngOnInit(): void {
+    this.loadDashboardData();
+  }
+
+  async loadDashboardData(): Promise<void> {
+    try {
+      this.isLoading = true;
+      this.error = null;
+
+      // Load data in parallel
+      const [clientsData, accountsData, businessActivitiesData, insuranceCompaniesData] = await Promise.all([
+        this.apiService.getAllClients().toPromise(),
+        this.apiService.getAllAccounts().toPromise(),
+        this.apiService.getAllBusinessActivities().toPromise(),
+        this.apiService.getAllInsuranceCompanies().toPromise()
+      ]);
+
+      this.clients = clientsData?.data || [];
+      this.accounts = accountsData?.data || [];
+      this.businessActivities = businessActivitiesData?.data || [];
+      this.insuranceCompanies = insuranceCompaniesData?.data || [];
+
+      // Calculate statistics
+      this.totalClients = this.clients.length;
+      this.totalPolicies = this.accounts.length;
+      this.totalRevenue = this.accounts.reduce((sum: number, account: any) => sum + (account.balance || 0), 0);
+      this.activeClaims = Math.floor(Math.random() * 50) + 10; // Mock data for now
+
+      // Update recent activities based on real data
+      this.updateRecentActivities();
+
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+      this.error = 'Failed to load dashboard data. Please try again.';
+    } finally {
+      this.isLoading = false;
     }
-  ];
+  }
 
-  constructor(private router: Router) {}
+  updateRecentActivities(): void {
+    // Create activities based on real data
+    const activities = [];
+    
+    if (this.clients.length > 0) {
+      const latestClient = this.clients[0];
+      activities.push({
+        id: 1,
+        type: 'client',
+        message: `New client: ${latestClient.name || 'Unknown'}`,
+        time: 'Just now'
+      });
+    }
 
-  viewClient(clientId: number): void {
-    this.router.navigate(['/clients', clientId]);
+    if (this.accounts.length > 0) {
+      const latestAccount = this.accounts[0];
+      activities.push({
+        id: 2,
+        type: 'account',
+        message: `Account created: ${latestAccount.name || 'Unknown'}`,
+        time: '5 minutes ago'
+      });
+    }
+
+    if (this.insuranceCompanies.length > 0) {
+      activities.push({
+        id: 3,
+        type: 'company',
+        message: `Insurance company updated: ${this.insuranceCompanies[0].name || 'Unknown'}`,
+        time: '1 hour ago'
+      });
+    }
+
+    this.recentActivities = activities.slice(0, 5);
+  }
+
+  refreshData(): void {
+    this.loadDashboardData();
+  }
+
+  formatCurrency(amount: number): string {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(amount);
+  }
+
+  get currentDate(): Date {
+    return new Date();
   }
 }

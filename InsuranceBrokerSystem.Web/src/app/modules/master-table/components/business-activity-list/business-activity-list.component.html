@@ -1,1 +1,209 @@
-<p>business-activity-list works!</p>
+<div class="container-fluid">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Master Tables - Business Activities</h1>
+    <div class="btn-group">
+      <button class="btn btn-outline-secondary" (click)="navigateToInsuranceCompanies()">
+        <i class="fas fa-building me-2"></i>Insurance Companies
+      </button>
+      <button class="btn btn-primary" (click)="toggleAddForm()">
+        <i class="fas fa-plus me-2"></i>{{ showAddForm ? 'Cancel' : 'Add Activity' }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Add New Activity Form -->
+  <div class="card mb-4" *ngIf="showAddForm">
+    <div class="card-header">
+      <h5 class="mb-0">Add New Business Activity</h5>
+    </div>
+    <div class="card-body">
+      <form (ngSubmit)="addNewActivity()">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="activityName" class="form-label">Activity Name *</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="activityName" 
+              [(ngModel)]="newActivity.name"
+              required
+            >
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="activityDescription" class="form-label">Description</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="activityDescription" 
+              [(ngModel)]="newActivity.description"
+            >
+          </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2">
+          <button type="button" class="btn btn-outline-secondary" (click)="toggleAddForm()">Cancel</button>
+          <button type="submit" class="btn btn-primary" [disabled]="isLoading">
+            <i class="fas fa-save me-2"></i>Add Activity
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Search and Filter -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="input-group">
+            <span class="input-group-text">
+              <i class="fas fa-search"></i>
+            </span>
+            <input 
+              type="text" 
+              class="form-control" 
+              placeholder="Search business activities..." 
+              [(ngModel)]="searchTerm"
+              (input)="searchActivities()"
+            >
+          </div>
+        </div>
+        <div class="col-md-6 text-end">
+          <button class="btn btn-outline-secondary" (click)="refreshActivities()">
+            <i class="fas fa-sync-alt me-2"></i>Refresh
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Alert -->
+  <div *ngIf="error" class="alert alert-danger" role="alert">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ error }}
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading business activities...</p>
+  </div>
+
+  <!-- Business Activities Table -->
+  <div class="card" *ngIf="!isLoading && !error">
+    <div class="card-header">
+      <h5 class="mb-0">Business Activities ({{ totalActivities }})</h5>
+    </div>
+    <div class="card-body">
+      <div *ngIf="businessActivities.length === 0" class="text-center py-5">
+        <i class="fas fa-tasks fa-3x text-muted mb-3"></i>
+        <h5>No business activities found</h5>
+        <p class="text-muted">Get started by adding your first business activity.</p>
+        <button class="btn btn-primary" (click)="toggleAddForm()">Add First Activity</button>
+      </div>
+
+      <div class="table-responsive" *ngIf="businessActivities.length > 0">
+        <table class="table table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Created Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let activity of paginatedActivities">
+              <td>{{ activity.id }}</td>
+              <td>
+                <strong>{{ activity.name || 'N/A' }}</strong>
+              </td>
+              <td>{{ activity.description || 'N/A' }}</td>
+              <td>
+                <span class="badge" [ngClass]="getStatusBadgeClass(activity.isActive)">
+                  {{ activity.isActive ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>{{ activity.createdDate ? (activity.createdDate | date:'short') : 'N/A' }}</td>
+              <td>
+                <div class="btn-group btn-group-sm" role="group">
+                  <button 
+                    class="btn btn-outline-primary" 
+                    (click)="viewActivityDetails(activity.id)"
+                    title="View Details"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button 
+                    class="btn btn-outline-secondary" 
+                    (click)="editActivity(activity.id)"
+                    title="Edit"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button 
+                    class="btn btn-outline-danger" 
+                    (click)="deleteActivity(activity.id)"
+                    title="Delete"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Summary Statistics -->
+      <div class="row mt-4" *ngIf="businessActivities.length > 0">
+        <div class="col-md-4">
+          <div class="card bg-light">
+            <div class="card-body text-center">
+              <h6 class="text-muted">Total Activities</h6>
+              <h4 class="text-primary">{{ businessActivities.length }}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card bg-light">
+            <div class="card-body text-center">
+              <h6 class="text-muted">Active Activities</h6>
+              <h4 class="text-success">{{ activeActivitiesCount }}</h4>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card bg-light">
+            <div class="card-body text-center">
+              <h6 class="text-muted">Inactive Activities</h6>
+              <h4 class="text-secondary">{{ inactiveActivitiesCount }}</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <nav *ngIf="totalPages > 1" class="mt-4">
+        <ul class="pagination justify-content-center">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
+          </li>
+          <li 
+            class="page-item" 
+            *ngFor="let page of getPages()"
+            [class.active]="page === currentPage"
+          >
+            <button class="page-link" (click)="changePage(page)">{{ page }}</button>
+          </li>
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+</div>

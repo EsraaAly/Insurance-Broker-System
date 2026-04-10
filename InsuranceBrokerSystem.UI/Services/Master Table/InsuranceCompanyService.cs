@@ -1,9 +1,12 @@
 
-using Microsoft.OpenApi.MicrosoftExtensions;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Windows;
+using InsuranceBrokerSystem.UI;
 
 namespace InsuranceBrokerSystem.UI.Services.Master_Table
 {
-    class InsuranceCompanyService
+    public class InsuranceCompanyService
     {
         private readonly HttpClient _httpClient;
 
@@ -15,69 +18,104 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
             };
         }
 
-        public async Task AddInsuranceCompanyAsync(AddInsuranceCompanyDTO dto)
+        public async Task<ApiResponse<GetInsuranceCompanyDTO>> AddInsuranceCompanyAsync(AddInsuranceCompanyDTO dto)
         {
-            var response = await _httpClient.PostAsJsonAsync(ApiRoutes.MasterTable.InsuranceComp.AddInsuranceComp, dto);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                MessageBox.Show("Saved Successfully!");
-
+                var content = JsonContent.Create(dto);
+                var response = await _httpClient.PostAsync(ApiRoutes.MasterTable.InsuranceComp.AddInsuranceComp, content);
+                var result = await ApiResponseHandler.HandleResponseAsync<GetInsuranceCompanyDTO>(response);
+                
+                if (result.Successed)
+                {
+                    ApiResponseHandler.ShowSuccess("Insurance company added successfully!");
+                }
+                
+                return result;
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Error: Could not save data to the server.");
+                ApiResponseHandler.ShowError($"Error adding insurance company: {ex.Message}");
+                return ApiResponse<GetInsuranceCompanyDTO>.Failure("Failed to add insurance company");
             }
         }
 
-        public async Task UpdateInsuranceCompanyAsync(UpdateInsuranceCompanyDTO dto)
+        public async Task<ApiResponse<GetInsuranceCompanyDTO>> UpdateInsuranceCompanyAsync(UpdateInsuranceCompanyDTO dto)
         {
-            var response = await _httpClient.PutAsJsonAsync(ApiRoutes.MasterTable.InsuranceComp.UpdateInsuranceComp, dto);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                MessageBox.Show("Updated Successfully!");
-
+                var content = JsonContent.Create(dto);
+                var response = await _httpClient.PutAsync(ApiRoutes.MasterTable.InsuranceComp.UpdateInsuranceComp, content);
+                var result = await ApiResponseHandler.HandleResponseAsync<GetInsuranceCompanyDTO>(response);
+                
+                if (result.Successed)
+                {
+                    ApiResponseHandler.ShowSuccess("Insurance company updated successfully!");
+                }
+                
+                return result;
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Error: Could not update data to the server.");
+                ApiResponseHandler.ShowError($"Error updating insurance company: {ex.Message}");
+                return ApiResponse<GetInsuranceCompanyDTO>.Failure("Failed to update insurance company");
             }
         }
 
-        public async  Task<List<GetInsuranceCompanyDTO>> GetAllInsuranceCompaniesAsync()
+        public async Task<ApiResponse<List<GetInsuranceCompanyDTO>>> GetAllInsuranceCompaniesAsync()
         {
-
-            var response = await _httpClient.GetAsync(ApiRoutes.MasterTable.InsuranceComp.GetAllInsuranceCompanies);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"API Error: {response.StatusCode} - {error}");
+                var response = await _httpClient.GetAsync(ApiRoutes.MasterTable.InsuranceComp.GetAllInsuranceCompanies);
+                return await ApiResponseHandler.HandleResponseAsync<List<GetInsuranceCompanyDTO>>(response);
             }
-
-            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<List<GetInsuranceCompanyDTO>>>();
-            return apiResponse.Data ?? new List<GetInsuranceCompanyDTO>();
+            catch (Exception ex)
+            {
+                ApiResponseHandler.ShowError($"Error retrieving insurance companies: {ex.Message}");
+                return ApiResponse<List<GetInsuranceCompanyDTO>>.Failure("Failed to retrieve insurance companies");
+            }
         }
 
-        public async Task<GetInsuranceCompanyDTO> GetInsuranceCompanyByNameAsync(string name)
+        public async Task<ApiResponse<GetInsuranceCompanyDTO>> GetInsuranceCompanyByNameAsync(string name)
         {
-            var response = await _httpClient.GetAsync($"{ ApiRoutes.MasterTable.InsuranceComp.GetInsuranceCompanyByName}?Name={name}");
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"API Error: {response.StatusCode} - {error}");
-
+                var response = await _httpClient.GetAsync($"{ApiRoutes.MasterTable.InsuranceComp.GetInsuranceCompanyByName}?Name={name}");
+                var result = await ApiResponseHandler.HandleResponseAsync<GetInsuranceCompanyDTO>(response);
+                
+                if (!result.Successed && result.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    ApiResponseHandler.ShowError("No insurance company found with the specified name.", "Not Found");
+                }
+                
+                return result;
             }
-            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound || response.StatusCode == System.Net.HttpStatusCode.NoContent)
+            catch (Exception ex)
             {
-                MessageBox.Show("No insurance company found with the specified name.", "Not Found", MessageBoxButton.OK, MessageBoxImage.Information);
-                return null; 
+                ApiResponseHandler.ShowError($"Error retrieving insurance company: {ex.Message}");
+                return ApiResponse<GetInsuranceCompanyDTO>.Failure("Failed to retrieve insurance company");
             }
-            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<GetInsuranceCompanyDTO>>();
-            return apiResponse.Data?? new GetInsuranceCompanyDTO();
+        }
 
+        public async Task<ApiResponse<string>> DeleteInsuranceCompanyAsync(int id)
+        {
+            try
+            {
+                var response = await _httpClient.DeleteAsync($"{ApiRoutes.MasterTable.InsuranceComp.DeleteInsuranceComp}?id={id}");
+                var result = await ApiResponseHandler.HandleResponseAsync<string>(response);
+                
+                if (result.Successed)
+                {
+                    ApiResponseHandler.ShowSuccess("Insurance company deleted successfully!");
+                }
+                
+                return result;
+            }
+            catch (Exception ex)
+            {
+                ApiResponseHandler.ShowError($"Error deleting insurance company: {ex.Message}");
+                return ApiResponse<string>.Failure("Failed to delete insurance company");
+            }
         }
     }
 }

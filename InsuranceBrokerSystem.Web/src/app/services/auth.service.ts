@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -11,21 +12,21 @@ export class AuthService {
   isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor() {
-    // Check if user is logged in on app startup
-    const token = localStorage.getItem('authToken');
-    const user = localStorage.getItem('currentUser');
-    
-    if (token && user) {
-      this.isAuthenticatedSubject.next(true);
-      this.currentUserSubject.next(JSON.parse(user));
+  constructor(@Inject(PLATFORM_ID) private platformId: object) {
+    // Only access localStorage if we are running in the browser
+    if (isPlatformBrowser(this.platformId)) {
+      const token = localStorage.getItem('authToken');
+      const user = localStorage.getItem('currentUser');
+
+      if (token && user) {
+        this.isAuthenticatedSubject.next(true);
+        this.currentUserSubject.next(JSON.parse(user));
+      }
     }
   }
 
   login(credentials: { username: string; password: string }): Observable<boolean> {
-    // This is a mock login - replace with actual API call
     return new Observable(observer => {
-      // Simulate API call
       setTimeout(() => {
         if (credentials.username === 'admin' && credentials.password === 'password') {
           const user = {
@@ -34,15 +35,17 @@ export class AuthService {
             email: 'admin@insurancebroker.com',
             role: 'Administrator'
           };
-          
           const token = 'mock-jwt-token';
-          
-          localStorage.setItem('authToken', token);
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          
+
+          // Guard writes as well
+          if (isPlatformBrowser(this.platformId)) {
+            localStorage.setItem('authToken', token);
+            localStorage.setItem('currentUser', JSON.stringify(user));
+          }
+
           this.isAuthenticatedSubject.next(true);
           this.currentUserSubject.next(user);
-          
+
           observer.next(true);
           observer.complete();
         } else {
@@ -54,9 +57,10 @@ export class AuthService {
   }
 
   logout(): void {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('currentUser');
-    
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('currentUser');
+    }
     this.isAuthenticatedSubject.next(false);
     this.currentUserSubject.next(null);
   }
@@ -70,6 +74,9 @@ export class AuthService {
   }
 
   get authToken(): string | null {
-    return localStorage.getItem('authToken');
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('authToken');
+    }
+    return null;
   }
 }

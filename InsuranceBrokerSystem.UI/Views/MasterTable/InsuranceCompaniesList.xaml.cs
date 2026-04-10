@@ -1,4 +1,3 @@
-
 namespace InsuranceBrokerSystem.UI.Views.MasterTable
 {
     /// <summary>
@@ -6,12 +5,12 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
     /// </summary>
     public partial class InsuranceCompaniesList : UserControl
     {
-        private readonly InsuranceCompanyService _InsuranceCompanyService;
+        private readonly InsuranceCompanyService _insuranceCompanyService;
         public ObservableCollection<GetInsuranceCompanyDTO> InsuranceCompanies { get; set; } = new ObservableCollection<GetInsuranceCompanyDTO>();
         public InsuranceCompaniesList()
         {
             InitializeComponent();
-            _InsuranceCompanyService = new InsuranceCompanyService();
+            _insuranceCompanyService = ServiceContainer.InsuranceCompanyService;
             CompaniesGrid.ItemsSource = InsuranceCompanies;
 
         }
@@ -31,45 +30,49 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
         {
             try
             {
-
                 InsuranceCompanies.Clear();
-                var data = await _InsuranceCompanyService.GetAllInsuranceCompaniesAsync();
+                var response = await _insuranceCompanyService.GetAllInsuranceCompaniesAsync();
 
-                // Bind the result to your DataGrid
-                CompaniesGrid.ItemsSource = data;
-
+                if (response.Successed && response.Data != null)
+                {
+                    foreach (var company in response.Data)
+                    {
+                        InsuranceCompanies.Add(company);
+                    }
+                    CompaniesGrid.ItemsSource = InsuranceCompanies;
+                }
+                else
+                {
+                    CompaniesGrid.ItemsSource = null;
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Could not connect to the Insurance API: {ex.Message}");
-            }
-            finally
-            {
-
+                CompaniesGrid.ItemsSource = null;
             }
         }
         public async Task LoadInsuranceCompaniesDateByName()
         {
             try
             {
-
                 InsuranceCompanies.Clear();
-                var data = await _InsuranceCompanyService.GetInsuranceCompanyByNameAsync(txtCompanyName.Text);
-                if (data != null)
+                var response = await _insuranceCompanyService.GetInsuranceCompanyByNameAsync(txtCompanyName.Text);
+                
+                if (response.Successed && response.Data != null)
                 {
-                    InsuranceCompanies.Add(data);
+                    InsuranceCompanies.Add(response.Data);
+                    CompaniesGrid.ItemsSource = InsuranceCompanies;
                 }
-                // Bind the result to your DataGrid
-                //CompaniesGrid.ItemsSource = data;
-
+                else
+                {
+                    CompaniesGrid.ItemsSource = null;
+                }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Could not connect to the Insurance API: {ex.Message}");
-            }
-            finally
-            {
-
+                CompaniesGrid.ItemsSource = null;
             }
         }
 

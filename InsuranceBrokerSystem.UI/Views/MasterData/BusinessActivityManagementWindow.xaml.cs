@@ -1,37 +1,38 @@
 
 
+using InsuranceBrokerSystem.UI.Interface;
+using InsuranceBrokerSystem.UI.Services;
+using System.Threading.Tasks;
+
 namespace InsuranceBrokerSystem.UI.Views.MasterData
 {
     public partial class BusinessActivityManagementWindow : Window
     {
-        public ObservableCollection<BusinessActivity> BusinessActivities { get; set; }
-        public BusinessActivity SelectedBusinessActivity { get; private set; }
-
-        private static List<BusinessActivity> _businessActivities = new List<BusinessActivity>
-        {
-            new BusinessActivity { Id = 1, Name = "Manufacturing", Description = "Manufacturing and production" },
-            new BusinessActivity { Id = 2, Name = "Trading", Description = "Commercial trading" },
-            new BusinessActivity { Id = 3, Name = "Services", Description = "Service industry" },
-            new BusinessActivity { Id = 4, Name = "Construction", Description = "Construction and real estate" },
-            new BusinessActivity { Id = 5, Name = "Technology", Description = "IT and technology services" }
-        };
+        private readonly IServiceContainer _service;
+        public ObservableCollection<GetBusinessActivityDTO> BusinessActivities { get; set; }
+        public GetBusinessActivityDTO SelectedBusinessActivity { get; private set; }
 
         public BusinessActivityManagementWindow()
         {
             InitializeComponent();
-            BusinessActivities = new ObservableCollection<BusinessActivity>();
+            _service = new ServiceContainer(new HttpClientService());
+            BusinessActivities = new ObservableCollection<GetBusinessActivityDTO>();
             lstBusinessActivities.ItemsSource = BusinessActivities;
-            LoadData();
+            _ = LoadDataAsync();
         }
 
-        private void LoadData()
+        private async Task LoadDataAsync()
         {
             try
             {
                 BusinessActivities.Clear();
-                foreach (var item in _businessActivities.OrderBy(x => x.Name))
+                var response = await _service.BusinessActivityApiService.GetAllBusinessActivitiesAsync();
+                if (response.Successed && response.Data != null)
                 {
-                    BusinessActivities.Add(item);
+                    foreach (var item in response.Data.OrderBy(x => x.ActivityName))
+                    {
+                        BusinessActivities.Add(item);
+                    }
                 }
             }
             catch (Exception ex)
@@ -42,11 +43,11 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
 
         private void lstBusinessActivities_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SelectedBusinessActivity = lstBusinessActivities.SelectedItem as BusinessActivity;
+            SelectedBusinessActivity = lstBusinessActivities.SelectedItem as GetBusinessActivityDTO;
             
             if (SelectedBusinessActivity != null)
             {
-                txtName.Text = SelectedBusinessActivity.Name;
+                txtName.Text = SelectedBusinessActivity.ActivityName;
                 txtDescription.Text = SelectedBusinessActivity.Description;
                 btnUpdate.IsEnabled = true;
                 btnDelete.IsEnabled = true;
@@ -58,7 +59,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             }
         }
 
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtName.Text))
             {
@@ -66,28 +67,26 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            var newBusinessActivity = new BusinessActivity
+            var newBusinessActivity = new AddBusinessActivityDTO
             {
-                Name = txtName.Text.Trim(),
-                Description = txtDescription.Text.Trim(),
-                CreatedDate = DateTime.UtcNow,
-                CreatedBy = "CurrentUser"
+                ActivityName = txtName.Text.Trim(),
+                ActivityNameAr = txtName.Text.Trim(), // TODO: Add Arabic name field
+                Description = txtDescription.Text.Trim()
             };
 
             try
             {
-                newBusinessActivity.Id = _businessActivities.Count > 0 ? _businessActivities.Max(x => x.Id) + 1 : 1;
-                
-                if (_businessActivities.Any(x => x.Name.Equals(newBusinessActivity.Name, StringComparison.OrdinalIgnoreCase)))
+                var response = await _service.BusinessActivityApiService.AddBusinessActivityAsync(newBusinessActivity);
+                if (response.Successed)
                 {
-                    MessageBox.Show("A business activity with this name already exists.", "Duplicate Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    ClearForm();
+                    await LoadDataAsync(); // Refresh the list
+                    MessageBox.Show("Business activity added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-
-                _businessActivities.Add(newBusinessActivity);
-                BusinessActivities.Add(newBusinessActivity);
-                ClearForm();
-                MessageBox.Show("Business activity added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                else
+                {
+                    MessageBox.Show($"Error adding business activity: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
@@ -95,7 +94,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             }
         }
 
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedBusinessActivity == null || string.IsNullOrWhiteSpace(txtName.Text))
             {
@@ -103,26 +102,27 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            SelectedBusinessActivity.Name = txtName.Text.Trim();
-            SelectedBusinessActivity.Description = txtDescription.Text.Trim();
-            SelectedBusinessActivity.UpdatedDate = DateTime.UtcNow;
-            SelectedBusinessActivity.UpdatedBy = "CurrentUser";
+            var updateDto = new UpdateBusinessActivityDTO
+            {
+                Id = SelectedBusinessActivity.Id,
+                ActivityName = txtName.Text.Trim(),
+                ActivityNameAr = txtName.Text.Trim(), // TODO: Add Arabic name field
+                Description = txtDescription.Text.Trim(),
+                IsActive = SelectedBusinessActivity.IsActive
+            };
 
             try
             {
-                if (_businessActivities.Any(x => x.Id != SelectedBusinessActivity.Id && x.Name.Equals(SelectedBusinessActivity.Name, StringComparison.OrdinalIgnoreCase)))
+                var response = await _service.BusinessActivityApiService.UpdateBusinessActivityAsync(updateDto);
+                if (response.Successed)
                 {
-                    MessageBox.Show("A business activity with this name already exists.", "Duplicate Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    await LoadDataAsync(); // Refresh the list
+                    MessageBox.Show("Business activity updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-
-                var index = BusinessActivities.IndexOf(SelectedBusinessActivity);
-                if (index >= 0)
+                else
                 {
-                    BusinessActivities[index] = SelectedBusinessActivity;
+                    MessageBox.Show($"Error updating business activity: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
-                lstBusinessActivities.SelectedItem = SelectedBusinessActivity;
-                MessageBox.Show("Business activity updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
@@ -130,7 +130,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             }
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedBusinessActivity == null)
             {
@@ -138,19 +138,24 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedBusinessActivity.Name}'?", 
+            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedBusinessActivity.ActivityName}'?", 
                 "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {
                 try
                 {
-                    SelectedBusinessActivity.UpdatedDate = DateTime.UtcNow;
-                    SelectedBusinessActivity.UpdatedBy = "CurrentUser";
-
-                    BusinessActivities.Remove(SelectedBusinessActivity);
-                    ClearForm();
-                    MessageBox.Show("Business activity deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    var response = await _service.BusinessActivityApiService.DeleteBusinessActivityAsync(SelectedBusinessActivity.Id);
+                    if (response.Successed)
+                    {
+                        ClearForm();
+                        await LoadDataAsync(); // Refresh the list
+                        MessageBox.Show("Business activity deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Error deleting business activity: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -166,7 +171,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            LoadData();
+            LoadDataAsync();
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
@@ -185,9 +190,5 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             btnDelete.IsEnabled = false;
         }
 
-        public static List<BusinessActivity> GetBusinessActivities()
-        {
-            return _businessActivities.OrderBy(x => x.Name).ToList();
         }
-    }
 }

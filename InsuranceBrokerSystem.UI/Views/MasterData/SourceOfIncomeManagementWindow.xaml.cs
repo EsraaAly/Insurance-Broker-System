@@ -1,37 +1,38 @@
 
 
+using InsuranceBrokerSystem.UI.Interface;
+using InsuranceBrokerSystem.UI.Services;
+using System.Threading.Tasks;
+
 namespace InsuranceBrokerSystem.UI.Views.MasterData
 {
     public partial class SourceOfIncomeManagementWindow : Window
     {
-        public ObservableCollection<SourceOfIncome> SourcesOfIncome { get; set; }
-        public SourceOfIncome SelectedSourceOfIncome { get; private set; }
-
-        private static List<SourceOfIncome> _sourcesOfIncome = new List<SourceOfIncome>
-        {
-            new SourceOfIncome { Id = 1, Name = "Salary", Description = "Regular employment income" },
-            new SourceOfIncome { Id = 2, Name = "Business", Description = "Business income" },
-            new SourceOfIncome { Id = 3, Name = "Investment", Description = "Investment returns" },
-            new SourceOfIncome { Id = 4, Name = "Rental", Description = "Property rental income" },
-            new SourceOfIncome { Id = 5, Name = "Pension", Description = "Retirement pension" }
-        };
+        private readonly IServiceContainer _service;
+        public ObservableCollection<GetSourceOfIncomeDTO> SourcesOfIncome { get; set; }
+        public GetSourceOfIncomeDTO SelectedSourceOfIncome { get; private set; }
 
         public SourceOfIncomeManagementWindow()
         {
             InitializeComponent();
-            SourcesOfIncome = new ObservableCollection<SourceOfIncome>();
+            _service = new ServiceContainer(new HttpClientService());
+            SourcesOfIncome = new ObservableCollection<GetSourceOfIncomeDTO>();
             lstSourcesOfIncome.ItemsSource = SourcesOfIncome;
-            LoadData();
+            _ = LoadDataAsync();
         }
 
-        private void LoadData()
+        private async Task LoadDataAsync()
         {
             try
             {
                 SourcesOfIncome.Clear();
-                foreach (var item in _sourcesOfIncome.OrderBy(x => x.Name))
+                var response = await _service.SourceOfIncomeApiService.GetAllSourceOfIncomesAsync();
+                if (response.Successed && response.Data != null)
                 {
-                    SourcesOfIncome.Add(item);
+                    foreach (var item in response.Data.OrderBy(x => x.SourceName))
+                    {
+                        SourcesOfIncome.Add(item);
+                    }
                 }
             }
             catch (Exception ex)
@@ -42,11 +43,11 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
 
         private void lstSourcesOfIncome_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SelectedSourceOfIncome = lstSourcesOfIncome.SelectedItem as SourceOfIncome;
+            SelectedSourceOfIncome = lstSourcesOfIncome.SelectedItem as GetSourceOfIncomeDTO;
             
             if (SelectedSourceOfIncome != null)
             {
-                txtName.Text = SelectedSourceOfIncome.Name;
+                txtName.Text = SelectedSourceOfIncome.SourceName;
                 txtDescription.Text = SelectedSourceOfIncome.Description;
                 btnUpdate.IsEnabled = true;
                 btnDelete.IsEnabled = true;
@@ -58,7 +59,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             }
         }
 
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtName.Text))
             {
@@ -66,28 +67,26 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            var newSourceOfIncome = new SourceOfIncome
+            var newSourceOfIncome = new AddSourceOfIncomeDTO
             {
-                Name = txtName.Text.Trim(),
-                Description = txtDescription.Text.Trim(),
-                CreatedDate = DateTime.UtcNow,
-                CreatedBy = "CurrentUser"
+                SourceName = txtName.Text.Trim(),
+                SourceNameAr = txtName.Text.Trim(), // TODO: Add Arabic name field
+                Description = txtDescription.Text.Trim()
             };
 
             try
             {
-                newSourceOfIncome.Id = _sourcesOfIncome.Count > 0 ? _sourcesOfIncome.Max(x => x.Id) + 1 : 1;
-                
-                if (_sourcesOfIncome.Any(x => x.Name.Equals(newSourceOfIncome.Name, StringComparison.OrdinalIgnoreCase)))
+                var response = await _service.SourceOfIncomeApiService.AddSourceOfIncomeAsync(newSourceOfIncome);
+                if (response.Successed)
                 {
-                    MessageBox.Show("A source of income with this name already exists.", "Duplicate Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    ClearForm();
+                    await LoadDataAsync(); // Refresh the list
+                    MessageBox.Show("Source of income added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-
-                _sourcesOfIncome.Add(newSourceOfIncome);
-                SourcesOfIncome.Add(newSourceOfIncome);
-                ClearForm();
-                MessageBox.Show("Source of income added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                else
+                {
+                    MessageBox.Show($"Error adding source of income: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
@@ -97,66 +96,12 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
 
         private void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedSourceOfIncome == null || string.IsNullOrWhiteSpace(txtName.Text))
-            {
-                MessageBox.Show("Please select a source of income and enter a name.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            SelectedSourceOfIncome.Name = txtName.Text.Trim();
-            SelectedSourceOfIncome.Description = txtDescription.Text.Trim();
-            SelectedSourceOfIncome.UpdatedDate = DateTime.UtcNow;
-            SelectedSourceOfIncome.UpdatedBy = "CurrentUser";
-
-            try
-            {
-                if (_sourcesOfIncome.Any(x => x.Id != SelectedSourceOfIncome.Id && x.Name.Equals(SelectedSourceOfIncome.Name, StringComparison.OrdinalIgnoreCase)))
-                {
-                    MessageBox.Show("A source of income with this name already exists.", "Duplicate Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                var index = SourcesOfIncome.IndexOf(SelectedSourceOfIncome);
-                if (index >= 0)
-                {
-                    SourcesOfIncome[index] = SelectedSourceOfIncome;
-                }
-                lstSourcesOfIncome.SelectedItem = SelectedSourceOfIncome;
-                MessageBox.Show("Source of income updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error updating source of income: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            // TODO: Implement update functionality using API service
         }
 
         private void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            if (SelectedSourceOfIncome == null)
-            {
-                MessageBox.Show("Please select a source of income to delete.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedSourceOfIncome.Name}'?", 
-                "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
-
-            if (result == MessageBoxResult.Yes)
-            {
-                try
-                {
-                    SelectedSourceOfIncome.UpdatedDate = DateTime.UtcNow;
-                    SelectedSourceOfIncome.UpdatedBy = "CurrentUser";
-
-                    SourcesOfIncome.Remove(SelectedSourceOfIncome);
-                    ClearForm();
-                    MessageBox.Show("Source of income deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error deleting source of income: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
-            }
+            // TODO: Implement delete functionality using API service
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
@@ -166,7 +111,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
 
         private void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            LoadData();
+            LoadDataAsync();
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
@@ -185,9 +130,5 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             btnDelete.IsEnabled = false;
         }
 
-        public static List<SourceOfIncome> GetSourcesOfIncome()
-        {
-            return _sourcesOfIncome.OrderBy(x => x.Name).ToList();
-        }
     }
 }

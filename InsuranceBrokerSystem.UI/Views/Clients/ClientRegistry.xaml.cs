@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using InsuranceBrokerSystem.Application.DTOs.Client;
 using InsuranceBrokerSystem.Domain.Enums.Client;
+using InsuranceBrokerSystem.UI.Interface;
 using InsuranceBrokerSystem.UI.Services.Clients;
 
 namespace InsuranceBrokerSystem.UI.Views.Clients
@@ -24,13 +25,13 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
     /// </summary>
     public partial class ClientRegistry : UserControl
     {
-        private readonly ClientService _clientService;
+        private readonly IServiceContainer _service;
         public ObservableCollection<GetClientDTO> Clients { get; set; }
 
         public ClientRegistry()
         {
             InitializeComponent();
-            _clientService = new ClientService();
+            _service = new ServiceContainer(new HttpClientService());
             Clients = new ObservableCollection<GetClientDTO>();
             DataContext = this;
             //LoadClientsAsync();
@@ -61,7 +62,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 //    return;
                 //}
 
-                var response = await _clientService.GetAllClientsAsync();
+                var response = await _service.ClientService.GetAllClientsAsync();
 
                 // Get status filter values
                 bool showProspect = chProspect.IsChecked == true;
@@ -107,7 +108,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 }
 
                 var clientType = int.Parse(selectedType.Tag.ToString());
-                var response = await _clientService.GetAllClientsAsync();
+                var response = await _service.ClientService.GetAllClientsAsync();
                 var filteredClients = response.Data.Where(c => c.ClientType == clientType).ToList();
 
                 Clients.Clear();
@@ -158,7 +159,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             {
                 try
                 {
-                    var response = await _clientService.GetClientByIdAsync(client.Id);
+                    var response = await _service.ClientService.GetClientByIdAsync(client.Id);
                     if (response.Data != null)
                     {
                         RegisterNewClient editWindow = new RegisterNewClient(response.Data);
@@ -186,7 +187,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                         MessageBox.Show("Invalid client ID.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                         return;
                     }
-                    await _clientService.ApproveClientAsync(client.Id);
+                    await _service.ClientService.ApproveClientAsync(client.Id);
                     await LoadClientsAsync();
                 }
                 catch (Exception ex)
@@ -202,7 +203,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             {
                 try
                 {
-                    await _clientService.RejectClientAsync(client.Id); // TODO: Get current user
+                    await _service.ClientService.RejectClientAsync(client.Id); // TODO: Get current user
                     await LoadClientsAsync();
                 }
                 catch (Exception ex)
@@ -218,7 +219,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             {
                 try
                 {
-                    await _clientService.BlockClientAsync(client.Id); // TODO: Get current user
+                    await _service.ClientService.BlockClientAsync(client.Id); // TODO: Get current user
                     await LoadClientsAsync();
                 }
                 catch (Exception ex)

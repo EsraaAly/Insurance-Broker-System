@@ -1,3 +1,6 @@
+using InsuranceBrokerSystem.UI.Interface;
+using InsuranceBrokerSystem.UI.Services;
+
 namespace InsuranceBrokerSystem.UI.Views.MasterTable
 {
     /// <summary>
@@ -5,12 +8,12 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
     /// </summary>
     public partial class InsuranceCompaniesList : UserControl
     {
-        private readonly InsuranceCompanyService _insuranceCompanyService;
+        private readonly IServiceContainer _service;
         public ObservableCollection<GetInsuranceCompanyDTO> InsuranceCompanies { get; set; } = new ObservableCollection<GetInsuranceCompanyDTO>();
         public InsuranceCompaniesList()
         {
             InitializeComponent();
-            _insuranceCompanyService = ServiceContainer.InsuranceCompanyService;
+            _service = new ServiceContainer(new HttpClientService());
             CompaniesGrid.ItemsSource = InsuranceCompanies;
 
         }
@@ -31,7 +34,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             try
             {
                 InsuranceCompanies.Clear();
-                var response = await _insuranceCompanyService.GetAllInsuranceCompaniesAsync();
+                var response = await _service.InsuranceCompanyService.GetAllInsuranceCompaniesAsync();
 
                 if (response.Successed && response.Data != null)
                 {
@@ -57,7 +60,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             try
             {
                 InsuranceCompanies.Clear();
-                var response = await _insuranceCompanyService.GetInsuranceCompanyByNameAsync(txtCompanyName.Text);
+                var response = await _service.InsuranceCompanyService.GetInsuranceCompanyByNameAsync(txtCompanyName.Text);
                 
                 if (response.Successed && response.Data != null)
                 {

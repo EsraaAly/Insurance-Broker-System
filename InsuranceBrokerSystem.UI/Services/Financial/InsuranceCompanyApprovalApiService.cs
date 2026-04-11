@@ -1,40 +1,25 @@
 
+using InsuranceBrokerSystem.UI;
+
 namespace InsuranceBrokerSystem.UI.Services.Financial
 {
     public class InsuranceCompanyApprovalApiService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClientService _httpClientService;
 
-        public InsuranceCompanyApprovalApiService() 
+        public InsuranceCompanyApprovalApiService(HttpClientService httpClientService) 
         {
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44314")
-            };
+            _httpClientService = httpClientService;
         }
 
         public async Task ApproveInsuranceCompanyAsync(int id)
         {
-            var response = await _httpClient.PutAsJsonAsync(ApiRoutes.Financial.InsuranceComp.ApproveInsuranceComp, id);
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"API Error: {response.StatusCode} - {error}");
-
-            }
-
+            await _httpClientService.PutAsync<string, object>(ApiRoutes.Financial.InsuranceComp.ApproveInsuranceComp, id);
         }
 
         public async Task RejectInsuranceCompanyAsync(int id)
         {
-            var response = await _httpClient.PutAsJsonAsync(ApiRoutes.Financial.InsuranceComp.RejectInsuranceComp, id);
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"API Error: {response.StatusCode} - {error}");
-
-            }
-
+            await _httpClientService.PutAsync<string, object>(ApiRoutes.Financial.InsuranceComp.RejectInsuranceComp, id);
         }
     }
 }

@@ -1,4 +1,6 @@
 using System.Security.Cryptography;
+using InsuranceBrokerSystem.UI.Interface;
+using InsuranceBrokerSystem.UI.Services;
 
 namespace InsuranceBrokerSystem.UI.Views.MasterTable
 {
@@ -15,12 +17,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
         public ObservableCollection<string> DepartmentList { get; set; }
 
-        private readonly InsuranceCompanyService _InsuranceCompanyService;
-        private readonly InsuranceContactService _InsuranceContactService;
-        private readonly InsuranceProductService _InsuranceProductService;
-
-        private readonly InsuranceClassApiService _ClassService;
-        private readonly InsuranceLOBApiService _LOBService;
+        private readonly IServiceContainer _service;
         public EditInsuranceCompany(string companyName)
         {
             InitializeComponent();
@@ -28,11 +25,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             this.ProductsGrid.ItemsSource = this.Products;
             this.ContactsGrid.ItemsSource = this.Contacts;
 
-            _InsuranceCompanyService = new InsuranceCompanyService();
-            _InsuranceContactService = new InsuranceContactService();
-            _InsuranceProductService = new InsuranceProductService();
-            _ClassService = new InsuranceClassApiService();
-            _LOBService = new InsuranceLOBApiService();
+            _service = new ServiceContainer(new HttpClientService());
 
             DepartmentList = new ObservableCollection<string> { "Underwriting", "Customer Service", "Claims", "Finance", "Administration", "Management", "Sales", "Broker Relation" };
             FillClassesDate();
@@ -71,7 +64,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
         private async void FillClassesDate()
         {
-            var response = await _ClassService.GetAllClassesAsync();
+            var response = await _service.InsuranceClassApiService.GetAllClassesAsync();
             InsuranceClasses = new ObservableCollection<GetInsuranceClassDTO>(response.Data);
 
         }
@@ -86,7 +79,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
             int selectedClassId = (int)CombBox.SelectedValue;
 
-            var response = await _LOBService.GetLOBByClassIdAsync(selectedClassId);
+            var response = await _service.InsuranceLobApiService.GetLOBByClassIdAsync(selectedClassId);
 
             if (currentRow.avaiableLOBs != null) currentRow.avaiableLOBs.Clear();
 
@@ -105,8 +98,8 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
         private async void FillProducts(int id)
         {
-            var InsuranceProductDate = await _InsuranceProductService.GetInsuranceProductByInsuranceIdAsync(id);
-            var newCollection = InsuranceProductDate.Select(s => new LinkedProduct
+            var InsuranceProductDate = await _service.InsuranceProductService.GetInsuranceProductByInsuranceIdAsync(id);
+            var newCollection = InsuranceProductDate.Data.Select(s => new LinkedProduct
             {
                 Id = s.Id,
                 ClassId = s.ClassId,
@@ -120,8 +113,8 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
         private async void FillContacts(int id)
         {
 
-            var InsuranceContactDate = await _InsuranceContactService.GetInsuranceContactByInsuranceIdAsync(id);
-            var newCollection = InsuranceContactDate.Select(s => new Contact
+            var InsuranceContactDate = await _service.InsuranceContactService.GetInsuranceContactByInsuranceIdAsync(id);
+            var newCollection = InsuranceContactDate.Data.Select(s => new Contact
             {
                 Id = s.Id,
                 Department = s.Department,
@@ -136,34 +129,34 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
         private async void FillInsurance(string companyName)
         {
-            var InsuranceDate = await _InsuranceCompanyService.GetInsuranceCompanyByNameAsync(companyName);
+            var result = await _service.InsuranceCompanyService.GetInsuranceCompanyByNameAsync(companyName);
 
-            _id = InsuranceDate.Id;
-            txtName.Text = InsuranceDate.CompanyName;
-            txtNameArabic.Text = InsuranceDate.CompanyNameAr;
-            txtVATNo.Text = InsuranceDate.VATNo;
-            txtTele.Text = InsuranceDate.Tele;
-            txtAbbreviation.Text = InsuranceDate.Abbreviation;
-            txtCRNo.Text = InsuranceDate.CRNo;
-            txtEmail.Text = InsuranceDate.Email;
+            _id = result.Data.Id;
+            txtName.Text = result.Data.CompanyName;
+            txtNameArabic.Text = result.Data.CompanyNameAr;
+            txtVATNo.Text = result.Data.VATNo;
+            txtTele.Text = result.Data.Tele;
+            txtAbbreviation.Text = result.Data.Abbreviation;
+            txtCRNo.Text = result.Data.CRNo;
+            txtEmail.Text = result.Data.Email;
 
-            txtUnifiedNo.Text = InsuranceDate.UnifiedNo;
+            txtUnifiedNo.Text = result.Data.UnifiedNo;
 
-            txtBuildingNo.Text= InsuranceDate.BuildingNo;
-            txtAdditionalNo.Text = InsuranceDate.AdditionalNo;
-            txtBuildingName.Text = InsuranceDate.BuildingName;
-            txtBuildingNameArabic.Text = InsuranceDate.BuildingNameArabic;
-            txtStreetName.Text = InsuranceDate.StreetName;
-            txtStreetlNameArabic.Text = InsuranceDate.StreetNameArabic;
-            txtDistrictName.Text = InsuranceDate.DistrictName;
-            txtDistrictNameArabic.Text =InsuranceDate.DistrictNameArabic;
-            txtPostalCode.Text = InsuranceDate.PostalZIPCode;
-            txtCityName.Text = InsuranceDate.CityName;
-            txtCityNameArabic.Text = InsuranceDate.CityNameArabic;
-            txtState.Text = InsuranceDate.State;
-            txtStateArabic.Text = InsuranceDate.StateArabic;
-            txtCountry.Text = InsuranceDate.CountryRegion;
-            txtCountryArabic.Text = InsuranceDate.CountryRegionArabic;
+            txtBuildingNo.Text= result.Data.BuildingNo;
+            txtAdditionalNo.Text = result.Data.AdditionalNo;
+            txtBuildingName.Text = result.Data.BuildingName;
+            txtBuildingNameArabic.Text = result.Data.BuildingNameArabic;
+            txtStreetName.Text = result.Data.StreetName;
+            txtStreetlNameArabic.Text = result.Data.StreetNameArabic;
+            txtDistrictName.Text = result.Data.DistrictName;
+            txtDistrictNameArabic.Text = result.Data.DistrictNameArabic;
+            txtPostalCode.Text = result.Data.PostalZIPCode;
+            txtCityName.Text = result.Data.CityName;
+            txtCityNameArabic.Text = result.Data.CityNameArabic;
+            txtState.Text = result.Data.State;
+            txtStateArabic.Text = result.Data.StateArabic;
+            txtCountry.Text = result.Data.CountryRegion;
+            txtCountryArabic.Text = result.Data.CountryRegionArabic;
 
             FillProducts(_id);
             FillContacts(_id);
@@ -251,7 +244,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
                 Contacts = InsuranceContractDTO
 
             };
-            _InsuranceCompanyService.UpdateInsuranceCompanyAsync(dto);
+            _service.InsuranceCompanyService.UpdateInsuranceCompanyAsync(dto);
             Clear();
 
         }

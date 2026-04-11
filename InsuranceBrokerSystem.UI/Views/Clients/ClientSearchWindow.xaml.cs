@@ -7,19 +7,21 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using InsuranceBrokerSystem.Application.DTOs.Client;
 using InsuranceBrokerSystem.UI.Services.Clients;
+using InsuranceBrokerSystem.UI.Interface;
+using InsuranceBrokerSystem.UI.Services;
 
 namespace InsuranceBrokerSystem.UI.Views.Clients
 {
     public partial class ClientSearchWindow : Window
     {
-        private readonly ClientService _clientService;
+        private readonly IServiceContainer _service;
         public ObservableCollection<GetClientDTO> SearchResults { get; set; }
         public GetClientDTO SelectedClient { get; private set; }
 
         public ClientSearchWindow()
         {
             InitializeComponent();
-            _clientService = new ClientService();
+            _service = new ServiceContainer(new HttpClientService());
             SearchResults = new ObservableCollection<GetClientDTO>();
             DataContext = this;
             //LoadInitialData();
@@ -29,7 +31,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         {
             try
             {
-                var response = await _clientService.GetAllClientsAsync();
+                var response = await _service.ClientService.GetAllClientsAsync();
                 if (response.Successed)
                 {
                     SearchResults.Clear();
@@ -85,7 +87,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                     return;
                 }
 
-                var allClientsResponse = await _clientService.GetAllClientsAsync();
+                var allClientsResponse = await _service.ClientService.GetAllClientsAsync();
                 if (!allClientsResponse.Successed)
                 {
                     ApiResponseHandler.ShowError(allClientsResponse.Message, "Search Error");

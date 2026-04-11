@@ -1,42 +1,22 @@
-﻿using Azure;
-using InsuranceBrokerSystem.Application.DTOs.Master_Table.InsuranceCompany;
-using System;
+﻿using InsuranceBrokerSystem.Application.DTOs.Master_Table.InsuranceCompany;
+using InsuranceBrokerSystem.UI;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace InsuranceBrokerSystem.UI.Services.Master_Table
 {
-    class InsuranceProductService
+    public class InsuranceProductService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClientService _httpClientService;
 
-        public InsuranceProductService()
+        public InsuranceProductService(HttpClientService httpClientService)
         {
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44314")
-            };
+            _httpClientService = httpClientService;
         }
 
-        public async Task<List<GetInsuranceProductDTO>> GetInsuranceProductByInsuranceIdAsync(int id)
+        public async Task<ApiResponse<List<GetInsuranceProductDTO>>> GetInsuranceProductByInsuranceIdAsync(int id)
         {
-            var response = await _httpClient.GetAsync($"{ ApiRoutes.MasterTable.InsuranceCompProduct.GetInsuranceProductByInsuranceId}/{id}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"API Error: {response.StatusCode} - {error}");
-
-            }
-            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<List<GetInsuranceProductDTO>>>();
-            return apiResponse.Data?? new List<GetInsuranceProductDTO>();
-
+            return await _httpClientService.GetAsync<List<GetInsuranceProductDTO>>($"{ApiRoutes.MasterTable.InsuranceCompProduct.GetInsuranceProductByInsuranceId}/{id}");
         }
     }
 }

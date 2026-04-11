@@ -2,42 +2,41 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using InsuranceBrokerSystem.UI.Interface;
+using InsuranceBrokerSystem.UI.Services;
 
 namespace InsuranceBrokerSystem.UI.Views.MasterData
 {
     public partial class PolicyTypeManagementWindow : Window
     {
-        public ObservableCollection<PolicyType> PolicyTypes { get; set; }
-        public PolicyType SelectedPolicyType { get; private set; }
-
-        // Mock data for demonstration - in real implementation, this would come from API/database
-        private static List<PolicyType> _policyTypes = new List<PolicyType>
-        {
-            new PolicyType { Id = 1, Name = "Life Insurance", Description = "Life and health insurance policies" },
-            new PolicyType { Id = 2, Name = "Vehicle Insurance", Description = "Car and vehicle insurance policies" },
-            new PolicyType { Id = 3, Name = "Property Insurance", Description = "Home and property insurance policies" },
-            new PolicyType { Id = 4, Name = "Travel Insurance", Description = "Travel and trip insurance policies" },
-            new PolicyType { Id = 5, Name = "Business Insurance", Description = "Business and commercial insurance policies" }
-        };
+        private readonly IServiceContainer _service;
+        public ObservableCollection<GetPolicyTypeDTO> PolicyTypes { get; set; }
+        public GetPolicyTypeDTO SelectedPolicyType { get; private set; }
 
         public PolicyTypeManagementWindow()
         {
             InitializeComponent();
-            PolicyTypes = new ObservableCollection<PolicyType>();
+            _service = new ServiceContainer(new HttpClientService());
+            PolicyTypes = new ObservableCollection<GetPolicyTypeDTO>();
             lstPolicyTypes.ItemsSource = PolicyTypes;
-            LoadData();
+            _ = LoadDataAsync();
         }
 
-        private void LoadData()
+        private async Task LoadDataAsync()
         {
             try
             {
                 PolicyTypes.Clear();
-                foreach (var item in _policyTypes.OrderBy(x => x.Name))
+                var response = await _service.PolicyTypeApiService.GetAllPolicyTypesAsync();
+                if (response.Successed && response.Data != null)
                 {
-                    PolicyTypes.Add(item);
+                    foreach (var item in response.Data.OrderBy(x => x.PolicyTypeName))
+                    {
+                        PolicyTypes.Add(item);
+                    }
                 }
             }
             catch (Exception ex)
@@ -48,11 +47,11 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
 
         private void lstPolicyTypes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            SelectedPolicyType = lstPolicyTypes.SelectedItem as PolicyType;
+            SelectedPolicyType = lstPolicyTypes.SelectedItem as GetPolicyTypeDTO;
             
             if (SelectedPolicyType != null)
             {
-                txtName.Text = SelectedPolicyType.Name;
+                txtName.Text = SelectedPolicyType.PolicyTypeName;
                 txtDescription.Text = SelectedPolicyType.Description;
                 btnUpdate.IsEnabled = true;
                 btnDelete.IsEnabled = true;
@@ -64,7 +63,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             }
         }
 
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtName.Text))
             {
@@ -72,30 +71,26 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            var newPolicyType = new PolicyType
+            var newPolicyType = new AddPolicyTypeDTO
             {
-                Name = txtName.Text.Trim(),
-                Description = txtDescription.Text.Trim(),
-                CreatedDate = DateTime.UtcNow,
-                CreatedBy = "CurrentUser" // TODO: Get actual user
+                PolicyTypeName = txtName.Text.Trim(),
+                Description = txtDescription.Text.Trim()
             };
 
             try
             {
-                // Generate new ID
-                newPolicyType.Id = _policyTypes.Count > 0 ? _policyTypes.Max(x => x.Id) + 1 : 1;
+                var response = await _service.PolicyTypeApiService.AddPolicyTypeAsync(newPolicyType);
                 
-                // Check for duplicates
-                if (_policyTypes.Any(x => x.Name.Equals(newPolicyType.Name, StringComparison.OrdinalIgnoreCase)))
+                if (response.Successed)
                 {
-                    MessageBox.Show("A policy type with this name already exists.", "Duplicate Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    await LoadDataAsync(); // Reload data from API
+                    ClearForm();
+                    MessageBox.Show("Policy type added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-
-                _policyTypes.Add(newPolicyType);
-                PolicyTypes.Add(newPolicyType);
-                ClearForm();
-                MessageBox.Show("Policy type added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                else
+                {
+                    MessageBox.Show($"Failed to add policy type: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
             catch (Exception ex)
             {
@@ -103,43 +98,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             }
         }
 
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
-        {
-            if (SelectedPolicyType == null || string.IsNullOrWhiteSpace(txtName.Text))
-            {
-                MessageBox.Show("Please select a policy type and enter a name.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            SelectedPolicyType.Name = txtName.Text.Trim();
-            SelectedPolicyType.Description = txtDescription.Text.Trim();
-            SelectedPolicyType.UpdatedDate = DateTime.UtcNow;
-            SelectedPolicyType.UpdatedBy = "CurrentUser"; // TODO: Get actual user
-
-            try
-            {
-                // Check for duplicates (excluding current item)
-                if (_policyTypes.Any(x => x.Id != SelectedPolicyType.Id && x.Name.Equals(SelectedPolicyType.Name, StringComparison.OrdinalIgnoreCase)))
-                {
-                    MessageBox.Show("A policy type with this name already exists.", "Duplicate Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                var index = PolicyTypes.IndexOf(SelectedPolicyType);
-                if (index >= 0)
-                {
-                    PolicyTypes[index] = SelectedPolicyType;
-                }
-                lstPolicyTypes.SelectedItem = SelectedPolicyType;
-                MessageBox.Show("Policy type updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error updating policy type: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-        }
-
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedPolicyType == null)
             {
@@ -147,21 +106,25 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedPolicyType.Name}'?", 
+            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedPolicyType.PolicyTypeName}'?", 
                 "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
             {
                 try
                 {
-                    // Check if item is in use (in real implementation, check against clients/policies)
-                    // For now, we'll mark as inactive instead of deleting
-                    SelectedPolicyType.UpdatedDate = DateTime.UtcNow;
-                    SelectedPolicyType.UpdatedBy = "CurrentUser";
-
-                    PolicyTypes.Remove(SelectedPolicyType);
-                    ClearForm();
-                    MessageBox.Show("Policy type deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    var response = await _service.PolicyTypeApiService.DeletePolicyTypeAsync(SelectedPolicyType.Id);
+                    
+                    if (response.Successed)
+                    {
+                        await LoadDataAsync(); // Reload data from API
+                        ClearForm();
+                        MessageBox.Show("Policy type deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show($"Failed to delete policy type: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -175,9 +138,9 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             ClearForm();
         }
 
-        private void btnRefresh_Click(object sender, RoutedEventArgs e)
+        private async void btnRefresh_Click(object sender, RoutedEventArgs e)
         {
-            LoadData();
+            await LoadDataAsync();
         }
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
@@ -196,10 +159,47 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             btnDelete.IsEnabled = false;
         }
 
-        // Static method to get policy types for combobox population
-        public static List<PolicyType> GetPolicyTypes()
+        private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
-            return _policyTypes.OrderBy(x => x.Name).ToList();
+            if (SelectedPolicyType == null || string.IsNullOrWhiteSpace(txtName.Text))
+            {
+                MessageBox.Show("Please select a policy type and enter a name.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var updatePolicyType = new UpdatePolicyTypeDTO
+            {
+                Id = SelectedPolicyType.Id,
+                PolicyTypeName = txtName.Text.Trim(),
+                Description = txtDescription.Text.Trim(),
+                IsActive = SelectedPolicyType.IsActive
+            };
+
+            try
+            {
+                var response = await _service.PolicyTypeApiService.UpdatePolicyTypeAsync(updatePolicyType);
+
+                if (response.Successed)
+                {
+                    await LoadDataAsync(); // Reload data from API
+                    ClearForm();
+                    MessageBox.Show("Policy type updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+                else
+                {
+                    MessageBox.Show($"Failed to update policy type: {response.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating policy type: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
+
+        // Static method to get policy types for combobox population
+        //public static List<PolicyType> GetPolicyTypes()
+        //{
+        //    return PolicyTypes.OrderBy(x => x.Name).ToList();
+        //}
     }
 }

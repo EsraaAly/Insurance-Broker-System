@@ -1,41 +1,23 @@
-﻿using Azure;
-using InsuranceBrokerSystem.Application.DTOs.Master_Table.InsuranceCompany;
+﻿using InsuranceBrokerSystem.Application.DTOs.Master_Table.InsuranceCompany;
+using InsuranceBrokerSystem.UI;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Text;
 using System.Threading.Tasks;
-using System.Windows;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace InsuranceBrokerSystem.UI.Services.Master_Table
 {
-    class InsuranceContactService
+    public class InsuranceContactService
     {
-        private readonly HttpClient _httpClient;
+        private readonly HttpClientService _httpClientService;
 
-        public InsuranceContactService()
+        public InsuranceContactService(HttpClientService httpClientService)
         {
-            _httpClient = new HttpClient
-            {
-                BaseAddress = new Uri("https://localhost:44314")
-            };
+            _httpClientService = httpClientService;
         }
 
-        public async Task<List<GetInsuranceContractDTO>> GetInsuranceContactByInsuranceIdAsync(int id)
+        public async Task<ApiResponse<List<GetInsuranceContractDTO>>> GetInsuranceContactByInsuranceIdAsync(int id)
         {
-            var response = await _httpClient.GetAsync($"{ ApiRoutes.MasterTable.InsuranceCompContact.GetInsuranceContactByInsuranceIdAsync}/{id}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                var error = await response.Content.ReadAsStringAsync();
-                throw new Exception($"API Error: {response.StatusCode} - {error}");
-
-            }
-            var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<List<GetInsuranceContractDTO>>>();
-            return apiResponse.Data ?? new List<GetInsuranceContractDTO>();
+            return await _httpClientService.GetAsync<List<GetInsuranceContractDTO>>($"{ ApiRoutes.MasterTable.InsuranceCompContact.GetInsuranceContactByInsuranceIdAsync}/{id}");
         }
     }
 }

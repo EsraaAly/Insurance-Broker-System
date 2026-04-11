@@ -1,5 +1,6 @@
 using System.Collections.Specialized;
 using InsuranceBrokerSystem.UI.Services;
+using InsuranceBrokerSystem.UI.Interface;
 
 namespace InsuranceBrokerSystem.UI.Views.MasterTable
 {
@@ -15,9 +16,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
         public ObservableCollection<string> DepartmentList { get; set; }
 
-        private readonly InsuranceCompanyService _service;
-        private readonly InsuranceClassApiService _classService;
-        private readonly InsuranceLOBApiService _lobService;
+        private readonly IServiceContainer _service;
         
         public NewInsuranceCompany()
         {
@@ -26,9 +25,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             this.ProductsGrid.ItemsSource = this.Products;
             this.ContactsGrid.ItemsSource = this.Contacts;
 
-            _service = ServiceContainer.InsuranceCompanyService;
-            _classService = ServiceContainer.InsuranceClassApiService;
-            _lobService = ServiceContainer.InsuranceLobApiService;
+            _service = new ServiceContainer(new HttpClientService());
 
             DepartmentList = new ObservableCollection<string>{"Underwriting","Customer Service","Claims","Finance","Administration","Management","Sales","Broker Relation"};
             FillClassesDate();
@@ -66,7 +63,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
         }
         private async void FillClassesDate()
         {
-            var response = await _classService.GetAllClassesAsync();
+            var response = await _service.InsuranceClassApiService.GetAllClassesAsync();
             InsuranceClasses = new ObservableCollection<GetInsuranceClassDTO>(response.Data);
             
         }
@@ -80,7 +77,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
             int selectedClassId = (int)CombBox.SelectedValue;
 
-            var response = await _lobService.GetLOBByClassIdAsync(selectedClassId);
+            var response = await _service.InsuranceLobApiService.GetLOBByClassIdAsync(selectedClassId);
 
             if(currentRow.avaiableLOBs != null) currentRow.avaiableLOBs.Clear();
             
@@ -150,7 +147,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
             };
             
-            var result = await _service.AddInsuranceCompanyAsync(dto);
+            var result = await _service.InsuranceCompanyService.AddInsuranceCompanyAsync(dto);
             if (result.Successed)
             {
                 Clear();

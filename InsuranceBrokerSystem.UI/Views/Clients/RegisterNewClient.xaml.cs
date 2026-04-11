@@ -1,5 +1,8 @@
 
 
+using InsuranceBrokerSystem.UI.Services;
+using InsuranceBrokerSystem.UI.Interface;
+
 namespace InsuranceBrokerSystem.UI.Views.Clients
 {
     /// <summary>
@@ -12,13 +15,14 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         public ObservableCollection<DocumentItem> Documents { get; set; }
         public ObservableCollection<BankAccountItem> BankAccounts { get; set; }
 
-        private readonly ClientService _clientService;
+        private readonly IServiceContainer _service;
+
         private readonly GetClientDTO _editingClient;
 
         public RegisterNewClient()
         {
             InitializeComponent();
-            _clientService = new ClientService();
+            _service = new ServiceContainer(new HttpClientService());
             InitializeWindow();
         }
 
@@ -28,14 +32,13 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             LoadClientData();
             Title = "Edit Client";
         }
-
         private void InitializeWindow()
         {
             // Initialize collections
             Contacts = new ObservableCollection<ContactItem>();
             Documents = new ObservableCollection<DocumentItem>();
             BankAccounts = new ObservableCollection<BankAccountItem>();
-            
+
             // Populate comboboxes
             PopulateComboBoxes();
 
@@ -44,57 +47,78 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             GridFiles.ItemsSource = Documents;
             GridBankAccounts.ItemsSource = BankAccounts;
         }
-        
-        private void PopulateComboBoxes()
+        private async void PopulateComboBoxes()
         {
             // Master Data Comboboxes
-            PopulateMasterDataComboBoxes();
+            await PopulateMasterDataComboBoxes();
             
             // Other comboboxes (keeping existing hardcoded values for now)
             PopulateOtherComboBoxes();
         }
 
-        private void PopulateMasterDataComboBoxes()
+        private async Task PopulateMasterDataComboBoxes()
         {
-            //// Policy Type
-            //CombPolicyType.Items.Clear();
-            //var policyTypes = PolicyType.GetMockData();
-            //foreach (var policyType in policyTypes.Where(p => p.IsActive))
-            //{
-            //    CombPolicyType.Items.Add(new ComboBoxItem { Content = policyType.Name, Tag = policyType.Id });
-            //}
+            try
+            {
+                // Policy Type
+                CombPolicyType.Items.Clear();
+                var policyTypesResponse = await _service.PolicyTypeApiService.GetAllPolicyTypesAsync();
+                if (policyTypesResponse.Successed && policyTypesResponse.Data != null)
+                {
+                    foreach (var policyType in policyTypesResponse.Data.Where(p => p.IsActive))
+                    {
+                        CombPolicyType.Items.Add(new ComboBoxItem { Content = policyType.PolicyTypeName, Tag = policyType.Id });
+                    }
+                }
 
-            //// Nationality
-            //CombNationality.Items.Clear();
-            //var nationalities = Nationality.GetMockData();
-            //foreach (var nationality in nationalities.Where(n => n.IsActive))
-            //{
-            //    CombNationality.Items.Add(new ComboBoxItem { Content = nationality.Name, Tag = nationality.Id });
-            //}
+                // Nationality
+                CombNationality.Items.Clear();
+                var nationalitiesResponse = await _service.NationalityApiService.GetAllNationalitiesAsync();
+                if (nationalitiesResponse.Successed && nationalitiesResponse.Data != null)
+                {
+                    foreach (var nationality in nationalitiesResponse.Data.Where(n => n.IsActive))
+                    {
+                        CombNationality.Items.Add(new ComboBoxItem { Content = nationality.NationalityName, Tag = nationality.Id });
+                    }
+                }
 
-            //// Source of Income
-            //CombSourceofIncome.Items.Clear();
-            //var sourcesOfIncome = SourceOfIncome.GetMockData();
-            //foreach (var source in sourcesOfIncome.Where(s => s.IsActive))
-            //{
-            //    CombSourceofIncome.Items.Add(new ComboBoxItem { Content = source.Name, Tag = source.Id });
-            //}
+                // Source of Income
+                CombSourceofIncome.Items.Clear();
+                var sourceOfIncomesResponse = await _service.SourceOfIncomeApiService.GetAllSourceOfIncomesAsync();
+                if (sourceOfIncomesResponse.Successed && sourceOfIncomesResponse.Data != null)
+                {
+                    foreach (var source in sourceOfIncomesResponse.Data.Where(s => s.IsActive))
+                    {
+                        CombSourceofIncome.Items.Add(new ComboBoxItem { Content = source.SourceName, Tag = source.Id });
+                    }
+                }
 
-            //// Business Activity
-            //cmbBusinessActivity.Items.Clear();
-            //var businessActivities = BusinessActivity.GetMockData();
-            //foreach (var activity in businessActivities.Where(a => a.IsActive))
-            //{
-            //    cmbBusinessActivity.Items.Add(new ComboBoxItem { Content = activity.Name, Tag = activity.Id });
-            //}
+                // Business Activity
+                cmbBusinessActivity.Items.Clear();
+                var businessActivitiesResponse = await _service.BusinessActivityApiService.GetAllBusinessActivitiesAsync();
+                if (businessActivitiesResponse.Successed && businessActivitiesResponse.Data != null)
+                {
+                    foreach (var activity in businessActivitiesResponse.Data.Where(a => a.IsActive))
+                    {
+                        cmbBusinessActivity.Items.Add(new ComboBoxItem { Content = activity.ActivityName, Tag = activity.Id });
+                    }
+                }
 
-            //// Location
-            //CombLocation.Items.Clear();
-            //var locations = Location.GetMockData();
-            //foreach (var location in locations.Where(l => l.IsActive))
-            //{
-            //    CombLocation.Items.Add(new ComboBoxItem { Content = location.Name, Tag = location.Id });
-            //}
+                // Location
+                CombLocation.Items.Clear();
+                var locationsResponse = await _service.LocationApiService.GetAllLocationsAsync();
+                if (locationsResponse.Successed && locationsResponse.Data != null)
+                {
+                    foreach (var location in locationsResponse.Data.Where(l => l.IsActive))
+                    {
+                        CombLocation.Items.Add(new ComboBoxItem { Content = location.CityName, Tag = location.Id });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading master data: {ex.Message}", "Data Load Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
         }
 
         private void PopulateOtherComboBoxes()
@@ -249,7 +273,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 {
                     // Update existing client
                     var updateDto = CreateUpdateClientDTO();
-                    var result = await _clientService.UpdateClientAsync(updateDto);
+                    var result = await _service.ClientService.UpdateClientAsync(updateDto);
                     if (result != null)
                     {
                         DialogResult = true;
@@ -260,7 +284,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 {
                     // Add new client
                     var addDto = CreateAddClientDTO();
-                    var result = await _clientService.AddClientAsync(addDto);
+                    var result = await _service.ClientService.AddClientAsync(addDto);
                     if (result != null)
                     {
                         DialogResult = true;

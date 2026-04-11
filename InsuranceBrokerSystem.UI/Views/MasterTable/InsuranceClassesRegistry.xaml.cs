@@ -1,3 +1,5 @@
+using InsuranceBrokerSystem.UI.Interface;
+using InsuranceBrokerSystem.UI.Services;
 
 namespace InsuranceBrokerSystem.UI.Views.MasterTable
 {
@@ -7,15 +9,13 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
     public partial class InsuranceClassesRegistry : UserControl
     {
 
-        private readonly InsuranceClassApiService service;
-        private readonly InsuranceLOBApiService LOBService;
+        private readonly IServiceContainer _service;
         public ObservableCollection<GetInsuranceClassDTO> AllClassesList { get; set; } = new ObservableCollection<GetInsuranceClassDTO>();
 
         public InsuranceClassesRegistry()
         {
             InitializeComponent();
-            service = new InsuranceClassApiService();
-            LOBService = new InsuranceLOBApiService();
+            _service = new ServiceContainer(new HttpClientService());
             this.DataContext = this;
             LoadClassesDate();
             LoadLOBsDate();
@@ -33,7 +33,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
 
             try
             {
-                var result = await service.AddClassAsync(newClass);
+                var result = await _service.InsuranceClassApiService.AddClassAsync(newClass);
                 if (result.Successed)
                 {
                     ClearClass();
@@ -77,7 +77,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
                     ClassName = selectedRowData.ClassName,
                     Abbreviation = selectedRowData.Abbreviation
                 };
-                var result = await service.UpdateClassAsync(dto);
+                var result = await _service.InsuranceClassApiService.UpdateClassAsync(dto);
                 if (result.Successed)
                 {
                     LoadClassesDate();
@@ -101,7 +101,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             if (selectedRowData != null)
             {
                 Id = selectedRowData.Id;
-                var result = await service.DeleteClassAsync(Id);
+                var result = await _service.InsuranceClassApiService.DeleteClassAsync(Id);
                 if (result.Successed)
                 {
                     LoadClassesDate();
@@ -123,7 +123,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
                 LineOfBusiness = txtLineOfBusiness.Text,
                 Abbreviation = txtAbb.Text,
             };
-            var result = await LOBService.AddLOBAsync(addInsuranceLOBDTO);
+            var result = await _service.InsuranceLobApiService.AddLOBAsync(addInsuranceLOBDTO);
             if (result.Successed)
             {
                 ClearLine();
@@ -161,7 +161,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
                     Abbreviation = selectedRowData.Abbreviation,
                     ClassID = selectedRowData.ClassID,
                 };
-                var result = await LOBService.UpdateLOBAsync(dto);
+                var result = await _service.InsuranceLobApiService.UpdateLOBAsync(dto);
                 if (result.Successed)
                 {
                     LoadLOBsDate();
@@ -182,7 +182,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             if (selectedRowData != null)
             {
                 Id = selectedRowData.Id;
-                var result = await LOBService.DeleteLOBAsync(Id);
+                var result = await _service.InsuranceLobApiService.DeleteLOBAsync(Id);
                 if (result.Successed)
                 {
                     LoadLOBsDate();
@@ -203,7 +203,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             try
             {
 
-                var response = await service.GetAllClassesAsync();
+                var response = await _service.InsuranceClassApiService.GetAllClassesAsync();
                 if (response.Successed)
                 {
                     var data = response.Data;
@@ -237,14 +237,14 @@ namespace InsuranceBrokerSystem.UI.Views.MasterTable
             try
             {
                 // 1. First, make sure the Master Classes are loaded
-                var classResponse = await service.GetAllClassesAsync();
+                var classResponse = await _service.InsuranceClassApiService.GetAllClassesAsync();
                 if (classResponse.Successed)
                 {
                     AllClassesList = new ObservableCollection<GetInsuranceClassDTO>(classResponse.Data);
                 }
 
                 // 2. Load the Lines of Business
-                var lobResponse = await LOBService.GetAllLOBAsync();
+                var lobResponse = await _service.InsuranceLobApiService.GetAllLOBAsync();
                 if (lobResponse.Successed)
                 {
                     GridLines.ItemsSource = lobResponse.Data;

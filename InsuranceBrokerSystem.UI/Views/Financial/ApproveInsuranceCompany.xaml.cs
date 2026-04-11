@@ -1,3 +1,6 @@
+using InsuranceBrokerSystem.UI.Interface;
+using InsuranceBrokerSystem.UI.Services;
+
 namespace InsuranceBrokerSystem.UI.Views.Financial
 {
     /// <summary>
@@ -5,8 +8,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
     /// </summary>
     public partial class ApproveInsuranceCompany : UserControl
     {
-        private readonly InsuranceCompanyService _InsuranceCompanyService;
-        private readonly InsuranceCompanyApprovalApiService _InsuranceCompanyApproveService;
+        private readonly IServiceContainer _service;
         public ObservableCollection<GetInsuranceCompanyDTO> InsuranceCompanies { get; set; } = new ObservableCollection<GetInsuranceCompanyDTO>();
         string status;
         public ApproveInsuranceCompany()
@@ -14,8 +16,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
             InitializeComponent();
             this.ChPending.IsChecked = true;
             status = ChPending.IsChecked == true ? "Pending" : "Rejected";
-            _InsuranceCompanyService = new InsuranceCompanyService();
-            _InsuranceCompanyApproveService = new InsuranceCompanyApprovalApiService();
+            _service = new ServiceContainer(new HttpClientService());
             CompaniesGrid.ItemsSource = InsuranceCompanies;
         }
 
@@ -28,24 +29,24 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
         {
             if (txtCompanyName.Text.Length != 0)
             {
-                LoadInsuranceCompaniesDateByName();
+                LoadInsuranceCompaniesDataByName();
             }
             else
             {
-                LoadInsuranceCompaniesDate();
+                LoadInsuranceCompaniesData();
             }
         }
 
-        public async Task LoadInsuranceCompaniesDate()
+        public async Task LoadInsuranceCompaniesData()
         {
             try
             {
                 InsuranceCompanies.Clear();
-                var data = await _InsuranceCompanyService.GetAllInsuranceCompaniesAsync();
+                var result = await _service.InsuranceCompanyService.GetAllInsuranceCompaniesAsync();
 
-                data = data.Where(c => c.Status == status).ToList();
+                result.Data = result.Data.Where(c => c.Status == status).ToList();
                 // Bind the result to your DataGrid
-                CompaniesGrid.ItemsSource = data;
+                CompaniesGrid.ItemsSource = result.Data;
 
             }
             catch (Exception ex)
@@ -57,17 +58,17 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
 
             }
         }
-        public async Task LoadInsuranceCompaniesDateByName()
+        public async Task LoadInsuranceCompaniesDataByName()
         {
             try
             {
 
                 InsuranceCompanies.Clear();
-                var data = await _InsuranceCompanyService.GetInsuranceCompanyByNameAsync(txtCompanyName.Text);
+                var result = await _service.InsuranceCompanyService.GetInsuranceCompanyByNameAsync(txtCompanyName.Text);
                 //data = data.Where(c => c.Status == status).ToList();
-                if (data.State == status)
+                if (result.Data.State == status)
                 {
-                    InsuranceCompanies.Add(data);
+                    InsuranceCompanies.Add(result.Data);
                 }
                 // Bind the result to your DataGrid
                 //CompaniesGrid.ItemsSource = data;
@@ -96,7 +97,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
                         MessageBox.Show($"Insurance company: {selectedCompany.CompanyName} is already Rejected.");
                         return;
                     }
-                    await _InsuranceCompanyApproveService.RejectInsuranceCompanyAsync(selectedCompany.Id);
+                    await _service.InsuranceCompanyApprovalApiService.RejectInsuranceCompanyAsync(selectedCompany.Id);
                     MessageBox.Show($"Rejecting insurance company: {selectedCompany.CompanyName}");
                     Refresh();
                 }
@@ -111,7 +112,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
                 var selectedCompany = button.CommandParameter as GetInsuranceCompanyDTO;
                 if (selectedCompany != null)
                 {
-                    await _InsuranceCompanyApproveService.ApproveInsuranceCompanyAsync(selectedCompany.Id);
+                    await _service.InsuranceCompanyApprovalApiService.ApproveInsuranceCompanyAsync(selectedCompany.Id);
                     MessageBox.Show($"Approving insurance company and generating auto-accounts: {selectedCompany.CompanyName}");
                     Refresh();
                 }

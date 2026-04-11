@@ -1,29 +1,24 @@
 ﻿
+using InsuranceBrokerSystem.UI;
+
 namespace InsuranceBrokerSystem.UI.Services.Financial
 {
     public class ChartOfAccountApiService
     {
-        private static readonly HttpClient _httpClient = new HttpClient
+        private readonly HttpClientService _httpClientService;
+
+        public ChartOfAccountApiService(HttpClientService httpClientService)
         {
-            BaseAddress = new Uri("https://localhost:44314")
-        };
-        public ChartOfAccountApiService() { }
+            _httpClientService = httpClientService;
+        }
 
         public async Task<bool> AddAccountAsync(Account account)
         {
             if (account == null) return false;
 
             var dto = MapUIToCreateDto(account);
-            var response = await _httpClient.PostAsJsonAsync(ApiRoutes.Financial.Account.AddAccount, dto);
-            
-            if (response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Account created successfully!");
-                return true;
-            }
-            
-            MessageBox.Show("Error: Could not create account.");
-            return false;
+            var response = await _httpClientService.PostAsync<string, object>(ApiRoutes.Financial.Account.AddAccount, dto);
+            return response.Successed;
         }
 
         public async Task<bool> UpdateAccountAsync(Account account)
@@ -31,48 +26,25 @@ namespace InsuranceBrokerSystem.UI.Services.Financial
             if (account == null || account.Id == 0) return false;
 
             var dto = MapUIToEditDto(account);
-            var response = await _httpClient.PutAsJsonAsync(ApiRoutes.Financial.Account.UpdateAccount, dto);
-
-            if (response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Account updated successfully!");
-                return true;
-            }
-
-            MessageBox.Show("Error: Could not update account.");
-            return false;
+            var response = await _httpClientService.PutAsync<string, object>(ApiRoutes.Financial.Account.UpdateAccount, dto);
+            return response.Successed;
         }
 
         public async Task<bool> DeleteAccountAsync(int id)
         {
-            var response = await _httpClient.DeleteAsync($"{ApiRoutes.Financial.Account.DeleteAccount}/{id}");
-            if (response.IsSuccessStatusCode)
-            {
-                MessageBox.Show("Account deleted successfully!");
-                return true;
-            }
-
-            MessageBox.Show("Error: Could not delete account.");
-            return false;
+            var response = await _httpClientService.DeleteAsync($"{ApiRoutes.Financial.Account.DeleteAccount}/{id}");
+            return response.Successed;
         }
 
         public async Task<List<Account>> LoadAccountsAsync()
         {
-            try
+            var response = await _httpClientService.GetAsync<List<GetAccountDTO>>(ApiRoutes.Financial.Account.GetAllAccounts);
+            
+            if (response.Successed && response.Data != null)
             {
-                var response = await _httpClient.GetFromJsonAsync<ApiResponse<List<GetAccountDTO>>>(ApiRoutes.Financial.Account.GetAllAccounts);
-
-                if (response != null && response.Data != null)
-                {
-                    return response.Data.Select(dto => MapDtoToUIModel(dto)).ToList();
-                }
-                return new List<Account>();
+                return response.Data.Select(dto => MapDtoToUIModel(dto)).ToList();
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Connection Error: {ex.Message}");
-                return new List<Account>();
-            }
+            return new List<Account>();
         }
 
         private CreateAccountDTO MapUIToCreateDto(Account account)

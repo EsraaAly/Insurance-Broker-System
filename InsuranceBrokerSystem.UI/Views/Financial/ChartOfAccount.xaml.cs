@@ -1,5 +1,8 @@
 
 
+using InsuranceBrokerSystem.UI.Interface;
+using InsuranceBrokerSystem.UI.Services;
+
 namespace InsuranceBrokerSystem.UI.Views.Financial
 {
     /// <summary>
@@ -8,7 +11,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
     public partial class ChartOfAccount : UserControl, INotifyPropertyChanged
     {
         
-        private readonly ChartOfAccountApiService _service ;
+        private readonly IServiceContainer _service;
         private ObservableCollection<Account> _allAccounts = new ObservableCollection<Account>();
 
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -27,7 +30,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
 
             InitializeComponent();
             DataContext = this;
-            _service = new ChartOfAccountApiService();
+            _service = new ServiceContainer(new HttpClientService());
             Loaded += async (s, e) => await LoadAccountsAsync();
         }
 
@@ -43,7 +46,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
         {
             try
             {
-                var accounts = await _service.LoadAccountsAsync();
+                var accounts = await _service.ChartOfAccountApiService.LoadAccountsAsync();
                 _allAccounts.Clear();
 
                 // Add only root accounts (ParentId == null or 0)
@@ -79,7 +82,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
 
             if (form.IsSaved)
             {
-                bool success = await _service.AddAccountAsync(form.EditingAccount);
+                bool success = await _service.ChartOfAccountApiService.AddAccountAsync(form.EditingAccount);
                 if (success)
                     await LoadAccountsAsync();
             }
@@ -103,7 +106,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
 
                 if (form.IsSaved)
                 {
-                    bool success = await _service.AddAccountAsync(form.EditingAccount);
+                    bool success = await _service.ChartOfAccountApiService.AddAccountAsync(form.EditingAccount);
                     if (success)
                         await LoadAccountsAsync();
                 }
@@ -124,7 +127,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
 
             if (accountToEdit != null)
             {
-                    bool success = await _service.UpdateAccountAsync(accountToEdit);
+                    bool success = await _service.ChartOfAccountApiService.UpdateAccountAsync(accountToEdit);
                     if (success)
                         await LoadAccountsAsync();              
             }
@@ -140,7 +143,7 @@ namespace InsuranceBrokerSystem.UI.Views.Financial
 
                 if (result == MessageBoxResult.Yes)
                 {
-                    bool success = await _service.DeleteAccountAsync(account.Id);
+                    bool success = await _service.ChartOfAccountApiService.DeleteAccountAsync(account.Id);
                     if (success)
                         await LoadAccountsAsync();
                 }

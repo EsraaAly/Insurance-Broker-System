@@ -2,6 +2,9 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceClasses.Commands.U
 {
     public class UpdateInsuranceClassCommand : IRequest<Result<GetInsuranceClassDTO>>
     {
+        public UpdateInsuranceClassDTO _updateInsuranceClassDTO { get; set; }
+        
+        // Keep existing properties for backward compatibility
         public int Id { get; set; }
         public string ClassName { get; set; }
         public string Abbreviation { get; set; }

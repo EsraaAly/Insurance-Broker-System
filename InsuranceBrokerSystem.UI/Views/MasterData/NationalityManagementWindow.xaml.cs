@@ -33,7 +33,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 var response = await _service.NationalityApiService.GetAllNationalitiesAsync();
                 if (response.Successed && response.Data != null)
                 {
-                    foreach (var item in response.Data.OrderBy(x => x.NationalityName))
+                    foreach (var item in response.Data.OrderBy(x => x.Name))
                     {
                         Nationalities.Add(item);
                     }
@@ -51,9 +51,9 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             
             if (SelectedNationality != null)
             {
-                txtName.Text = SelectedNationality.NationalityName;
-                txtCode.Text = SelectedNationality.NationalityName; // Using NationalityName as Code since Code property doesn't exist
-                txtDescription.Text = ""; // Description property doesn't exist in GetNationalityDTO
+                txtName.Text = SelectedNationality.Name;
+                txtCode.Text = SelectedNationality.Code;
+                txtDescription.Text = SelectedNationality.Description;
                 btnUpdate.IsEnabled = true;
                 btnDelete.IsEnabled = true;
                 btnAdd.IsEnabled = false;
@@ -64,7 +64,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             }
         }
 
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtName.Text) || string.IsNullOrWhiteSpace(txtCode.Text))
             {
@@ -72,10 +72,34 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            // TODO: Implement add functionality using API service
+            try
+            {
+                var addNationality = new AddNationalityDTO
+                {
+                    Name = txtName.Text.Trim(),
+                    Code = txtCode.Text.Trim(),
+                    Description = txtDescription.Text.Trim()
+                };
+
+                var response = await _service.NationalityApiService.AddNationalityAsync(addNationality);
+                if (response.Successed)
+                {
+                    MessageBox.Show("Nationality added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearForm();
+                    await LoadDataAsync();
+                }
+                else
+                {
+                    MessageBox.Show(response.Message ?? "Failed to add nationality", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error adding nationality: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedNationality == null || string.IsNullOrWhiteSpace(txtName.Text) || string.IsNullOrWhiteSpace(txtCode.Text))
             {
@@ -83,10 +107,65 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            // TODO: Implement update functionality using API service
+            try
+            {
+                var updateNationality = new UpdateNationalityDTO
+                {
+                    Id = SelectedNationality.Id,
+                    Name = txtName.Text.Trim(),
+                    Code = txtCode.Text.Trim(),
+                    Description = txtDescription.Text.Trim()
+                };
+
+                var response = await _service.NationalityApiService.UpdateNationalityAsync(updateNationality);
+                if (response.Successed)
+                {
+                    MessageBox.Show("Nationality updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearForm();
+                    await LoadDataAsync();
+                }
+                else
+                {
+                    MessageBox.Show(response.Message ?? "Failed to update nationality", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating nationality: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        // TODO: Implement delete functionality using API service
+        private async void btnDelete_Click(object sender, RoutedEventArgs e)
+        {
+            if (SelectedNationality == null)
+            {
+                MessageBox.Show("Please select a nationality to delete.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedNationality.Name}'?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    var response = await _service.NationalityApiService.DeleteNationalityAsync(SelectedNationality.Id);
+                    if (response.Successed)
+                    {
+                        MessageBox.Show("Nationality deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        ClearForm();
+                        await LoadDataAsync();
+                    }
+                    else
+                    {
+                        MessageBox.Show(response.Message ?? "Failed to delete nationality", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error deleting nationality: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+        }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
@@ -115,9 +194,5 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             btnDelete.IsEnabled = false;
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
     }
 }

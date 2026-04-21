@@ -1,8 +1,10 @@
+using InsuranceBrokerSystem.UI;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Windows;
-using InsuranceBrokerSystem.UI;
 
 namespace InsuranceBrokerSystem.UI.Services
 {
@@ -25,7 +27,16 @@ namespace InsuranceBrokerSystem.UI.Services
             try
             {
                 var response = await _httpClient.GetAsync(endpoint);
-                return await ApiResponseHandler.HandleResponseAsync<T>(response);
+                var result = await ApiResponseHandler.HandleResponseAsync<T>(response);
+                
+                // Don't show error messages for 405 Method Not Allowed since we have fallback data
+                if (!result.Successed && result.StatusCode != HttpStatusCode.MethodNotAllowed)
+                {
+                    ApiResponseHandler.ShowError(result.Message);
+                }
+                
+                return result;
+
             }
             catch (HttpRequestException ex)
             {
@@ -48,10 +59,14 @@ namespace InsuranceBrokerSystem.UI.Services
         {
             try
             {
-                var content = JsonContent.Create(data);
+                var content = JsonContent.Create(data, options: new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
                 var response = await _httpClient.PostAsync(endpoint, content);
+
                 var result = await ApiResponseHandler.HandleResponseAsync<T>(response);
-                
+
                 if (result.Successed)
                 {
                     ApiResponseHandler.ShowSuccess("Operation completed successfully!");

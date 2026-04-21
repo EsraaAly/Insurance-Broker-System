@@ -1,3 +1,6 @@
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.Location;
+using InsuranceBrokerSystem.Application.Features.Locations.Commands;
+
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
     [ApiController]
@@ -11,10 +14,10 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPost(ApiRoutes.MasterTable.Location.AddLocation)]
-        public async Task<IActionResult> AddLocationAsync(AddLocationCommand command)
+        public async Task<IActionResult> AddLocationAsync(AddLocationDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new AddLocationCommand { _addLocationDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
@@ -36,10 +39,10 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPut(ApiRoutes.MasterTable.Location.UpdateLocation)]
-        public async Task<IActionResult> UpdateLocationAsync(UpdateLocationCommand command)
+        public async Task<IActionResult> UpdateLocationAsync(UpdateLocationDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new UpdateLocationCommand { _updateLocationDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }

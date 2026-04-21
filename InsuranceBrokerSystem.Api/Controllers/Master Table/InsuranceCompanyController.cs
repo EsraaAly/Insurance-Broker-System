@@ -1,4 +1,7 @@
 
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.InsuranceCompany;
+using InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands;
+
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
 
@@ -13,10 +16,10 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPost(ApiRoutes.MasterTable.InsuranceComp.AddInsuranceComp)]
-        public async Task<IActionResult> AddInsuranceCompanyAsync(AddInsuranceCompanyCommand command)
+        public async Task<IActionResult> AddInsuranceCompanyAsync(AddInsuranceCompanyDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new AddInsuranceCompanyCommand { _addInsuranceCompanyDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
@@ -43,10 +46,10 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPut(ApiRoutes.MasterTable.InsuranceComp.UpdateInsuranceComp)]
-        public async Task<IActionResult> UpdateInsuranceCompanyAsync(UpdateInsuranceCompanyCommand command)
+        public async Task<IActionResult> UpdateInsuranceCompanyAsync(UpdateInsuranceCompanyDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new UpdateInsuranceCompanyCommand { _updateInsuranceCompanyDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }

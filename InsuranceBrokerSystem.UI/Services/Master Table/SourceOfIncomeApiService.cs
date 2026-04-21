@@ -37,29 +37,4 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
         }
     }
 
-    // DTO Classes
-    public class GetSourceOfIncomeDTO
-    {
-        public int Id { get; set; }
-        public string SourceName { get; set; }
-        public string SourceNameAr { get; set; }
-        public string Description { get; set; }
-        public bool IsActive { get; set; }
-    }
-
-    public class AddSourceOfIncomeDTO
-    {
-        public string SourceName { get; set; }
-        public string SourceNameAr { get; set; }
-        public string Description { get; set; }
-    }
-
-    public class UpdateSourceOfIncomeDTO
-    {
-        public int Id { get; set; }
-        public string SourceName { get; set; }
-        public string SourceNameAr { get; set; }
-        public string Description { get; set; }
-        public bool IsActive { get; set; }
-    }
 }

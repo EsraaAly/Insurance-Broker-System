@@ -2,6 +2,8 @@
 
 using InsuranceBrokerSystem.UI.Services;
 using InsuranceBrokerSystem.UI.Interface;
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.PolicyType;
+using GetPolicyTypeDTO = InsuranceBrokerSystem.Application.DTOs.Master_Table.PolicyType.GetPolicyTypeDTO;
 
 namespace InsuranceBrokerSystem.UI.Views.Clients
 {
@@ -15,6 +17,13 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         public ObservableCollection<DocumentItem> Documents { get; set; }
         public ObservableCollection<BankAccountItem> BankAccounts { get; set; }
 
+        public ObservableCollection<GetPolicyTypeDTO> PolicyTypes  = new ObservableCollection<GetPolicyTypeDTO>();
+        public ObservableCollection<GetNationalityDTO> Nationalities = new ObservableCollection<GetNationalityDTO>();
+        public ObservableCollection<GetBusinessActivityDTO> BusinessActivities = new ObservableCollection<GetBusinessActivityDTO>();
+        public ObservableCollection<GetLocationDTO> Locations = new ObservableCollection<GetLocationDTO>();
+        public ObservableCollection<GetSourceOfIncomeDTO> SourceOfIncomes = new ObservableCollection<GetSourceOfIncomeDTO>();
+
+
         private readonly IServiceContainer _service;
 
         private readonly GetClientDTO _editingClient;
@@ -22,6 +31,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         public RegisterNewClient()
         {
             InitializeComponent();
+            DataContext = this;
             _service = new ServiceContainer(new HttpClientService());
             InitializeWindow();
         }
@@ -60,64 +70,93 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         {
             try
             {
-                // Policy Type
-                CombPolicyType.Items.Clear();
-                var policyTypesResponse = await _service.PolicyTypeApiService.GetAllPolicyTypesAsync();
-                if (policyTypesResponse.Successed && policyTypesResponse.Data != null)
-                {
-                    foreach (var policyType in policyTypesResponse.Data.Where(p => p.IsActive))
-                    {
-                        CombPolicyType.Items.Add(new ComboBoxItem { Content = policyType.PolicyTypeName, Tag = policyType.Id });
-                    }
-                }
+                FillPolicyTypeFallback();
 
-                // Nationality
-                CombNationality.Items.Clear();
-                var nationalitiesResponse = await _service.NationalityApiService.GetAllNationalitiesAsync();
-                if (nationalitiesResponse.Successed && nationalitiesResponse.Data != null)
-                {
-                    foreach (var nationality in nationalitiesResponse.Data.Where(n => n.IsActive))
-                    {
-                        CombNationality.Items.Add(new ComboBoxItem { Content = nationality.NationalityName, Tag = nationality.Id });
-                    }
-                }
+                FillNationalityFallback();
 
-                // Source of Income
-                CombSourceofIncome.Items.Clear();
-                var sourceOfIncomesResponse = await _service.SourceOfIncomeApiService.GetAllSourceOfIncomesAsync();
-                if (sourceOfIncomesResponse.Successed && sourceOfIncomesResponse.Data != null)
-                {
-                    foreach (var source in sourceOfIncomesResponse.Data.Where(s => s.IsActive))
-                    {
-                        CombSourceofIncome.Items.Add(new ComboBoxItem { Content = source.SourceName, Tag = source.Id });
-                    }
-                }
+                FillSourceOfIncomeFallback();
 
-                // Business Activity
-                cmbBusinessActivity.Items.Clear();
-                var businessActivitiesResponse = await _service.BusinessActivityApiService.GetAllBusinessActivitiesAsync();
-                if (businessActivitiesResponse.Successed && businessActivitiesResponse.Data != null)
-                {
-                    foreach (var activity in businessActivitiesResponse.Data.Where(a => a.IsActive))
-                    {
-                        cmbBusinessActivity.Items.Add(new ComboBoxItem { Content = activity.ActivityName, Tag = activity.Id });
-                    }
-                }
+                FillBusinessActivityFallback();
 
-                // Location
-                CombLocation.Items.Clear();
-                var locationsResponse = await _service.LocationApiService.GetAllLocationsAsync();
-                if (locationsResponse.Successed && locationsResponse.Data != null)
-                {
-                    foreach (var location in locationsResponse.Data.Where(l => l.IsActive))
-                    {
-                        CombLocation.Items.Add(new ComboBoxItem { Content = location.CityName, Tag = location.Id });
-                    }
-                }
+                FillLocationFallback();
+
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading master data: {ex.Message}", "Data Load Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Error loading data from database: {ex.Message}", "Database Connection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private async void FillPolicyTypeFallback()
+        {
+            PolicyTypes.Clear();
+            var response = await _service.PolicyTypeApiService.GetAllPolicyTypesAsync();
+
+            if (response.Successed && response.Data != null)
+            {
+                PolicyTypes.Clear();
+
+                foreach (var item in response.Data)
+                {
+                    PolicyTypes.Add(item);
+                }
+                CombPolicyType.ItemsSource = PolicyTypes;
+            }
+        }
+
+        private async void FillNationalityFallback()
+        {
+            Nationalities.Clear();
+            var nationalitiesResponse = await _service.NationalityApiService.GetAllNationalitiesAsync();
+            if (nationalitiesResponse.Successed && nationalitiesResponse.Data != null)
+            {
+                foreach (var nationality in nationalitiesResponse.Data)
+                {
+                    Nationalities.Add(nationality);
+                }
+                CombNationality.ItemsSource = Nationalities;
+            }
+        }
+
+        private async void FillSourceOfIncomeFallback()
+        {
+            SourceOfIncomes.Clear();
+            var sourceOfIncomesResponse = await _service.SourceOfIncomeApiService.GetAllSourceOfIncomesAsync();
+            if (sourceOfIncomesResponse.Successed && sourceOfIncomesResponse.Data != null)
+            {
+                foreach (var source in sourceOfIncomesResponse.Data)
+                {
+                    SourceOfIncomes.Add(source);
+                }
+                CombSourceofIncome.ItemsSource = SourceOfIncomes;
+            }
+        }
+
+        private async void FillBusinessActivityFallback()
+        {
+            BusinessActivities.Clear();
+            var businessActivitiesResponse = await _service.BusinessActivityApiService.GetAllBusinessActivitiesAsync();
+            if (businessActivitiesResponse.Successed && businessActivitiesResponse.Data != null)
+            {
+                foreach (var activity in businessActivitiesResponse.Data)
+                {
+                    BusinessActivities.Add(activity);
+                }
+                cmbBusinessActivity.ItemsSource = BusinessActivities;
+            }
+        }
+
+        private async void FillLocationFallback()
+        {
+            Locations.Clear();
+            var locationsResponse = await _service.LocationApiService.GetAllLocationsAsync();
+            if (locationsResponse.Successed && locationsResponse.Data != null)
+            {
+                foreach (var location in locationsResponse.Data)
+                {
+                    Locations.Add(location);
+                }
+                CombLocation.ItemsSource = Locations;
             }
         }
 
@@ -187,6 +226,15 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             CmbProspectType.Items.Clear();
             CmbProspectType.Items.Add(new ComboBoxItem { Content = "Retail", Tag = (int)ClientType.Retail });
             CmbProspectType.Items.Add(new ComboBoxItem { Content = "Corporate", Tag = (int)ClientType.Corporate });
+
+            // Business Type
+            CombBusinessType.Items.Clear();
+            CombBusinessType.Items.Add("Governmental Entities");
+            CombBusinessType.Items.Add("Semi-Government");
+            CombBusinessType.Items.Add("Publicly listed");
+            CombBusinessType.Items.Add("Corporation");
+            CombBusinessType.Items.Add("SME");
+            CombBusinessType.Items.Add("Individual");
         }
 
         private void CmbProspectType_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -362,8 +410,9 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
 
             if (CmbProspectType.SelectedItem == null)
                 return false;
-
-            var clientType = int.Parse(CmbProspectType.SelectedItem.ToString());
+            var selectedPolicy = (GetPolicyTypeDTO)CmbProspectType.SelectedItem;
+            var clientType = selectedPolicy.Id;
+            //var clientType = int.Parse(CmbProspectType.SelectedItem.ToString());
             if (clientType == 1 && string.IsNullOrWhiteSpace(txtIDNo.Text))
                 return false;
 
@@ -441,6 +490,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 DateOfBirth = txtBirthDay.SelectedDate,
                 IDExpiryDate = DTPIDExpiryDate.SelectedDate,
                 DateOfIncorporation = DTPIncorporation.SelectedDate,
+                PolicyTypeId = CombPolicyType.SelectedValue != null ? (int)CombPolicyType.SelectedValue : null,
                 Contacts = Contacts.Select(c => new UpdateClientContactDTO
                 {
                     Name = c.Name,
@@ -686,7 +736,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             window.ShowDialog();
             
             // Refresh combobox after closing management window
-            PopulateComboBoxes();
+            FillPolicyTypeFallback();
         }
 
         private void btnAddNationality_Click(object sender, RoutedEventArgs e)
@@ -696,7 +746,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             window.ShowDialog();
             
             // Refresh combobox after closing management window
-            PopulateComboBoxes();
+            FillNationalityFallback();
         }
 
         private void btnAddSourceOfIncome_Click(object sender, RoutedEventArgs e)
@@ -706,7 +756,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             window.ShowDialog();
             
             // Refresh combobox after closing management window
-            PopulateComboBoxes();
+            FillSourceOfIncomeFallback();
         }
 
         private void btnAddBusinessActivity_Click(object sender, RoutedEventArgs e)
@@ -716,7 +766,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             window.ShowDialog();
             
             // Refresh combobox after closing management window
-            PopulateComboBoxes();
+            FillBusinessActivityFallback();
         }
 
         private void btnAddLocation_Click(object sender, RoutedEventArgs e)
@@ -726,7 +776,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             window.ShowDialog();
             
             // Refresh combobox after closing management window
-            PopulateComboBoxes();
+            FillLocationFallback();
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)

@@ -69,7 +69,10 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="Auto"/>
                                             </Grid.ColumnDefinitions>
-                                            <ComboBox x:Name="CombPolicyType" />
+                                            <ComboBox x:Name="CombPolicyType"
+                                                      ItemsSource="{Binding PolicyTypes}"
+                                                      DisplayMemberPath="Name"
+                                                      SelectedValuePath="Id"/>
                                             <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0" Padding="0"
                                                     Style="{StaticResource SecondaryButtonStyle}" Foreground="White"  Background="#0D3559"
                                                     Click="btnAddPolicyType_Click" ToolTip="Add Policy Type"/>
@@ -114,9 +117,12 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <ComboBox x:Name="CombNationality" />
-                                        <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0"
-                                                Style="{StaticResource SecondaryButtonStyle}" Background="#27AE60"
+                                        <ComboBox x:Name="CombNationality"
+                                                  ItemsSource="{Binding Nationalities}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedValuePath="Id"  />
+                                        <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0" Padding="0"
+                                                Style="{StaticResource SecondaryButtonStyle}"  Background="#0D3559"
                                                 Click="btnAddNationality_Click" ToolTip="Add Nationality"/>
                                     </Grid>
 
@@ -126,9 +132,12 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <ComboBox x:Name="CombSourceofIncome" />
-                                        <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0"
-                                                Style="{StaticResource SecondaryButtonStyle}" Background="#27AE60"
+                                        <ComboBox x:Name="CombSourceofIncome"
+                                                  ItemsSource="{Binding SourceofIncomes}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedValuePath="Id" />
+                                        <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0" Padding="0"
+                                                Style="{StaticResource SecondaryButtonStyle}"  Background="#0D3559"
                                                 Click="btnAddSourceOfIncome_Click" ToolTip="Add Source of Income"/>
                                     </Grid>
 
@@ -154,7 +163,10 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <ComboBox x:Name="cmbBusinessActivity" />
+                                        <ComboBox x:Name="cmbBusinessActivity" 
+                                                  ItemsSource="{Binding BusinessActivities}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedValuePath="Id" />
                                         <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0" Padding="0"
                                                 Style="{StaticResource SecondaryButtonStyle}" Background="#0D3559"
                                                 Click="btnAddBusinessActivity_Click" ToolTip="Add Business Activity"/>
@@ -206,7 +218,10 @@
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="Auto"/>
                                         </Grid.ColumnDefinitions>
-                                        <ComboBox x:Name="CombLocation" />
+                                        <ComboBox x:Name="CombLocation"
+                                                  ItemsSource="{Binding Locations}"
+                                                  DisplayMemberPath="Name"
+                                                  SelectedValuePath="Id" /> 
                                         <Button Content="+" Grid.Column="1" Width="30" Height="28" Margin="5,0,0,0" Padding="0"
                                                 Style="{StaticResource SecondaryButtonStyle}" Background="#0D3559"
                                                 Click="btnAddLocation_Click" ToolTip="Add Location"/>

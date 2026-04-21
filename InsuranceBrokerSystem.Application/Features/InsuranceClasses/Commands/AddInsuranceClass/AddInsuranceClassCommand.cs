@@ -2,6 +2,9 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceClasses.Commands.A
 {
     public class AddInsuranceClassCommand : IRequest<Result<bool>>
     {
+        public AddInsuranceClassDTO _addInsuranceClassDTO { get; set; }
+        
+        // Keep existing properties for backward compatibility
         public string ClassName { get; set; }
         public string Abbreviation { get; set; }
     }

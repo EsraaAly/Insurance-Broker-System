@@ -93,7 +93,8 @@ global using InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Commands
 global using InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Commands.UpdateSourceOfIncome;
 global using InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Queries.GetAllSourceOfIncomes;
 global using InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Queries.GetSourceOfIncomeById;
-
+global using InsuranceBrokerSystem.Application.Features.Nationalities.Queries.GetAllNationalities;
+global using InsuranceBrokerSystem.Application.Features.Nationalities.Queries.GetNationalityById;
 
 // ── Infrastructure ───────────────────────────────────────────
 global using InsuranceBrokerSystem.Infrastructure.Data;

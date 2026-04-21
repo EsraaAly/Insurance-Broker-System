@@ -19,6 +19,11 @@ namespace InsuranceBrokerSystem.Application.DTOs.Master_Table.Nationality
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public bool IsDeleted { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
+        // Property to match UI expectations
     }
 
     public class UpdateNationalityDTO : NationalityBase

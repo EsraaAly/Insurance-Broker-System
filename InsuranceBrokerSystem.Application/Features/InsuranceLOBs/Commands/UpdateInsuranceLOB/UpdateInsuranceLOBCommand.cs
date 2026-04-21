@@ -2,6 +2,9 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Commands.Upda
 {
     public class UpdateInsuranceLOBCommand : IRequest<Result<GetInsuranceLOBDTO>>
     {
+        public UpdateInsuranceLOBDTO _updateInsuranceLOBDTO { get; set; }
+        
+        // Keep existing properties for backward compatibility
         public int Id { get; set; }
         public int ClassID { get; set; }
         public string LineOfBusiness { get; set; }

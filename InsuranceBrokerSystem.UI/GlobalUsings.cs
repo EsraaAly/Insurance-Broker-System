@@ -50,5 +50,11 @@ global using InsuranceBrokerSystem.Domain.Enums.Client;
 global using InsuranceBrokerSystem.UI.Services.Clients;
 global using InsuranceBrokerSystem.UI.Views.MasterData;
 global using InsuranceBrokerSystem.Domain.Entities.MasterTable;
+global using InsuranceBrokerSystem.Application.DTOs.Master_Table.PolicyType;
+global using InsuranceBrokerSystem.Application.DTOs.Master_Table.Nationality;
+global using InsuranceBrokerSystem.Application.DTOs.Master_Table.BusinessActivity;
+global using InsuranceBrokerSystem.Application.DTOs.Master_Table.Location;
+global using InsuranceBrokerSystem.Application.DTOs.Master_Table.SourceOfIncome;
 
+global using InsuranceBrokerSystem.UI;
 

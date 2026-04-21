@@ -33,7 +33,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 var response = await _service.PolicyTypeApiService.GetAllPolicyTypesAsync();
                 if (response.Successed && response.Data != null)
                 {
-                    foreach (var item in response.Data.OrderBy(x => x.PolicyTypeName))
+                    foreach (var item in response.Data.OrderBy(x => x.Name))
                     {
                         PolicyTypes.Add(item);
                     }
@@ -51,7 +51,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             
             if (SelectedPolicyType != null)
             {
-                txtName.Text = SelectedPolicyType.PolicyTypeName;
+                txtName.Text = SelectedPolicyType.Name;
                 txtDescription.Text = SelectedPolicyType.Description;
                 btnUpdate.IsEnabled = true;
                 btnDelete.IsEnabled = true;
@@ -73,7 +73,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
 
             var newPolicyType = new AddPolicyTypeDTO
             {
-                PolicyTypeName = txtName.Text.Trim(),
+                Name = txtName.Text.Trim(),
                 Description = txtDescription.Text.Trim()
             };
 
@@ -106,7 +106,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedPolicyType.PolicyTypeName}'?", 
+            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedPolicyType.Name}'?", 
                 "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)
@@ -170,9 +170,8 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             var updatePolicyType = new UpdatePolicyTypeDTO
             {
                 Id = SelectedPolicyType.Id,
-                PolicyTypeName = txtName.Text.Trim(),
-                Description = txtDescription.Text.Trim(),
-                IsActive = SelectedPolicyType.IsActive
+                Name = txtName.Text.Trim(),
+                Description = txtDescription.Text.Trim()
             };
 
             try

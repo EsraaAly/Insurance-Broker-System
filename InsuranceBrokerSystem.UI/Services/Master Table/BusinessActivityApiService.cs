@@ -36,30 +36,4 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
             return await _httpClientService.DeleteAsync($"{ApiRoutes.MasterTable.BusinessActivity.DeleteBusinessActivity}?id={id}");
         }
     }
-
-    // DTO Classes - These should match the Application layer DTOs
-    public class GetBusinessActivityDTO
-    {
-        public int Id { get; set; }
-        public string ActivityName { get; set; }
-        public string ActivityNameAr { get; set; }
-        public string Description { get; set; }
-        public bool IsActive { get; set; }
-    }
-
-    public class AddBusinessActivityDTO
-    {
-        public string ActivityName { get; set; }
-        public string ActivityNameAr { get; set; }
-        public string Description { get; set; }
-    }
-
-    public class UpdateBusinessActivityDTO
-    {
-        public int Id { get; set; }
-        public string ActivityName { get; set; }
-        public string ActivityNameAr { get; set; }
-        public string Description { get; set; }
-        public bool IsActive { get; set; }
-    }
 }

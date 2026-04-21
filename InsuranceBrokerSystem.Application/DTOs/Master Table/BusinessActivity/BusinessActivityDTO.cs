@@ -8,6 +8,7 @@ namespace InsuranceBrokerSystem.Application.DTOs.Master_Table.BusinessActivity
 
     public class AddBusinessActivityDTO : BusinessActivityBase
     {
+        // Properties to match UI expectations
     }
 
     public class GetBusinessActivityDTO : BusinessActivityBase
@@ -18,10 +19,17 @@ namespace InsuranceBrokerSystem.Application.DTOs.Master_Table.BusinessActivity
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public bool IsDeleted { get; set; }
+
+        // Property to match UI expectations
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class UpdateBusinessActivityDTO : BusinessActivityBase
     {
         public int Id { get; set; }
+
     }
 }

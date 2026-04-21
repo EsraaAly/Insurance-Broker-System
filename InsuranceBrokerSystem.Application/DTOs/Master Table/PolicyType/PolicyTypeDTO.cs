@@ -18,10 +18,15 @@ namespace InsuranceBrokerSystem.Application.DTOs.Master_Table.PolicyType
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public bool IsDeleted { get; set; }
+        public override string ToString()
+        {
+            return Name; 
+        }
     }
 
     public class UpdatePolicyTypeDTO : PolicyTypeBase
     {
         public int Id { get; set; }
+        
     }
 }

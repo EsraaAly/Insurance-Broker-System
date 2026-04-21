@@ -1,3 +1,6 @@
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.BusinessActivity;
+using InsuranceBrokerSystem.Application.Features.BusinessActivities.Commands;
+
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
     [ApiController]
@@ -11,10 +14,10 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPost(ApiRoutes.MasterTable.BusinessActivity.AddBusinessActivity)]
-        public async Task<IActionResult> AddBusinessActivityAsync(AddBusinessActivityCommand command)
+        public async Task<IActionResult> AddBusinessActivityAsync(AddBusinessActivityDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new AddBusinessActivityCommand { _addBusinessActivityDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
@@ -36,10 +39,10 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPut(ApiRoutes.MasterTable.BusinessActivity.UpdateBusinessActivity)]
-        public async Task<IActionResult> UpdateBusinessActivityAsync(UpdateBusinessActivityCommand command)
+        public async Task<IActionResult> UpdateBusinessActivityAsync(UpdateBusinessActivityDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new UpdateBusinessActivityCommand { _updateBusinessActivityDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }

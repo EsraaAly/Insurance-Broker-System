@@ -1,7 +1,11 @@
+
+
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.Nationality;
+using InsuranceBrokerSystem.Application.Features.Nationalities.Commands;
+
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
     [ApiController]
-    [Route("api/v1/[controller]")]
     public class NationalityController : ControllerBase
     {
         private readonly ISender _mediator;
@@ -11,41 +15,41 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
             _mediator = mediator;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddNationalityAsync(AddNationalityCommand command)
+        [HttpPost(ApiRoutes.MasterTable.Nationality.AddNationality)]
+        public async Task<IActionResult> AddNationalityAsync(AddNationalityDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new AddNationalityCommand { _addNationalityDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> GetAllNationalitiesAsync()
-        //{
-        //    var result = await _mediator.Send(new GetAllNationalitiesQuery());
-        //    return result.ToActionResult();
-        //}
-
-        //[HttpGet("{id}")]
-        //public async Task<IActionResult> GetNationalityByIdAsync(int id)
-        //{
-        //    if (id == 0) return BadRequest("Id is not valid");
-
-        //    var result = await _mediator.Send(new GetNationalityByIdQuery { Id = id });
-        //    return result.ToActionResult();
-        //}
-
-        [HttpPut]
-        public async Task<IActionResult> UpdateNationalityAsync(UpdateNationalityCommand command)
+        [HttpGet(ApiRoutes.MasterTable.Nationality.GetAllNationalities)]
+        public async Task<IActionResult> GetAllNationalitiesAsync()
         {
-            if (command == null) return BadRequest("Data is null");
+            var result = await _mediator.Send(new GetAllNationalitiesQuery());
+            return result.ToActionResult();
+        }
 
+        [HttpGet(ApiRoutes.MasterTable.Nationality.GetNationalityById+"/{id}")]
+        public async Task<IActionResult> GetNationalityByIdAsync(int id)
+        {
+            if (id == 0) return BadRequest("Id is not valid");
+
+            var result = await _mediator.Send(new GetNationalityByIdQuery { Id = id });
+            return result.ToActionResult();
+        }
+
+        [HttpPut(ApiRoutes.MasterTable.Nationality.UpdateNationality)]
+        public async Task<IActionResult> UpdateNationalityAsync(UpdateNationalityDTO dto)
+        {
+            if (dto == null) return BadRequest("Data is null");
+            var command = new UpdateNationalityCommand { _updateNationalityDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete(ApiRoutes.MasterTable.Nationality.DeleteNationality+"/{id}")]
         public async Task<IActionResult> DeleteNationalityAsync(int id)
         {
             if (id == 0) return BadRequest("Id is not valid");

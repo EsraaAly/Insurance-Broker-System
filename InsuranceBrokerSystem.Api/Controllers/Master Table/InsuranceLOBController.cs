@@ -1,4 +1,7 @@
 
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.Insurance_Class_and_Line;
+using InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Commands;
+
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
 
@@ -34,19 +37,19 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPost(ApiRoutes.MasterTable.InsuranceLOB.AddInsuranceLOB)]
-        public async Task<IActionResult> AddLOBAsync(AddInsuranceLOBCommand command)
+        public async Task<IActionResult> AddLOBAsync(AddInsuranceLOBDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new AddInsuranceLOBCommand { _addInsuranceLOBDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
 
         [HttpPut(ApiRoutes.MasterTable.InsuranceLOB.UpdateInsuranceLOB)]
-        public async Task<IActionResult> UpdateLOBAsync(UpdateInsuranceLOBCommand command)
+        public async Task<IActionResult> UpdateLOBAsync(UpdateInsuranceLOBDTO dto)
         {
-            if (command is null) return BadRequest("Data is null");
-
+            if (dto is null) return BadRequest("Data is null");
+            var command = new UpdateInsuranceLOBCommand { _updateInsuranceLOBDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }

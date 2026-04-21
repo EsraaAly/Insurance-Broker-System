@@ -1,3 +1,5 @@
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.PolicyType;
+
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
     [ApiController]
@@ -11,10 +13,10 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPost(ApiRoutes.MasterTable.PolicyType.AddPolicyType)]
-        public async Task<IActionResult> AddPolicyTypeAsync(AddPolicyTypeCommand command)
+        public async Task<IActionResult> AddPolicyTypeAsync([FromBody] AddPolicyTypeDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new AddPolicyTypeCommand { _addPolicyTypeDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
@@ -36,10 +38,10 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPut(ApiRoutes.MasterTable.PolicyType.UpdatePolicyType)]
-        public async Task<IActionResult> UpdatePolicyTypeAsync(UpdatePolicyTypeCommand command)
+        public async Task<IActionResult> UpdatePolicyTypeAsync(UpdatePolicyTypeDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new UpdatePolicyTypeCommand { _updatePolicyTypeDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }

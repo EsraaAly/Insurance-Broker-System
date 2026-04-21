@@ -19,6 +19,13 @@ namespace InsuranceBrokerSystem.Application.DTOs.Master_Table.Location
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public bool IsDeleted { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
+        // Properties to match UI expectations
+        
+        public string Country { get; set; }
     }
 
     public class UpdateLocationDTO : LocationBase

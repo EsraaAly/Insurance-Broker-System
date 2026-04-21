@@ -1,4 +1,7 @@
 
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.Insurance_Class_and_Line;
+using InsuranceBrokerSystem.Application.Features.InsuranceClasses.Commands;
+
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
 
@@ -27,19 +30,19 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPost(ApiRoutes.MasterTable.InsuranceClass.AddInsuranceClass)]
-        public async Task<IActionResult> AddClassAsync(AddInsuranceClassCommand command)
+        public async Task<IActionResult> AddClassAsync(AddInsuranceClassDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new AddInsuranceClassCommand { _addInsuranceClassDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
 
         [HttpPut(ApiRoutes.MasterTable.InsuranceClass.UpdateInsuranceClass)]
-        public async Task<IActionResult> UpdateClassAsync(UpdateInsuranceClassCommand command)
+        public async Task<IActionResult> UpdateClassAsync(UpdateInsuranceClassDTO dto)
         {
-            if (command is null) return BadRequest("Data is null");
-
+            if (dto is null) return BadRequest("Data is null");
+            var command = new UpdateInsuranceClassCommand { _updateInsuranceClassDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }

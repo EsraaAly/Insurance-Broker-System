@@ -37,32 +37,4 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
         }
     }
 
-    // DTO Classes
-    public class GetLocationDTO
-    {
-        public int Id { get; set; }
-        public string CityName { get; set; }
-        public string CityNameAr { get; set; }
-        public string Country { get; set; }
-        public string CountryAr { get; set; }
-        public bool IsActive { get; set; }
-    }
-
-    public class AddLocationDTO
-    {
-        public string CityName { get; set; }
-        public string CityNameAr { get; set; }
-        public string Country { get; set; }
-        public string CountryAr { get; set; }
-    }
-
-    public class UpdateLocationDTO
-    {
-        public int Id { get; set; }
-        public string CityName { get; set; }
-        public string CityNameAr { get; set; }
-        public string Country { get; set; }
-        public string CountryAr { get; set; }
-        public bool IsActive { get; set; }
-    }
 }

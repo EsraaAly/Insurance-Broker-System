@@ -8,6 +8,7 @@ namespace InsuranceBrokerSystem.Application.DTOs.Master_Table.SourceOfIncome
 
     public class AddSourceOfIncomeDTO : SourceOfIncomeBase
     {
+
     }
 
     public class GetSourceOfIncomeDTO : SourceOfIncomeBase
@@ -18,10 +19,15 @@ namespace InsuranceBrokerSystem.Application.DTOs.Master_Table.SourceOfIncome
         public string? UpdatedBy { get; set; }
         public DateTime? UpdatedDate { get; set; }
         public bool IsDeleted { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 
     public class UpdateSourceOfIncomeDTO : SourceOfIncomeBase
     {
         public int Id { get; set; }
+
     }
 }

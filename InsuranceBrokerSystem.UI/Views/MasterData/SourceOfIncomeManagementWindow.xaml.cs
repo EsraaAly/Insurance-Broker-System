@@ -29,7 +29,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 var response = await _service.SourceOfIncomeApiService.GetAllSourceOfIncomesAsync();
                 if (response.Successed && response.Data != null)
                 {
-                    foreach (var item in response.Data.OrderBy(x => x.SourceName))
+                    foreach (var item in response.Data.OrderBy(x => x.Name))
                     {
                         SourcesOfIncome.Add(item);
                     }
@@ -47,7 +47,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             
             if (SelectedSourceOfIncome != null)
             {
-                txtName.Text = SelectedSourceOfIncome.SourceName;
+                txtName.Text = SelectedSourceOfIncome.Name;
                 txtDescription.Text = SelectedSourceOfIncome.Description;
                 btnUpdate.IsEnabled = true;
                 btnDelete.IsEnabled = true;
@@ -69,8 +69,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
 
             var newSourceOfIncome = new AddSourceOfIncomeDTO
             {
-                SourceName = txtName.Text.Trim(),
-                SourceNameAr = txtName.Text.Trim(), // TODO: Add Arabic name field
+                Name = txtName.Text.Trim(),
                 Description = txtDescription.Text.Trim()
             };
 

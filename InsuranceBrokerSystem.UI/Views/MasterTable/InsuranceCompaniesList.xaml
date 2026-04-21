@@ -11,6 +11,7 @@
     <UserControl.Resources>
         <ResourceDictionary Source="/Style.xaml"/>
     </UserControl.Resources>
+    
     <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

@@ -29,7 +29,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 var response = await _service.BusinessActivityApiService.GetAllBusinessActivitiesAsync();
                 if (response.Successed && response.Data != null)
                 {
-                    foreach (var item in response.Data.OrderBy(x => x.ActivityName))
+                    foreach (var item in response.Data.OrderBy(x => x.Name))
                     {
                         BusinessActivities.Add(item);
                     }
@@ -47,7 +47,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             
             if (SelectedBusinessActivity != null)
             {
-                txtName.Text = SelectedBusinessActivity.ActivityName;
+                txtName.Text = SelectedBusinessActivity.Name;
                 txtDescription.Text = SelectedBusinessActivity.Description;
                 btnUpdate.IsEnabled = true;
                 btnDelete.IsEnabled = true;
@@ -69,8 +69,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
 
             var newBusinessActivity = new AddBusinessActivityDTO
             {
-                ActivityName = txtName.Text.Trim(),
-                ActivityNameAr = txtName.Text.Trim(), // TODO: Add Arabic name field
+                Name = txtName.Text.Trim(),
                 Description = txtDescription.Text.Trim()
             };
 
@@ -105,10 +104,8 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             var updateDto = new UpdateBusinessActivityDTO
             {
                 Id = SelectedBusinessActivity.Id,
-                ActivityName = txtName.Text.Trim(),
-                ActivityNameAr = txtName.Text.Trim(), // TODO: Add Arabic name field
-                Description = txtDescription.Text.Trim(),
-                IsActive = SelectedBusinessActivity.IsActive
+                Name = txtName.Text.Trim(),
+                Description = txtDescription.Text.Trim()
             };
 
             try
@@ -138,7 +135,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedBusinessActivity.ActivityName}'?", 
+            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedBusinessActivity.Name}'?", 
                 "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
 
             if (result == MessageBoxResult.Yes)

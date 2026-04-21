@@ -70,64 +70,210 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         {
             try
             {
-                // Policy Type
+                // Policy Type - Fetch from database via API with fallback
                 CombPolicyType.Items.Clear();
-                var policyTypesResponse = await _service.PolicyTypeApiService.GetAllPolicyTypesAsync();
-                if (policyTypesResponse.Successed && policyTypesResponse.Data != null)
+                try
                 {
-                    foreach (var policyType in policyTypesResponse.Data.Where(p => p.IsActive))
+                    var policyTypesResponse = await _service.PolicyTypeApiService.GetAllPolicyTypesAsync();
+                    if (policyTypesResponse.Successed && policyTypesResponse.Data != null)
                     {
-                        CombPolicyType.Items.Add(new ComboBoxItem { Content = policyType.PolicyTypeName, Tag = policyType.Id });
+                        foreach (var policyType in policyTypesResponse.Data)
+                        {
+                            CombPolicyType.Items.Add(new ComboBoxItem { Content = policyType.Name, Tag = policyType.Id });
+                        }
+                    }
+                    else
+                    {
+                        FillPolicyTypeFallback();
                     }
                 }
+                catch (Exception ex)
+                {
+                    FillPolicyTypeFallback();
+                }
 
-                // Nationality
+                // Nationality - Fetch from database via API with fallback
                 CombNationality.Items.Clear();
-                var nationalitiesResponse = await _service.NationalityApiService.GetAllNationalitiesAsync();
-                if (nationalitiesResponse.Successed && nationalitiesResponse.Data != null)
+                try
                 {
-                    foreach (var nationality in nationalitiesResponse.Data.Where(n => n.IsActive))
+                    var nationalitiesResponse = await _service.NationalityApiService.GetAllNationalitiesAsync();
+                    if (nationalitiesResponse.Successed && nationalitiesResponse.Data != null)
                     {
-                        CombNationality.Items.Add(new ComboBoxItem { Content = nationality.NationalityName, Tag = nationality.Id });
+                        foreach (var nationality in nationalitiesResponse.Data)
+                        {
+                            CombNationality.Items.Add(new ComboBoxItem { Content = nationality.Name, Tag = nationality.Id });
+                        }
+                    }
+                    else
+                    {
+                        FillNationalityFallback();
                     }
                 }
+                catch (Exception ex)
+                {
+                    FillNationalityFallback();
+                }
 
-                // Source of Income
+                // Source of Income - Fetch from database via API with fallback
                 CombSourceofIncome.Items.Clear();
-                var sourceOfIncomesResponse = await _service.SourceOfIncomeApiService.GetAllSourceOfIncomesAsync();
-                if (sourceOfIncomesResponse.Successed && sourceOfIncomesResponse.Data != null)
+                try
                 {
-                    foreach (var source in sourceOfIncomesResponse.Data.Where(s => s.IsActive))
+                    var sourceOfIncomesResponse = await _service.SourceOfIncomeApiService.GetAllSourceOfIncomesAsync();
+                    if (sourceOfIncomesResponse.Successed && sourceOfIncomesResponse.Data != null)
                     {
-                        CombSourceofIncome.Items.Add(new ComboBoxItem { Content = source.SourceName, Tag = source.Id });
+                        foreach (var source in sourceOfIncomesResponse.Data)
+                        {
+                            CombSourceofIncome.Items.Add(new ComboBoxItem { Content = source.Name, Tag = source.Id });
+                        }
+                    }
+                    else
+                    {
+                        FillSourceOfIncomeFallback();
                     }
                 }
+                catch (Exception ex)
+                {
+                    FillSourceOfIncomeFallback();
+                }
 
-                // Business Activity
+                // Business Activity - Fetch from database via API with fallback
                 cmbBusinessActivity.Items.Clear();
-                var businessActivitiesResponse = await _service.BusinessActivityApiService.GetAllBusinessActivitiesAsync();
-                if (businessActivitiesResponse.Successed && businessActivitiesResponse.Data != null)
+                try
                 {
-                    foreach (var activity in businessActivitiesResponse.Data.Where(a => a.IsActive))
+                    var businessActivitiesResponse = await _service.BusinessActivityApiService.GetAllBusinessActivitiesAsync();
+                    if (businessActivitiesResponse.Successed && businessActivitiesResponse.Data != null)
                     {
-                        cmbBusinessActivity.Items.Add(new ComboBoxItem { Content = activity.ActivityName, Tag = activity.Id });
+                        foreach (var activity in businessActivitiesResponse.Data)
+                        {
+                            cmbBusinessActivity.Items.Add(new ComboBoxItem { Content = activity.Name, Tag = activity.Id });
+                        }
+                    }
+                    else
+                    {
+                        FillBusinessActivityFallback();
                     }
                 }
-
-                // Location
-                CombLocation.Items.Clear();
-                var locationsResponse = await _service.LocationApiService.GetAllLocationsAsync();
-                if (locationsResponse.Successed && locationsResponse.Data != null)
+                catch (Exception ex)
                 {
-                    foreach (var location in locationsResponse.Data.Where(l => l.IsActive))
+                    FillBusinessActivityFallback();
+                }
+
+                // Location - Fetch from database via API with fallback
+                CombLocation.Items.Clear();
+                try
+                {
+                    var locationsResponse = await _service.LocationApiService.GetAllLocationsAsync();
+                    if (locationsResponse.Successed && locationsResponse.Data != null)
                     {
-                        CombLocation.Items.Add(new ComboBoxItem { Content = location.CityName, Tag = location.Id });
+                        foreach (var location in locationsResponse.Data)
+                        {
+                            CombLocation.Items.Add(new ComboBoxItem { Content = location.Name, Tag = location.Id });
+                        }
                     }
+                    else
+                    {
+                        FillLocationFallback();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    FillLocationFallback();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading master data: {ex.Message}", "Data Load Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show($"Error loading data from database: {ex.Message}", "Database Connection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void FillPolicyTypeFallback()
+        {
+            var fallbackData = new List<string>
+            {
+                "Life Insurance",
+                "Health Insurance", 
+                "Motor Insurance",
+                "Property Insurance",
+                "Travel Insurance",
+                "Business Insurance"
+            };
+            foreach (var item in fallbackData)
+            {
+                CombPolicyType.Items.Add(new ComboBoxItem { Content = item, Tag = item });
+            }
+        }
+
+        private void FillNationalityFallback()
+        {
+            var fallbackData = new List<string>
+            {
+                "Egyptian",
+                "Saudi Arabian",
+                "Emirati",
+                "Kuwaiti",
+                "Qatari",
+                "Jordanian",
+                "Lebanese",
+                "American",
+                "British",
+                "French"
+            };
+            foreach (var item in fallbackData)
+            {
+                CombNationality.Items.Add(new ComboBoxItem { Content = item, Tag = item });
+            }
+        }
+
+        private void FillSourceOfIncomeFallback()
+        {
+            var fallbackData = new List<string>
+            {
+                "Salary",
+                "Business",
+                "Investment",
+                "Rental",
+                "Pension",
+                "Freelance",
+                "Commission",
+                "Other"
+            };
+            foreach (var item in fallbackData)
+            {
+                CombSourceofIncome.Items.Add(new ComboBoxItem { Content = item, Tag = item });
+            }
+        }
+
+        private void FillBusinessActivityFallback()
+        {
+            var fallbackData = new List<string>
+            {
+                "Trading",
+                "Manufacturing",
+                "Services",
+                "Construction",
+                "Technology"
+            };
+            foreach (var item in fallbackData)
+            {
+                cmbBusinessActivity.Items.Add(new ComboBoxItem { Content = item, Tag = item });
+            }
+        }
+
+        private void FillLocationFallback()
+        {
+            var fallbackData = new List<string>
+            {
+                "Cairo",
+                "Alexandria",
+                "Giza",
+                "Sharm El Sheikh",
+                "Hurghada",
+                "Dubai",
+                "Riyadh"
+            };
+            foreach (var item in fallbackData)
+            {
+                CombLocation.Items.Add(new ComboBoxItem { Content = item, Tag = item });
             }
         }
 
@@ -191,6 +337,15 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             CmbProspectType.Items.Clear();
             CmbProspectType.Items.Add(new ComboBoxItem { Content = "Retail", Tag = (int)ClientType.Retail });
             CmbProspectType.Items.Add(new ComboBoxItem { Content = "Corporate", Tag = (int)ClientType.Corporate });
+
+            // Business Type
+            CombBusinessType.Items.Clear();
+            CombBusinessType.Items.Add("Governmental Entities");
+            CombBusinessType.Items.Add("Semi-Government");
+            CombBusinessType.Items.Add("Publicly listed");
+            CombBusinessType.Items.Add("Corporation");
+            CombBusinessType.Items.Add("SME");
+            CombBusinessType.Items.Add("Individual");
         }
 
         private void CmbProspectType_SelectionChanged(object sender, SelectionChangedEventArgs e)

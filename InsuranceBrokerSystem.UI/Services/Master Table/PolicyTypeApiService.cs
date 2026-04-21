@@ -1,4 +1,4 @@
-using InsuranceBrokerSystem.UI;
+﻿
 
 namespace InsuranceBrokerSystem.UI.Services.Master_Table
 {
@@ -35,31 +35,5 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
         {
             return await _httpClientService.DeleteAsync($"{ApiRoutes.MasterTable.PolicyType.DeletePolicyType}?id={id}");
         }
-    }
-
-    // DTO Classes
-    public class GetPolicyTypeDTO
-    {
-        public int Id { get; set; }
-        public string PolicyTypeName { get; set; }
-        public string PolicyTypeNameAr { get; set; }
-        public string Description { get; set; }
-        public bool IsActive { get; set; }
-    }
-
-    public class AddPolicyTypeDTO
-    {
-        public string PolicyTypeName { get; set; }
-        public string PolicyTypeNameAr { get; set; }
-        public string Description { get; set; }
-    }
-
-    public class UpdatePolicyTypeDTO
-    {
-        public int Id { get; set; }
-        public string PolicyTypeName { get; set; }
-        public string PolicyTypeNameAr { get; set; }
-        public string Description { get; set; }
-        public bool IsActive { get; set; }
     }
 }

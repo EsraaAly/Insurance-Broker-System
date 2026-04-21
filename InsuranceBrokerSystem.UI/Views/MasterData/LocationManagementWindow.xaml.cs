@@ -33,7 +33,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 var response = await _service.LocationApiService.GetAllLocationsAsync();
                 if (response.Successed && response.Data != null)
                 {
-                    foreach (var item in response.Data.OrderBy(x => x.CityName))
+                    foreach (var item in response.Data.OrderBy(x => x.Name))
                     {
                         Locations.Add(item);
                     }
@@ -51,9 +51,9 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             
             if (SelectedLocation != null)
             {
-                txtName.Text = SelectedLocation.CityName;
-                txtCode.Text = SelectedLocation.CityName; // Using CityName as Code since Code property doesn't exist
-                txtDescription.Text = SelectedLocation.Country; // Using Country as Description
+                txtName.Text = SelectedLocation.Name;
+                txtCode.Text = SelectedLocation.Code;
+                txtDescription.Text = SelectedLocation.Description;
                 btnUpdate.IsEnabled = true;
                 btnDelete.IsEnabled = true;
                 btnAdd.IsEnabled = false;
@@ -64,7 +64,7 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
             }
         }
 
-        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(txtName.Text) || string.IsNullOrWhiteSpace(txtCode.Text))
             {
@@ -72,10 +72,34 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            // TODO: Implement add functionality using API service
+            try
+            {
+                var addLocation = new AddLocationDTO
+                {
+                    Name = txtName.Text.Trim(),
+                    Code = txtCode.Text.Trim(),
+                    Description = txtDescription.Text.Trim()
+                };
+
+                var response = await _service.LocationApiService.AddLocationAsync(addLocation);
+                if (response.Successed)
+                {
+                    MessageBox.Show("Location added successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearForm();
+                    await LoadDataAsync();
+                }
+                else
+                {
+                    MessageBox.Show(response.Message ?? "Failed to add location", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error adding location: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void btnUpdate_Click(object sender, RoutedEventArgs e)
+        private async void btnUpdate_Click(object sender, RoutedEventArgs e)
         {
             if (SelectedLocation == null || string.IsNullOrWhiteSpace(txtName.Text) || string.IsNullOrWhiteSpace(txtCode.Text))
             {
@@ -83,12 +107,64 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
                 return;
             }
 
-            // TODO: Implement update functionality using API service
+            try
+            {
+                var updateLocation = new UpdateLocationDTO
+                {
+                    Id = SelectedLocation.Id,
+                    Name = txtName.Text.Trim(),
+                    Code = txtCode.Text.Trim(),
+                    Description = txtDescription.Text.Trim()
+                };
+
+                var response = await _service.LocationApiService.UpdateLocationAsync(updateLocation);
+                if (response.Successed)
+                {
+                    MessageBox.Show("Location updated successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ClearForm();
+                    await LoadDataAsync();
+                }
+                else
+                {
+                    MessageBox.Show(response.Message ?? "Failed to update location", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error updating location: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void btnDelete_Click(object sender, RoutedEventArgs e)
+        private async void btnDelete_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Implement delete functionality using API service
+            if (SelectedLocation == null)
+            {
+                MessageBox.Show("Please select a location to delete.", "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            var result = MessageBox.Show($"Are you sure you want to delete '{SelectedLocation.Name}'?", "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (result == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    var response = await _service.LocationApiService.DeleteLocationAsync(SelectedLocation.Id);
+                    if (response.Successed)
+                    {
+                        MessageBox.Show("Location deleted successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        ClearForm();
+                        await LoadDataAsync();
+                    }
+                    else
+                    {
+                        MessageBox.Show(response.Message ?? "Failed to delete location", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error deleting location: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)

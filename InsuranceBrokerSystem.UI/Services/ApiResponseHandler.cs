@@ -21,21 +21,38 @@ namespace InsuranceBrokerSystem.UI.Services
             {
                 var content = await response.Content.ReadAsStringAsync();
                 
-                if (response.IsSuccessStatusCode)
+                // Handle empty content cases (like 405 Method Not Allowed)
+                if (string.IsNullOrWhiteSpace(content))
                 {
-                    var data = JsonSerializer.Deserialize<T>(content, _jsonOptions);
-                    return ApiResponse<T>.Success(data);
+                    return ApiResponse<T>.Failure(GetDefaultErrorMessage(response.StatusCode), response.StatusCode);
+                }
+                
+                // Most modern APIs use the same wrapper for Success AND Failure
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<T>>(content, _jsonOptions);
+
+                if (response.IsSuccessStatusCode && apiResponse != null)
+                {
+                    // Use the factory method but sync the message from the API
+                    var result = ApiResponse<T>.Success(apiResponse.Data);
+                    result.Message = apiResponse.Message;
+                    return result;
                 }
                 else
                 {
-                    var errorResponse = JsonSerializer.Deserialize<ErrorResponse>(content, _jsonOptions);
-                    var errorMessage = errorResponse?.Message ?? GetDefaultErrorMessage(response.StatusCode);
+                    // If the API provided a message in the wrapper, use it. 
+                    // Otherwise, fall back to your default status code message.
+                    var errorMessage = apiResponse?.Message ?? GetDefaultErrorMessage(response.StatusCode);
                     return ApiResponse<T>.Failure(errorMessage, response.StatusCode);
                 }
+
             }
             catch (JsonException ex)
             {
-                return ApiResponse<T>.Failure($"JSON parsing error: {ex.Message}", response.StatusCode);
+                // Handle JSON parsing errors gracefully
+                var errorMessage = response.StatusCode == HttpStatusCode.MethodNotAllowed 
+                    ? "API endpoint does not support this HTTP method. Using fallback data."
+                    : $"JSON parsing error: {ex.Message}";
+                return ApiResponse<T>.Failure(errorMessage, response.StatusCode);
             }
             catch (Exception ex)
             {
@@ -61,6 +78,7 @@ namespace InsuranceBrokerSystem.UI.Services
                 HttpStatusCode.Unauthorized => "Access denied. You don't have permission to perform this action.",
                 HttpStatusCode.Forbidden => "Access forbidden. This action is not allowed.",
                 HttpStatusCode.NotFound => "Resource not found. The requested item could not be found.",
+                HttpStatusCode.MethodNotAllowed => "API endpoint does not support this HTTP method. Using fallback data.",
                 HttpStatusCode.InternalServerError => "Server error. Please try again later.",
                 HttpStatusCode.ServiceUnavailable => "Service unavailable. Please try again later.",
                 _ => $"An error occurred. Status code: {(int)statusCode}"

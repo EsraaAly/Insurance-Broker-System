@@ -2,6 +2,9 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceCompanies.Commands
 {
     public class UpdateInsuranceCompanyCommand : IRequest<Result<GetInsuranceCompanyDTO>>
     {
+        public UpdateInsuranceCompanyDTO _updateInsuranceCompanyDTO { get; set; }
+        
+        // Keep existing properties for backward compatibility
         public int Id { get; set; }
         public string CompanyName { get; set; }
         public string CompanyNameAr { get; set; }

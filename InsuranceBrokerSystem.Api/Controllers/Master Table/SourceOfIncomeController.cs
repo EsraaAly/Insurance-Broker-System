@@ -1,3 +1,6 @@
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.SourceOfIncome;
+using InsuranceBrokerSystem.Application.Features.SourceOfIncomes.Commands;
+
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
     [ApiController]
@@ -11,10 +14,10 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPost(ApiRoutes.MasterTable.SourceOfIncome.AddSourceOfIncome)]
-        public async Task<IActionResult> AddSourceOfIncomeAsync(AddSourceOfIncomeCommand command)
+        public async Task<IActionResult> AddSourceOfIncomeAsync(AddSourceOfIncomeDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new AddSourceOfIncomeCommand { _addSourceOfIncomeDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }
@@ -36,10 +39,10 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         }
 
         [HttpPut(ApiRoutes.MasterTable.SourceOfIncome.UpdateSourceOfIncome)]
-        public async Task<IActionResult> UpdateSourceOfIncomeAsync(UpdateSourceOfIncomeCommand command)
+        public async Task<IActionResult> UpdateSourceOfIncomeAsync(UpdateSourceOfIncomeDTO dto)
         {
-            if (command == null) return BadRequest("Data is null");
-
+            if (dto == null) return BadRequest("Data is null");
+            var command = new UpdateSourceOfIncomeCommand { _updateSourceOfIncomeDTO = dto };
             var result = await _mediator.Send(command);
             return result.ToActionResult();
         }

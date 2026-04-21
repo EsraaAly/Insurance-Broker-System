@@ -37,26 +37,4 @@ namespace InsuranceBrokerSystem.UI.Services.Master_Table
         }
     }
 
-    // DTO Classes
-    public class GetNationalityDTO
-    {
-        public int Id { get; set; }
-        public string NationalityName { get; set; }
-        public string NationalityNameAr { get; set; }
-        public bool IsActive { get; set; }
-    }
-
-    public class AddNationalityDTO
-    {
-        public string NationalityName { get; set; }
-        public string NationalityNameAr { get; set; }
-    }
-
-    public class UpdateNationalityDTO
-    {
-        public int Id { get; set; }
-        public string NationalityName { get; set; }
-        public string NationalityNameAr { get; set; }
-        public bool IsActive { get; set; }
-    }
 }

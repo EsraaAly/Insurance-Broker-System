@@ -2,6 +2,9 @@ namespace InsuranceBrokerSystem.Application.Features.InsuranceLOBs.Commands.AddI
 {
     public class AddInsuranceLOBCommand : IRequest<Result<bool>>
     {
+        public AddInsuranceLOBDTO _addInsuranceLOBDTO { get; set; }
+        
+        // Keep existing properties for backward compatibility
         public int ClassID { get; set; }
         public string LineOfBusiness { get; set; }
         public string Abbreviation { get; set; }

@@ -91,6 +91,22 @@ namespace InsuranceBrokerSystem.UI
                 public const string DeleteSourceOfIncome = $"api/{Version}/SourceOfIncome/Delete";
                 public const string GetSourceOfIncomeById = $"api/{Version}/SourceOfIncome/GetById";
             }
+            public static class Bank
+            {
+                public const string GetAllBanks = $"api/{Version}/Bank/GetAll";
+                public const string AddBank = $"api/{Version}/Bank/Add";
+                public const string UpdateBank = $"api/{Version}/Bank/Update";
+                public const string DeleteBank = $"api/{Version}/Bank/Delete";
+                public const string GetBankById = $"api/{Version}/Bank/GetById";
+            }
+            public static class Position
+            {
+                public const string GetAllPositions = $"api/{Version}/Position/GetAll";
+                public const string AddPosition = $"api/{Version}/Position/Add";
+                public const string UpdatePosition = $"api/{Version}/Position/Update";
+                public const string DeletePosition = $"api/{Version}/Position/Delete";
+                public const string GetPositionById = $"api/{Version}/Position/GetById";
+            }
 
         }
         public static class Financial

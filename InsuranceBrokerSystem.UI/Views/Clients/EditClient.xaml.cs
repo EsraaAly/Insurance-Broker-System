@@ -638,20 +638,62 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
 
         private void btnAddContact_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Implement add contact dialog
-            MessageBox.Show("Add Contact functionality to be implemented.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            Contacts.Add(new ContactItem
+            {
+                Name = "",
+                Position = "",
+                Extension = "",
+                Mobile = "",
+                Tele = "",
+                Email = "",
+                Branch = "Riyadh"
+            });
         }
 
-        private void btnAddBank_Click(object sender, RoutedEventArgs e)
-        {
-            // TODO: Implement add bank account dialog
-            MessageBox.Show("Add Bank Account functionality to be implemented.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
+        
         private void btnBrowseDocument_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Implement document upload
-            MessageBox.Show("Browse Document functionality to be implemented.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+            var dialog = new OpenFileDialog
+            {
+                Title = "Select Documents to Upload",
+                Multiselect = true,
+                Filter = "All Supported Files|*.pdf;*.docx;*.doc;*.xlsx;*.xls;*.png;*.jpg;*.jpeg;*.txt|" +
+                         "PDF Files|*.pdf|" +
+                         "Word Documents|*.docx;*.doc|" +
+                         "Excel Files|*.xlsx;*.xls|" +
+                         "Images|*.png;*.jpg;*.jpeg|" +
+                         "All Files|*.*"
+            };
+
+            if (dialog.ShowDialog() == true)
+            {
+                foreach (string fileName in dialog.FileNames)
+                {
+                    var fileInfo = new FileInfo(fileName);
+                    Documents.Add(new DocumentItem
+                    {
+                        Index = Documents.Count + 1,
+                        FileName = System.IO.Path.GetFileName(fileName),
+                        FilePath = fileName,
+                        DocumentType = System.IO.Path.GetExtension(fileName).ToUpper(),
+                        FileSize = FormatFileSize(fileInfo.Length),
+                        UploadDate = DateTime.Now.ToString()
+                    });
+                }
+            }
+        }
+
+        private string FormatFileSize(long bytes)
+        {
+            string[] sizes = { "B", "KB", "MB", "GB" };
+            double len = bytes;
+            int order = 0;
+            while (len >= 1024 && order < sizes.Length - 1)
+            {
+                order++;
+                len = len / 1024;
+            }
+            return $"{len:0.##} {sizes[order]}";
         }
 
         private void DeleteContact_Click(object sender, RoutedEventArgs e)
@@ -728,19 +770,6 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             // TODO: Implement drag leave visual feedback
         }
 
-        private string FormatFileSize(long bytes)
-        {
-            string[] sizes = { "B", "KB", "MB", "GB" };
-            double len = bytes;
-            int order = 0;
-            while (len >= 1024 && order < sizes.Length - 1)
-            {
-                order++;
-                len = len / 1024;
-            }
-            return $"{len:0.##} {sizes[order]}";
-        }
-
         private long? GetFileSize(string filePath)
         {
             try
@@ -786,7 +815,39 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             window.ShowDialog();
             
             // Refresh combobox after closing management window
-            PopulateComboBoxes();
+            FillSourceOfIncomeFallback();
+        }
+
+        private void btnAddBank_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new BankManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh bank combobox after closing management window
+            FillBankFallback();
+        }
+
+        private void btnAddPosition_Click(object sender, RoutedEventArgs e)
+        {
+            var window = new PositionManagementWindow();
+            window.Owner = this;
+            window.ShowDialog();
+            
+            // Refresh position combobox after closing management window
+            FillPositionFallback();
+        }
+
+        private void FillBankFallback()
+        {
+            // TODO: Implement bank combobox refresh logic
+            // This would typically call the API to get updated bank list
+        }
+
+        private void FillPositionFallback()
+        {
+            // TODO: Implement position combobox refresh logic  
+            // This would typically call the API to get updated position list
         }
 
         private void btnAddBusinessActivity_Click(object sender, RoutedEventArgs e)

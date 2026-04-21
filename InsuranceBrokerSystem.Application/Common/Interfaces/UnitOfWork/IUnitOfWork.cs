@@ -9,6 +9,8 @@ namespace InsuranceBrokerSystem.Application.Common.Interfaces.UnitOfWork
         IGenericRepository<Nationality> GNationality { get; }
         IGenericRepository<Location> GLocation { get; }
         IGenericRepository<SourceOfIncome> GSourceOfIncome { get; }
+        IGenericRepository<Bank> GBank { get; }
+        IGenericRepository<Position> GPosition { get; }
 
         //IGenericRepository<InsuranceCompany> G_repoInsuranceCompany { get; }
         //IGenericRepository<InsuranceContact> G_repoInsuranceContract { get; }

@@ -288,7 +288,21 @@
                                 <DataGridTextColumn Header="Tele" Binding="{Binding Tele}" Width="130"/>
                                 <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="1.8*"/>
                                 <DataGridCheckBoxColumn Header="Saddad Invoice" Width="110"/>
-                                <DataGridComboBoxColumn Header="Branch" Width="120"/>
+                                <DataGridComboBoxColumn Header="Branch" Width="120">
+                                    <DataGridComboBoxColumn.ElementStyle>
+                                        <Style TargetType="ComboBox">
+                                            <Setter Property="ItemsSource">
+                                                <Setter.Value>
+                                                    <x:Array Type="sys:String" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                                        <sys:String>Riyadh</sys:String>
+                                                        <sys:String>Jeddah</sys:String>
+                                                        <sys:String>Khobar</sys:String>
+                                                    </x:Array>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </DataGridComboBoxColumn.ElementStyle>
+                                </DataGridComboBoxColumn>
                                 <DataGridTemplateColumn Header="Action" Width="80">
                                     <DataGridTemplateColumn.CellTemplate>
                                         <DataTemplate>

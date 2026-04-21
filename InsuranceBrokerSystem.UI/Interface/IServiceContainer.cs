@@ -25,6 +25,8 @@ namespace InsuranceBrokerSystem.UI.Interface
          NationalityApiService NationalityApiService{ get; }
          PolicyTypeApiService PolicyTypeApiService{ get; }
          SourceOfIncomeApiService SourceOfIncomeApiService{ get; }
+         BankApiService BankApiService{ get; }
+         PositionApiService PositionApiService{ get; }
 
     }
 }

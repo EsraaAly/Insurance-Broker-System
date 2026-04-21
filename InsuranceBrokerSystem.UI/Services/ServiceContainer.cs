@@ -21,6 +21,8 @@ namespace InsuranceBrokerSystem.UI.Services
         private NationalityApiService _nationalityApiService;
         private PolicyTypeApiService _policyTypeApiService;
         private SourceOfIncomeApiService _sourceOfIncomeApiService;
+        private BankApiService _bankApiService;
+        private PositionApiService _positionApiService;
 
         public ServiceContainer(HttpClientService httpClientService)
         {
@@ -39,6 +41,8 @@ namespace InsuranceBrokerSystem.UI.Services
         public NationalityApiService NationalityApiService => _nationalityApiService ??= new NationalityApiService(_httpClientService);
         public PolicyTypeApiService PolicyTypeApiService => _policyTypeApiService ??= new PolicyTypeApiService(_httpClientService);
         public SourceOfIncomeApiService SourceOfIncomeApiService => _sourceOfIncomeApiService ??= new SourceOfIncomeApiService(_httpClientService);
+        public BankApiService BankApiService => _bankApiService ??= new BankApiService(_httpClientService);
+        public PositionApiService PositionApiService => _positionApiService ??= new PositionApiService(_httpClientService);
 
     }
 }

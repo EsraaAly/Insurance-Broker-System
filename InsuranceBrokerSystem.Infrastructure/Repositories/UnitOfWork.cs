@@ -10,6 +10,8 @@ namespace InsuranceBrokerSystem.Infrastructure.Repositories
         private IGenericRepository<Nationality> _GNationality;
         private IGenericRepository<Location> _GLocation;
         private IGenericRepository<SourceOfIncome> _GSourceOfIncome;
+        private IGenericRepository<Bank> _GBank;
+        private IGenericRepository<Position> _GPosition;
 
         private IInsuranceLOBRepository _InsuranceLOBRepository;
         private IInsuranceCompanyRepository _InsuranceCompanyRepository;
@@ -28,6 +30,8 @@ namespace InsuranceBrokerSystem.Infrastructure.Repositories
         public IGenericRepository<Nationality> GNationality => _GNationality ??= new GenericRepository<Nationality>(_context);
         public IGenericRepository<Location> GLocation => _GLocation ??= new GenericRepository<Location>(_context);
         public IGenericRepository<SourceOfIncome> GSourceOfIncome => _GSourceOfIncome ??= new GenericRepository<SourceOfIncome>(_context);
+        public IGenericRepository<Bank> GBank => _GBank ??= new GenericRepository<Bank>(_context);
+        public IGenericRepository<Position> GPosition => _GPosition ??= new GenericRepository<Position>(_context);
         public IInsuranceCompanyRepository InsuranceCompanyRepository => _InsuranceCompanyRepository??= new InsuranceCompanyRepository(_context);        
         public IInsuranceContactRepository InsuranceContractRepository => _InsuranceContactRepository ??= new InsuranceContactRepository(_context);
         public IInsuranceProductRepository InsuranceProductRepository => _InsuranceProductRepository ??= new InsuranceProductRepository(_context);        

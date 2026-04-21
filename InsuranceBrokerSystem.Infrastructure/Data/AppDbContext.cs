@@ -21,6 +21,8 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
         public DbSet<SourceOfIncome> sourceOfIncomes { get; set; }
         public DbSet<Location> locations { get; set; }
         public DbSet<Account> accounts { get; set; }
+        public DbSet<Bank> banks { get; set; }
+        public DbSet<Position> positions { get; set; }
 
         public DbSet<Client> Clients { get; set; }
         public DbSet<ClientContact> ClientContacts { get; set; }
@@ -193,6 +195,30 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
                 .WithMany(i => i.Clients)
                 .HasForeignKey(c => c.LocationId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            #region "Bank"
+            modelBuilder.Entity<Bank>()
+                .HasKey(x => x.Id);
+
+            // Bank relationships with ClientBankAccount
+            modelBuilder.Entity<Bank>()
+                .HasMany(b => b.ClientBankAccounts)
+                .WithOne(c => c.Bank)
+                .HasForeignKey(c => c.BankId)
+                .OnDelete(DeleteBehavior.Restrict);
+            #endregion
+
+            #region "Position"
+            modelBuilder.Entity<Position>()
+                .HasKey(x => x.Id);
+
+            // Position relationships with ClientContact
+            modelBuilder.Entity<Position>()
+                .HasMany(p => p.ClientContacts)
+                .WithOne(c => c.Position)
+                .HasForeignKey(c => c.PositionId)
+                .OnDelete(DeleteBehavior.Restrict);
+            #endregion
             #endregion
         }
     }

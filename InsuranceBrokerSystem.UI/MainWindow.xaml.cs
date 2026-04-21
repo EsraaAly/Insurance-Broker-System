@@ -131,6 +131,28 @@ namespace InsuranceBrokerSystem.UI
                         MessageBox.Show($"Error loading page: {ex.Message}\n\nInternal: {ex.InnerException?.Message}");
                     }
                     break;
+                case "Banks":
+                    try
+                    {
+                        var newView = new InsuranceBrokerSystem.UI.Views.MasterData.BankManagementWindow();
+                        MainContent.Content = newView;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error loading page: {ex.Message}\n\nInternal: {ex.InnerException?.Message}");
+                    }
+                    break;
+                case "Positions":
+                    try
+                    {
+                        var newView = new InsuranceBrokerSystem.UI.Views.MasterData.PositionManagementWindow();
+                        MainContent.Content = newView;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error loading page: {ex.Message}\n\nInternal: {ex.InnerException?.Message}");
+                    }
+                    break;
 
             }
         }

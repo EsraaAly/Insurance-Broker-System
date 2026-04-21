@@ -410,8 +410,8 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
 
             if (CmbProspectType.SelectedItem == null)
                 return false;
-            var selectedPolicy = (GetPolicyTypeDTO)CmbProspectType.SelectedItem;
-            var clientType = selectedPolicy.Id;
+            var selectedPolicy = (ClientType)CmbProspectType.SelectedItem;
+            var clientType = (int)selectedPolicy;
             //var clientType = int.Parse(CmbProspectType.SelectedItem.ToString());
             if (clientType == 1 && string.IsNullOrWhiteSpace(txtIDNo.Text))
                 return false;

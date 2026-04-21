@@ -36,6 +36,8 @@
                             <StackPanel>
                                 <Button Content="Insurance Classes / Lines of Business" Style="{StaticResource SidebarItemStyle}" Click="Menu_Click" />
                                 <Button Content="Insurance Companies" Style="{StaticResource SidebarItemStyle}" Click="Menu_Click" />
+                                <Button Content="Banks" Style="{StaticResource SidebarItemStyle}" Click="Menu_Click" />
+                                <Button Content="Positions" Style="{StaticResource SidebarItemStyle}" Click="Menu_Click" />
                                 <!--<Button Content="Producers" Style="{StaticResource SidebarItemStyle}"  Click="Menu_Click" />
                                 <Button Content="Insurance Brokers" Style="{StaticResource SidebarItemStyle}"  Click="Menu_Click" />
                                 <Button Content="Prospect Types" Style="{StaticResource SidebarItemStyle}"  Click="Menu_Click" />

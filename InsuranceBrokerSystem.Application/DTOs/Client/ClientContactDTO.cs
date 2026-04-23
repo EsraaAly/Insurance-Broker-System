@@ -1,11 +1,14 @@
 
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.Position;
+
 namespace InsuranceBrokerSystem.Application.DTOs.Client
 {
     public abstract class ClientContactBase
     {
         public int    ClientId      { get; set; }
+        public int?   PositionId    { get; set; }
         public string Name          { get; set; } = string.Empty;
-        public string Position      { get; set; } = string.Empty;
+        public string PositionName  { get; set; } = string.Empty; // Renamed from Position to avoid conflict
         public string Extension     { get; set; } = string.Empty;
         public string Mobile        { get; set; } = string.Empty;
         public string Tele          { get; set; } = string.Empty;
@@ -26,6 +29,9 @@ namespace InsuranceBrokerSystem.Application.DTOs.Client
         public DateTime CreatedDate { get; set; }
         public string? UpdatedBy   { get; set; }
         public DateTime? UpdatedDate { get; set; }
+        
+        // Navigation property for Position information
+        public GetPositionDTO? Position { get; set; }
     }
 
     public class UpdateClientContactDTO : ClientContactBase

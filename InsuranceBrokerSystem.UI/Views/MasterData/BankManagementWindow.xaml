@@ -1,17 +1,14 @@
-<Window x:Class="InsuranceBrokerSystem.UI.Views.MasterData.BankManagementWindow"
+<UserControl x:Class="InsuranceBrokerSystem.UI.Views.MasterData.BankManagementWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d" 
-             d:DesignHeight="400" d:DesignWidth="600"
-             WindowStartupLocation="CenterOwner"
-             ResizeMode="NoResize"
-             Title="Bank Management">
+             d:DesignHeight="400" d:DesignWidth="600">
 
-    <Window.Resources>
+    <UserControl.Resources>
         <ResourceDictionary Source="/Style.xaml"/>
-    </Window.Resources>
+    </UserControl.Resources>
 
     <Grid Background="{StaticResource BackgroundBrush}">
         <Grid.RowDefinitions>
@@ -109,4 +106,4 @@
                     Click="btnClose_Click"/>
         </StackPanel>
     </Grid>
-</Window>
+</UserControl>

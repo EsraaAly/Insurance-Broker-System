@@ -282,7 +282,11 @@
                                   Margin="0,0,0,8">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="2*"/>
-                                <DataGridComboBoxColumn Header="Position" Width="1.2*"/>
+                                <DataGridComboBoxColumn Header="Position" Width="1.2*" 
+                                        SelectedValueBinding="{Binding PositionId}"
+                                        ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Positions}"
+                                        DisplayMemberPath="Name"
+                                        SelectedValuePath="Id"/>
                                 <DataGridTextColumn Header="Extension" Binding="{Binding Extension}" Width="100"/>
                                 <DataGridTextColumn Header="Mobile" Binding="{Binding Mobile}" Width="130"/>
                                 <DataGridTextColumn Header="Tele" Binding="{Binding Tele}" Width="130"/>
@@ -404,7 +408,11 @@
                                       CanUserAddRows="False"
                                       RowHeight="40">
                                 <DataGrid.Columns>
-                                    <DataGridComboBoxColumn Header="Bank Name" Width="1.6*"/>
+                                    <DataGridComboBoxColumn Header="Bank Name" Width="1.6*"
+                                        SelectedValueBinding="{Binding BankId}"
+                                        ItemsSource="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=Banks}"
+                                        DisplayMemberPath="Name"
+                                        SelectedValuePath="Id"/>
                                     <DataGridTextColumn Header="Branch" Binding="{Binding Branch}" Width="1.2*"/>
                                     <DataGridTextColumn Header="IBAN" Binding="{Binding IBAN}" Width="1.8*"/>
                                     <DataGridTextColumn Header="Swift Code" Binding="{Binding SwiftCode}" Width="120"/>

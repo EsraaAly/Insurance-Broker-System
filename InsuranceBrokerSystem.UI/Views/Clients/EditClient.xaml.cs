@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using InsuranceBrokerSystem.Application.DTOs.Client;
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.Bank;
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.Position;
 using InsuranceBrokerSystem.Domain.Enums.Client;
 using InsuranceBrokerSystem.UI.Interface;
 using InsuranceBrokerSystem.UI.Services;
@@ -30,6 +32,8 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         public ObservableCollection<ContactItem> Contacts { get; set; }
         public ObservableCollection<DocumentItem> Documents { get; set; }
         public ObservableCollection<BankAccountItem> BankAccounts { get; set; }
+        public ObservableCollection<GetBankDTO> Banks { get; set; }
+        public ObservableCollection<GetPositionDTO> Positions { get; set; }
 
         public EditClient()
         {
@@ -38,10 +42,13 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             Contacts = new ObservableCollection<ContactItem>();
             Documents = new ObservableCollection<DocumentItem>();
             BankAccounts = new ObservableCollection<BankAccountItem>();
+            Banks = new ObservableCollection<GetBankDTO>();
+            Positions = new ObservableCollection<GetPositionDTO>();
             
             DataContext = this;
             InitializeCollections();
             PopulateComboBoxes();
+            LoadBanksAndPositions();
         }
 
         public EditClient(GetClientDTO client) : this()
@@ -469,7 +476,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                     Contacts.Add(new ContactItem
                     {
                         Name = contact.Name,
-                        Position = contact.Position,
+                        PositionId = contact.PositionId,
                         Extension = contact.Extension,
                         Mobile = contact.Mobile,
                         Tele = contact.Tele,
@@ -504,7 +511,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 {
                     BankAccounts.Add(new BankAccountItem
                     {
-                        BankName = bank.BankName,
+                        BankId = bank.BankId,
                         Branch = bank.Branch,
                         IBAN = bank.IBAN,
                         SwiftCode = bank.SwiftCode
@@ -552,7 +559,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                     Contacts = Contacts.Select(c => new UpdateClientContactDTO
                     {
                         Name = c.Name,
-                        Position = c.Position,
+                        PositionId = c.PositionId,
                         Extension = c.Extension,
                         Mobile = c.Mobile,
                         Tele = c.Tele,
@@ -569,11 +576,11 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                     }).ToList(),
                     BankAccounts = BankAccounts.Select(b => new UpdateClientBankAccountDTO
                     {
-                        BankName = b.BankName,
+                        BankId = b.BankId,
                         Branch = b.Branch,
                         IBAN = b.IBAN,
                         SwiftCode = b.SwiftCode
-                    }).ToList()
+                    }).ToList(),
                 };
 
                 var result = await _service.ClientService.UpdateClientAsync(updateDto);
@@ -640,8 +647,8 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
         {
             Contacts.Add(new ContactItem
             {
-                Name = "",
-                Position = "",
+                Name = "New Contact Person",
+                PositionId = null,
                 Extension = "",
                 Mobile = "",
                 Tele = "",
@@ -818,36 +825,70 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             FillSourceOfIncomeFallback();
         }
 
-        private void btnAddBank_Click(object sender, RoutedEventArgs e)
+        private async void btnAddBank_Click(object sender, RoutedEventArgs e)
         {
-            var window = new BankManagementWindow();
-            window.Owner = this;
-            window.ShowDialog();
-            
-            // Refresh bank combobox after closing management window
-            FillBankFallback();
+            // Since BankManagementWindow is now a UserControl, it can't be shown as a dialog
+            // This functionality should be moved to the main navigation or a different approach
+            // For now, we'll just refresh the bank combobox
+            await FillBankFallback();
         }
 
-        private void btnAddPosition_Click(object sender, RoutedEventArgs e)
+        private async void btnAddPosition_Click(object sender, RoutedEventArgs e)
         {
-            var window = new PositionManagementWindow();
-            window.Owner = this;
-            window.ShowDialog();
-            
-            // Refresh position combobox after closing management window
-            FillPositionFallback();
+            // Since PositionManagementWindow is now a UserControl, it can't be shown as a dialog
+            // This functionality should be moved to the main navigation or a different approach
+            // For now, we'll just refresh the position combobox
+            await FillPositionFallback();
         }
 
-        private void FillBankFallback()
+        private async Task LoadBanksAndPositions()
         {
-            // TODO: Implement bank combobox refresh logic
-            // This would typically call the API to get updated bank list
+            try
+            {
+                // Load Banks
+                var banksResponse = await _service.BankApiService.GetAllBanksAsync();
+                if (banksResponse != null)
+                {
+                    Banks.Clear();
+                    if (banksResponse.Data != null)
+                    {
+                        foreach (var bank in banksResponse.Data)
+                        {
+                            Banks.Add(bank);
+                        }
+                    }
+                }
+
+                // Load Positions
+                var positionsResponse = await _service.PositionApiService.GetAllPositionsAsync();
+                if (positionsResponse != null)
+                {
+                    Positions.Clear();
+                    if (positionsResponse.Data != null)
+                    {
+                        foreach (var position in positionsResponse.Data)
+                        {
+                            Positions.Add(position);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading banks and positions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
-        private void FillPositionFallback()
+        private async Task FillBankFallback()
         {
-            // TODO: Implement position combobox refresh logic  
-            // This would typically call the API to get updated position list
+            // Refresh banks from API
+            await LoadBanksAndPositions();
+        }
+
+        private async Task FillPositionFallback()
+        {
+            // Refresh positions from API
+            await LoadBanksAndPositions();
         }
 
         private void btnAddBusinessActivity_Click(object sender, RoutedEventArgs e)
@@ -875,7 +916,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
     public class ContactItem
     {
         public string Name { get; set; }
-        public string Position { get; set; }
+        public int? PositionId { get; set; }
         public string Extension { get; set; }
         public string Mobile { get; set; }
         public string Tele { get; set; }
@@ -896,7 +937,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
 
     public class BankAccountItem
     {
-        public string BankName { get; set; }
+        public int? BankId { get; set; }
         public string Branch { get; set; }
         public string IBAN { get; set; }
         public string SwiftCode { get; set; }

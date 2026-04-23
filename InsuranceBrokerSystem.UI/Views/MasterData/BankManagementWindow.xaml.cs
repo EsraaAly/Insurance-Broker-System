@@ -11,7 +11,7 @@ using InsuranceBrokerSystem.Application.DTOs.Master_Table.Bank;
 
 namespace InsuranceBrokerSystem.UI.Views.MasterData
 {
-    public partial class BankManagementWindow : Window
+    public partial class BankManagementWindow : UserControl
     {
         private readonly IServiceContainer _service;
         public ObservableCollection<GetBankDTO> Banks { get; set; }
@@ -203,7 +203,8 @@ namespace InsuranceBrokerSystem.UI.Views.MasterData
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            // UserControl doesn't have Close method - this will be handled by parent
+            // Could raise an event or use navigation service to close/replace this control
         }
     }
 }

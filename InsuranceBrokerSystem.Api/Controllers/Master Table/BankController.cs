@@ -4,17 +4,22 @@ using InsuranceBrokerSystem.Application.Features.Banks.Commands.UpdateBank;
 using InsuranceBrokerSystem.Application.Features.Banks.Commands.DeleteBank;
 using InsuranceBrokerSystem.Application.Features.Banks.Queries.GetAllBanks;
 using InsuranceBrokerSystem.Application.Features.Banks.Queries.GetBankById;
+using InsuranceBrokerSystem.Application.Mediators;
 
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
     [ApiController]
     public class BankController : ControllerBase
     {
-        private readonly ISender _mediator;
+        //private readonly ISender _mediator;
+        private readonly IManualMediator _mediator;
+        private readonly IMediator _mediator2;
 
-        public BankController(ISender mediator)
+        public BankController(IManualMediator mediator, IMediator mediator2)
         {
             _mediator = mediator;
+            _mediator2 = mediator2;
+
         }
 
         [HttpPost(ApiRoutes.MasterTable.Bank.AddBank)]
@@ -29,7 +34,8 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         [HttpGet(ApiRoutes.MasterTable.Bank.GetAllBanks)]
         public async Task<IActionResult> GetAllBanksAsync()
         {
-            var result = await _mediator.Send(new GetAllBanksQuery());
+            var query = new GetAllBanksQuery ();
+            var result = await _mediator.Send(query);
             return result.ToActionResult();
         }
 
@@ -38,7 +44,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         {
             if (id == 0) return BadRequest("Id is not valid");
 
-            var result = await _mediator.Send(new GetBankByIdQuery { Id = id });
+            var result = await _mediator2.Send(new GetBankByIdQuery { Id = id });
             return result.ToActionResult();
         }
 
@@ -47,7 +53,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         {
             if (dto == null) return BadRequest("Data is null");
             var command = new UpdateBankCommand { _updateBankDTO = dto };
-            var result = await _mediator.Send(command);
+            var result = await _mediator2.Send(command);
             return result.ToActionResult();
         }
 
@@ -56,7 +62,7 @@ namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
         {
             if (id == 0) return BadRequest("Id is not valid");
 
-            var result = await _mediator.Send(new DeleteBankCommand { Id = id });
+            var result = await _mediator2.Send(new DeleteBankCommand { Id = id });
             return result.ToActionResult();
         }
     }

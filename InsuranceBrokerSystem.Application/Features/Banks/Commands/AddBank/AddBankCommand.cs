@@ -1,15 +1,16 @@
-using InsuranceBrokerSystem.Application.DTOs.Master_Table.Bank;
-using MediatR;
 using InsuranceBrokerSystem.Application.Common;
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.Bank;
+using InsuranceBrokerSystem.Application.Mediators;
+using MediatR;
 
 namespace InsuranceBrokerSystem.Application.Features.Banks.Commands.AddBank
 {
-    public class AddBankCommand : IRequest<Result<GetBankDTO>>
+    public class AddBankCommand : IManualRequest<Result<GetBankDTO>>
     {
         public AddBankDTO _addBankDTO { get; set; }
     }
 
-    public class AddBankHandler : IRequestHandler<AddBankCommand, Result<GetBankDTO>>
+    public class AddBankHandler : IManualRequestHandler<AddBankCommand, Result<GetBankDTO>>
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -18,7 +19,7 @@ namespace InsuranceBrokerSystem.Application.Features.Banks.Commands.AddBank
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<Result<GetBankDTO>> Handle(AddBankCommand request, CancellationToken cancellationToken)
+        public async Task<Result<GetBankDTO>> ManualHandle(AddBankCommand request, CancellationToken cancellationToken)
         {
             // Check if bank code already exists using generic repository
             var allBanks = await _unitOfWork.GBank.GetAllEntitytiesAsync();

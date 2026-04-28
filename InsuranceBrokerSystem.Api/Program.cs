@@ -1,6 +1,11 @@
 
+using Azure;
+using InsuranceBrokerSystem.Application.DTOs.Master_Table.Bank;
+using InsuranceBrokerSystem.Application.Features.Banks.Queries.GetAllBanks;
+using InsuranceBrokerSystem.Application.Mediators;
 using InsuranceBrokerSystem.Application.Services;
 using InsuranceBrokerSystem.Infrastructure;
+using LiveChartsCore;
 
 namespace InsuranceBrokerSystem.Api
 {
@@ -12,6 +17,13 @@ namespace InsuranceBrokerSystem.Api
 
             builder.Services.AddInfrastructureServices(builder.Configuration);
             builder.Services.AddApplicationServices();
+
+            builder.Services.AddScoped<IManualMediator, ManualMediator>();
+            builder.Services.Scan(scan => scan
+                .FromAssemblies(typeof(GetAllBanksHandler).Assembly)
+                .AddClasses(classes => classes.AssignableTo(typeof(IManualRequestHandler<,>)))
+                .AsImplementedInterfaces()
+                .WithScopedLifetime());
 
             // Add CORS
             builder.Services.AddCors(options =>

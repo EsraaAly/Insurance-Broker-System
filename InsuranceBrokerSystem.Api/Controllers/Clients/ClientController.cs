@@ -2,12 +2,14 @@
 using InsuranceBrokerSystem.Application.Features.Clients.Commands;
 using InsuranceBrokerSystem.Application.Features.Clients.Queries;
 using InsuranceBrokerSystem.UI;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InsuranceBrokerSystem.Api.Controllers.Clients
 {
     [ApiController]
+    [Authorize]
     public class ClientController : ControllerBase
     {
         private readonly IMediator _mediator;

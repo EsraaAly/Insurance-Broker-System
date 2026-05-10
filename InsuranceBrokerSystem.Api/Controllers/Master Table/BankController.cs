@@ -5,10 +5,12 @@ using InsuranceBrokerSystem.Application.Features.Banks.Commands.DeleteBank;
 using InsuranceBrokerSystem.Application.Features.Banks.Queries.GetAllBanks;
 using InsuranceBrokerSystem.Application.Features.Banks.Queries.GetBankById;
 using InsuranceBrokerSystem.Application.Mediators;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InsuranceBrokerSystem.Api.Controllers.Master_Table
 {
     [ApiController]
+    [Authorize]
     public class BankController : ControllerBase
     {
         //private readonly ISender _mediator;

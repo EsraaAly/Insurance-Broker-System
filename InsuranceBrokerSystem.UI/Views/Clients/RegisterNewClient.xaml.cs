@@ -381,7 +381,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 Contacts.Add(new ContactItem
                 {
                     Name = contact.Name ?? string.Empty,
-                    PositionId = contact.PositionId,
+                    Position = contact.Position ?? string.Empty,
                     Extension = contact.Extension ?? string.Empty,
                     Mobile = contact.Mobile ?? string.Empty,
                     Tele = contact.Tele ?? string.Empty,
@@ -395,7 +395,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             {
                 BankAccounts.Add(new BankAccountItem
                 {
-                    BankId = bankAccount.BankId,
+                    BankName = bankAccount.BankName ?? string.Empty,
                     Branch = bankAccount.Branch ?? string.Empty,
                     IBAN = bankAccount.IBAN ?? string.Empty,
                     SwiftCode = bankAccount.SwiftCode ?? string.Empty
@@ -445,7 +445,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 Contacts = Contacts.Select(c => new AddClientContactDTO
                 {
                     Name = c.Name,
-                    PositionId = c.PositionId,
+                    Position = c.Position,
                     Extension = c.Extension,
                     Mobile = c.Mobile,
                     Tele = c.Tele,
@@ -453,7 +453,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 }).ToList(),
                 BankAccounts = BankAccounts.Select(b => new AddClientBankAccountDTO
                 {
-                    BankId = b.BankId,
+                    BankName = b.BankName,
                     Branch = b.Branch,
                     IBAN = b.IBAN,
                     SwiftCode = b.SwiftCode
@@ -494,7 +494,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 Contacts = Contacts.Select(c => new UpdateClientContactDTO
                 {
                     Name = c.Name,
-                    PositionId = c.PositionId,
+                    Position = c.Position,
                     Extension = c.Extension,
                     Mobile = c.Mobile,
                     Tele = c.Tele,
@@ -502,7 +502,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
                 }).ToList(),
                 BankAccounts = BankAccounts.Select(b => new UpdateClientBankAccountDTO
                 {
-                    BankId = b.BankId,
+                    BankName = b.BankName,
                     Branch = b.Branch,
                     IBAN = b.IBAN
                 }).ToList(),
@@ -528,7 +528,7 @@ namespace InsuranceBrokerSystem.UI.Views.Clients
             Contacts.Add(new ContactItem
             {
                 Name = "New Contact Person",
-                PositionId = null,
+                Position = "",
                 Extension = "",
                 Mobile = "",
                 Tele = "",

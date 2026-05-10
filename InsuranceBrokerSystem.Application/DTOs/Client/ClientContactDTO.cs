@@ -8,7 +8,6 @@ namespace InsuranceBrokerSystem.Application.DTOs.Client
         public int    ClientId      { get; set; }
         public int?   PositionId    { get; set; }
         public string Name          { get; set; } = string.Empty;
-        public string PositionName  { get; set; } = string.Empty; // Renamed from Position to avoid conflict
         public string Extension     { get; set; } = string.Empty;
         public string Mobile        { get; set; } = string.Empty;
         public string Tele          { get; set; } = string.Empty;

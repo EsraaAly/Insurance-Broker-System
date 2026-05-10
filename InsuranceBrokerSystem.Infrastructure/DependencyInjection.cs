@@ -15,6 +15,12 @@
             services.AddScoped<IInsuranceProductRepository, InsuranceProductRepository>();
             services.AddScoped<IAccountNumberRepository, AccountNumberRepository>();
             services.AddScoped<IClientRepository, ClientRepository>();
+            
+            // Authentication services
+            services.AddScoped<InsuranceBrokerSystem.Application.Interfaces.IUserRepository, Infrastructure.Repositories.Auth.UserRepository>();
+            
+            // Database initializer
+            services.AddScoped<Infrastructure.Data.DbInitializer>();
 
             return services;
         }

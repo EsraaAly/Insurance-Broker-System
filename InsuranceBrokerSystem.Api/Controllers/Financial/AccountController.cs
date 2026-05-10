@@ -1,10 +1,12 @@
 
 
 using InsuranceBrokerSystem.Application.Features.Financial.Accounts.Commands;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InsuranceBrokerSystem.Api.Controllers.Financial
 {
     [ApiController]
+    [Authorize]
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;

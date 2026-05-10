@@ -1,9 +1,10 @@
+
 using InsuranceBrokerSystem.Domain.Entities.Financial;
 using InsuranceBrokerSystem.Domain.Entities;
 
 namespace InsuranceBrokerSystem.Infrastructure.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext:DbContext
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -52,14 +53,14 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
                 .HasForeignKey(l => l.ClassID)
                 .HasPrincipalKey(c => c.Id);
             #endregion
-
+            
             #region "PolicyType"
             modelBuilder.Entity<PolicyType>()
                 .HasKey(x => x.Id);
             #endregion
 
             #region "Nationality"
-            modelBuilder.Entity<Nationality>()
+            modelBuilder.Entity <Nationality>()
                 .HasKey(x => x.Id);
             #endregion
 
@@ -117,9 +118,9 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
                 .HasFilter("[IsDeleted] = 0")
                 .IsUnique();
             modelBuilder.Entity<Account>()
-                .HasOne(p => p.Parent)
-                .WithMany(c => c.Children)
-                .HasForeignKey(p => p.ParentId)
+                .HasOne(p=>p.Parent)
+                .WithMany(c=>c.Children)
+                .HasForeignKey(p=>p.ParentId)
                 .OnDelete(DeleteBehavior.Restrict);
             #endregion
 
@@ -172,7 +173,7 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
             // Client Relationships with Master Data
             modelBuilder.Entity<Client>()
                 .HasOne(c => c.PolicyType)
-                .WithMany(i => i.Clients)
+                .WithMany(i=>i.Clients)
                 .HasForeignKey(c => c.PolicyTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -194,15 +195,13 @@ namespace InsuranceBrokerSystem.Infrastructure.Data
                 .HasForeignKey(c => c.BusinessActivityId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
+            
             modelBuilder.Entity<Client>()
                 .HasOne(c => c.Location)
                 .WithMany(i => i.Clients)
                 .HasForeignKey(c => c.LocationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            #endregion
-            
             #region "Bank"
             modelBuilder.Entity<Bank>()
                 .HasKey(x => x.Id);

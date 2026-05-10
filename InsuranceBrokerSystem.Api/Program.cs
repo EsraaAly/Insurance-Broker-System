@@ -6,6 +6,9 @@ using InsuranceBrokerSystem.Application.Mediators;
 using InsuranceBrokerSystem.Application.Services;
 using InsuranceBrokerSystem.Infrastructure;
 using LiveChartsCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace InsuranceBrokerSystem.Api
 {
@@ -24,6 +27,31 @@ namespace InsuranceBrokerSystem.Api
                 .AddClasses(classes => classes.AssignableTo(typeof(IManualRequestHandler<,>)))
                 .AsImplementedInterfaces()
                 .WithScopedLifetime());
+
+            // Add JWT Authentication
+            var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+            var secretKey = jwtSettings["SecretKey"]!;
+            var issuer = jwtSettings["Issuer"]!;
+            var audience = jwtSettings["Audience"]!;
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = issuer,
+                    ValidAudience = audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
 
             // Add CORS
             builder.Services.AddCors(options =>
@@ -54,10 +82,16 @@ namespace InsuranceBrokerSystem.Api
             // Use CORS
             app.UseCors("AllowAngularApp");
             
+            app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
 
-            //await app.UseWebApplicationWarmup();
+            // Initialize database with seed data
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbInitializer = scope.ServiceProvider.GetRequiredService<InsuranceBrokerSystem.Infrastructure.Data.DbInitializer>();
+                await dbInitializer.InitializeAsync();
+            }
 
             app.Run();
         }

@@ -150,7 +150,3 @@ Swagger playground is accessible at `https://localhost:7039/swagger/index.html`.
 3. Press `F5` to build and run.
 
 ---
-
-### 🔐 Initial Admin Account
-- **Username**: `admin`
-- **Password**: `Admin123!`
